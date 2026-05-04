@@ -1424,34 +1424,35 @@ if (!function_exists('fetch_file')) {
 
         try {
             if ($settings['storage_type'] == 'wasabi') {
-                config(
-                    [
-                        'filesystems.disks.wasabi.key' => $settings['wasabi_key'],
-                        'filesystems.disks.wasabi.secret' => $settings['wasabi_secret'],
-                        'filesystems.disks.wasabi.region' => $settings['wasabi_region'],
-                        'filesystems.disks.wasabi.bucket' => $settings['wasabi_bucket'],
-                        'filesystems.disks.wasabi.endpoint' => 'https://s3.' . $settings['wasabi_region'] . '.wasabisys.com',
-                    ]
-                );
-            } elseif ($settings['storage_type'] == 's3') {
-                config(
-                    [
-                        'filesystems.disks.s3.key' => $settings['aws_s3_key'],
-                        'filesystems.disks.s3.secret' => $settings['aws_s3_secret'],
-                        'filesystems.disks.s3.region' => $settings['aws_s3_region'],
-                        'filesystems.disks.s3.bucket' => $settings['aws_s3_bucket'],
-                        'filesystems.disks.s3.use_path_style_endpoint' => false,
-                    ]
-                );
+                config([
+                    'filesystems.disks.wasabi.key' => $settings['wasabi_key'],
+                    'filesystems.disks.wasabi.secret' => $settings['wasabi_secret'],
+                    'filesystems.disks.wasabi.region' => $settings['wasabi_region'],
+                    'filesystems.disks.wasabi.bucket' => $settings['wasabi_bucket'],
+                    'filesystems.disks.wasabi.endpoint' => 'https://s3.' . $settings['wasabi_region'] . '.wasabisys.com',
+                ]);
+                return \Storage::disk('wasabi')->url($path . $filename);
             }
-
-            return \Storage::disk($settings['storage_type'])->url($path . $filename);
+            elseif ($settings['storage_type'] == 's3') {
+                config([
+                    'filesystems.disks.s3.key' => $settings['aws_s3_key'],
+                    'filesystems.disks.s3.secret' => $settings['aws_s3_secret'],
+                    'filesystems.disks.s3.region' => $settings['aws_s3_region'],
+                    'filesystems.disks.s3.bucket' => $settings['aws_s3_bucket'],
+                    'filesystems.disks.s3.use_path_style_endpoint' => false,
+                ]);
+                return \Storage::disk('s3')->url($path . $filename);
+            }
+            else {
+                // For local storage, use the public URL
+                return asset('storage/' . $path . $filename);
+            }
         } catch (\Throwable $th) {
-            return '';
+            \Log::error('Fetch file error: ' . $th->getMessage());
+            return asset($path . 'default.png');
         }
     }
 }
-
 
 if (!function_exists('handleFileUpload')) {
     function handleFileUpload($file, $uploadPath, $customValidation = [])
@@ -1598,14 +1599,17 @@ if (!function_exists('uploadLogoFile')) {
                 ? "{$fieldName}.png"
                 : "{$parentId}_{$fieldName}.png";
 
+            // FIXED: Consistent storage approach
             if ($disk === 'local') {
-                $destination = public_path($uploadPath);
-                if (!file_exists($destination)) {
-                    if (!mkdir($destination, 0777, true) && !is_dir($destination)) {
-                        throw new \Exception("Unable to create directory: $destination");
+                // Use storage_path for consistency with Laravel's filesystem
+                $fullPath = storage_path('app/public/' . $uploadPath);
+                if (!file_exists($fullPath)) {
+                    if (!mkdir($fullPath, 0777, true) && !is_dir($fullPath)) {
+                        throw new \Exception("Unable to create directory: $fullPath");
                     }
                 }
-                $file->storeAs($uploadPath, $filename);
+                // Store properly in the storage directory
+                $file->storeAs($uploadPath, $filename, 'public');
             } else {
                 \Storage::disk($disk)->putFileAs($uploadPath, $file, $filename);
             }
@@ -1614,7 +1618,7 @@ if (!function_exists('uploadLogoFile')) {
                 'flag' => 1,
                 'msg' => 'Upload successful',
                 'filename' => $filename,
-                'path' => $uploadPath . '/' . $filename,
+                'path' => $uploadPath . $filename,
                 'disk' => $disk
             ];
         } catch (\Exception $e) {

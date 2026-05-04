@@ -16,7 +16,7 @@
                 show: false
             }
         },
-        colors: ['#2ca58d', '#0a2342'],
+        colors: ['#cc4909', '#0a2342'],
         dataLabels: {
             enabled: false
         },
@@ -27,7 +27,7 @@
         markers: {
             size: 1,
             colors: ['#fff', '#fff', '#fff'],
-            strokeColors: ['#2ca58d', '#0a2342'],
+            strokeColors: ['#cc4909', '#0a2342'],
             strokeWidth: 1,
             shape: 'circle',
             hover: {

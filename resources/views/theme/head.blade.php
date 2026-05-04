@@ -76,7 +76,7 @@
     <style>
         /* header.nav-homepage-style.at-home3 .ace-responsive-menu a.list-item.active { */
         .custom-active-style {
-            color: #2ca58d !important;
+            color: #cc4909 !important;
             border: 1px solid #000;
             padding: 6px 24px;
             border-radius: 4px;

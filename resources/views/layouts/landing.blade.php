@@ -877,200 +877,188 @@
     @endif
     <!-- [ section ] End -->
     <!-- [ footer ] start -->
-    <footer class="bg-dark footer">
-        @php
-            $Section_10 = App\Models\HomePage::where('section', 'Section 10')->first();
-            $Section_10_content_value = !empty($Section_10->content_value)
-                ? json_decode($Section_10->content_value, true)
-                : [];
-        @endphp
-        @if (empty($Section_10_content_value['section_enabled']) || $Section_10_content_value['section_enabled'] == 'active')
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-4 wow fadeInUp" data-wow-delay="0.2s">
-                        <div class="landing-logo">
-                            <img src="{{ asset(Storage::url('upload/logo/light_logo.png')) }}" alt="image"
-                                class="img-fluid" />
-                        </div>
-                        <h4 class="my-3 text-white">
-                            {{ !empty($Section_10_content_value['Sec10_title']) ? $Section_10_content_value['Sec10_title'] : 'About Smart Tenant' }}
-                        </h4>
-                        <p class="mb-4 text-white text-opacity-75">
-                            {!! !empty($Section_10_content_value['Sec10_info'])
-                                ? $Section_10_content_value['Sec10_info']
-                                : 'Property management refers to the administration, operation, and oversight of real estate properties on behalf of
-                                                                                                                                                                             property owners. It involves various tasks such as marketing rental properties, finding tenants,
-                                                                                                                                                                             collecting rent and ensuring legal compliance.' !!}
-                        </p>
+   <footer class="bg-dark footer">
+    @php
+        $Section_10 = App\Models\HomePage::where('section', 'Section 10')->first();
+        $Section_10_content_value = !empty($Section_10->content_value)
+            ? json_decode($Section_10->content_value, true)
+            : [];
+    @endphp
+    @if (empty($Section_10_content_value['section_enabled']) || $Section_10_content_value['section_enabled'] == 'active')
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 wow fadeInUp" data-wow-delay="0.2s">
+                    <div class="landing-logo">
+                        <!-- Using SAME landing logo as navbar -->
+                        <img src="{{ !empty($settings['landing_logo']) ? fetch_file($settings['landing_logo'], 'upload/logo/') : $default_landing_logo }}"
+                             alt="image"
+                             class="img-fluid" />
                     </div>
-                    <div class="col-md-8">
-                        <div class="row g-4">
-                            @php
-                                $footer_col = 0;
-                                if ($settings['footer_column_1_enabled'] == 'active') {
-                                    $footer_col = 12;
-                                }
-                                if ($settings['footer_column_2_enabled'] == 'active') {
-                                    $footer_col = 6;
-                                }
-                                if ($settings['footer_column_3_enabled'] == 'active') {
-                                    $footer_col = 4;
-                                }
-                                if ($settings['footer_column_4_enabled'] == 'active') {
-                                    $footer_col = 3;
-                                }
-                            @endphp
-                            @if ($footer_col > 0)
-                                @if ($settings['footer_column_1_enabled'] == 'active')
-                                    <div class="col-6 col-md-{{ $footer_col }} wow fadeInUp"
-                                        data-wow-delay="0.6s">
-                                        <h5 class="mb-3 mb-sm-4 text-white">{{ $settings['footer_column_1'] }}</h5>
-                                        @php
-                                            $active_footer_menu1 = !empty($settings['footer_column_1_pages'])
-                                                ? json_decode($settings['footer_column_1_pages'], true)
-                                                : [];
-                                        @endphp
-                                        <ul class="list-unstyled footer-link">
-                                            @if (!empty($active_footer_menu1))
-                                                @foreach ($menus as $menu)
-                                                    @if (in_array($menu->id, $active_footer_menu1))
-                                                        <li>
-                                                            <a target="_blank"
-                                                                href="{{ route('page', $menu->slug) }}">{{ $menu->title }}</a>
-                                                        </li>
-                                                    @endif
-                                                @endforeach
-                                            @else
-                                                <li><a href="#" target="_blank">{{ __('Blog') }}</a></li>
-                                                <li><a href="#" target="_blank">{{ __('Documentation') }}</a>
-                                                </li>
-                                                <li><a href="#" target="_blank">{{ __('ChangeLog') }}</a></li>
-                                                <li><a href="#" target="_blank">{{ __('Support') }}</a></li>
-                                            @endif
-                                        </ul>
-                                    </div>
-                                @endif
-                                @if ($settings['footer_column_2_enabled'] == 'active')
-                                    <div class="col-6 col-md-{{ $footer_col }} wow fadeInUp"
-                                        data-wow-delay="0.6s">
-                                        <h5 class="mb-3 mb-sm-4 text-white">{{ $settings['footer_column_2'] }}</h5>
-                                        @php
-                                            $active_footer_menu2 = !empty($settings['footer_column_2_pages'])
-                                                ? json_decode($settings['footer_column_2_pages'], true)
-                                                : [];
-                                        @endphp
-                                        <ul class="list-unstyled footer-link">
-                                            @if (!empty($active_footer_menu2))
-                                                @foreach ($menus as $menu)
-                                                    @if (in_array($menu->id, $active_footer_menu2))
-                                                        <li>
-                                                            <a target="_blank"
-                                                                href="{{ route('page', $menu->slug) }}">{{ $menu->title }}</a>
-                                                        </li>
-                                                    @endif
-                                                @endforeach
-                                            @else
-                                                <li><a href="#" target="_blank">{{ __('Blog') }}</a></li>
-                                                <li><a href="#" target="_blank">{{ __('Documentation') }}</a>
-                                                </li>
-                                                <li><a href="#" target="_blank">{{ __('ChangeLog') }}</a></li>
-                                                <li><a href="#" target="_blank">{{ __('Support') }}</a></li>
-                                            @endif
-                                        </ul>
-                                    </div>
-                                @endif
-                                @if ($settings['footer_column_3_enabled'] == 'active')
-                                    <div class="col-6 col-md-{{ $footer_col }} wow fadeInUp"
-                                        data-wow-delay="0.6s">
-                                        <h5 class="mb-3 mb-sm-4 text-white">{{ $settings['footer_column_3'] }}</h5>
-                                        @php
-                                            $active_footer_menu3 = !empty($settings['footer_column_3_pages'])
-                                                ? json_decode($settings['footer_column_3_pages'], true)
-                                                : [];
-                                        @endphp
-                                        <ul class="list-unstyled footer-link">
-                                            @if (!empty($active_footer_menu3))
-                                                @foreach ($menus as $menu)
-                                                    @if (in_array($menu->id, $active_footer_menu3))
-                                                        <li>
-                                                            <a target="_blank"
-                                                                href="{{ route('page', $menu->slug) }}">{{ $menu->title }}</a>
-                                                        </li>
-                                                    @endif
-                                                @endforeach
-                                            @else
-                                                <li><a href="#" target="_blank">{{ __('Blog') }}</a></li>
-                                                <li><a href="#" target="_blank">{{ __('Documentation') }}</a>
-                                                </li>
-                                                <li><a href="#" target="_blank">{{ __('ChangeLog') }}</a></li>
-                                                <li><a href="#" target="_blank">{{ __('Support') }}</a></li>
-                                            @endif
-                                        </ul>
-                                    </div>
-                                @endif
-                                @if ($settings['footer_column_4_enabled'] == 'active')
-                                    <div class="col-6 col-md-{{ $footer_col }} wow fadeInUp"
-                                        data-wow-delay="0.6s">
-                                        <h5 class="mb-3 mb-sm-4 text-white">{{ $settings['footer_column_4'] }}</h5>
-                                        @php
-                                            $active_footer_menu4 = !empty($settings['footer_column_4_pages'])
-                                                ? json_decode($settings['footer_column_4_pages'], true)
-                                                : [];
-                                        @endphp
-                                        <ul class="list-unstyled footer-link">
-                                            @if (!empty($active_footer_menu4))
-                                                @foreach ($menus as $menu)
-                                                    @if (in_array($menu->id, $active_footer_menu4))
-                                                        <li>
-                                                            <a target="_blank"
-                                                                href="{{ route('page', $menu->slug) }}">{{ $menu->title }}</a>
-                                                        </li>
-                                                    @endif
-                                                @endforeach
-                                            @else
-                                                <li><a href="#" target="_blank">{{ __('Blog') }}</a></li>
-                                                <li><a href="#" target="_blank">{{ __('Documentation') }}</a>
-                                                </li>
-                                                <li><a href="#" target="_blank">{{ __('ChangeLog') }}</a></li>
-                                                <li><a href="#" target="_blank">{{ __('Support') }}</a></li>
-                                            @endif
-                                        </ul>
-                                    </div>
-                                @endif
-                            @endif
-                        </div>
-                    </div>
+                    <h4 class="my-3 text-white">
+                        {{ !empty($Section_10_content_value['Sec10_title']) ? $Section_10_content_value['Sec10_title'] : 'About Smart Tenant' }}
+                    </h4>
+                    <p class="mb-4 text-white text-opacity-75">
+                        {!! !empty($Section_10_content_value['Sec10_info'])
+                            ? $Section_10_content_value['Sec10_info']
+                            : 'Property management refers to the administration, operation, and oversight of real estate properties on behalf of property owners. It involves various tasks such as marketing rental properties, finding tenants, collecting rent and ensuring legal compliance.' !!}
+                    </p>
                 </div>
-            </div>
-        @endif
-
-        <div class="sub-footer">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col my-1 wow fadeInUp" data-wow-delay="0.4s">
-                        <p class="mb-0 text-white text-opacity-75">
-                            @if (!empty($settings['copyright']))
-                                {{ $settings['copyright'] }}
-                            @else
-                                {{ __('Copyright') }} {{ date('Y') }} {{ env('APP_NAME') }}
+                <div class="col-md-8">
+                    <div class="row g-4">
+                        @php
+                            $footer_col = 0;
+                            if ($settings['footer_column_1_enabled'] == 'active') {
+                                $footer_col = 12;
+                            }
+                            if ($settings['footer_column_2_enabled'] == 'active') {
+                                $footer_col = 6;
+                            }
+                            if ($settings['footer_column_3_enabled'] == 'active') {
+                                $footer_col = 4;
+                            }
+                            if ($settings['footer_column_4_enabled'] == 'active') {
+                                $footer_col = 3;
+                            }
+                        @endphp
+                        @if ($footer_col > 0)
+                            @if ($settings['footer_column_1_enabled'] == 'active')
+                                <div class="col-6 col-md-{{ $footer_col }} wow fadeInUp" data-wow-delay="0.6s">
+                                    <h5 class="mb-3 mb-sm-4 text-white">{{ $settings['footer_column_1'] }}</h5>
+                                    @php
+                                        $active_footer_menu1 = !empty($settings['footer_column_1_pages'])
+                                            ? json_decode($settings['footer_column_1_pages'], true)
+                                            : [];
+                                    @endphp
+                                    <ul class="list-unstyled footer-link">
+                                        @if (!empty($active_footer_menu1))
+                                            @foreach ($menus as $menu)
+                                                @if (in_array($menu->id, $active_footer_menu1))
+                                                    <li>
+                                                        <a target="_blank" href="{{ route('page', $menu->slug) }}">{{ $menu->title }}</a>
+                                                    </li>
+                                                @endif
+                                            @endforeach
+                                        @else
+                                            <li><a href="#" target="_blank">{{ __('Blog') }}</a></li>
+                                            <li><a href="#" target="_blank">{{ __('Documentation') }}</a></li>
+                                            <li><a href="#" target="_blank">{{ __('ChangeLog') }}</a></li>
+                                            <li><a href="#" target="_blank">{{ __('Support') }}</a></li>
+                                        @endif
+                                    </ul>
+                                </div>
                             @endif
-                        </p>
-                    </div>
-                    <div class="col-auto my-1">
-                        <ul class="list-inline footer-sos-link mb-0">
-                            <li class="list-inline-item wow fadeInUp" data-wow-delay="0.4s">
-                                <a href="#" class="link-primary">
-                                    <svg class="pc-icon">
-                                        <use xlink:href="#custom-facebook"></use>
-                                    </svg>
-                                </a>
-                            </li>
-                        </ul>
+                            @if ($settings['footer_column_2_enabled'] == 'active')
+                                <div class="col-6 col-md-{{ $footer_col }} wow fadeInUp" data-wow-delay="0.6s">
+                                    <h5 class="mb-3 mb-sm-4 text-white">{{ $settings['footer_column_2'] }}</h5>
+                                    @php
+                                        $active_footer_menu2 = !empty($settings['footer_column_2_pages'])
+                                            ? json_decode($settings['footer_column_2_pages'], true)
+                                            : [];
+                                    @endphp
+                                    <ul class="list-unstyled footer-link">
+                                        @if (!empty($active_footer_menu2))
+                                            @foreach ($menus as $menu)
+                                                @if (in_array($menu->id, $active_footer_menu2))
+                                                    <li>
+                                                        <a target="_blank" href="{{ route('page', $menu->slug) }}">{{ $menu->title }}</a>
+                                                    </li>
+                                                @endif
+                                            @endforeach
+                                        @else
+                                            <li><a href="#" target="_blank">{{ __('Blog') }}</a></li>
+                                            <li><a href="#" target="_blank">{{ __('Documentation') }}</a></li>
+                                            <li><a href="#" target="_blank">{{ __('ChangeLog') }}</a></li>
+                                            <li><a href="#" target="_blank">{{ __('Support') }}</a></li>
+                                        @endif
+                                    </ul>
+                                </div>
+                            @endif
+                            @if ($settings['footer_column_3_enabled'] == 'active')
+                                <div class="col-6 col-md-{{ $footer_col }} wow fadeInUp" data-wow-delay="0.6s">
+                                    <h5 class="mb-3 mb-sm-4 text-white">{{ $settings['footer_column_3'] }}</h5>
+                                    @php
+                                        $active_footer_menu3 = !empty($settings['footer_column_3_pages'])
+                                            ? json_decode($settings['footer_column_3_pages'], true)
+                                            : [];
+                                    @endphp
+                                    <ul class="list-unstyled footer-link">
+                                        @if (!empty($active_footer_menu3))
+                                            @foreach ($menus as $menu)
+                                                @if (in_array($menu->id, $active_footer_menu3))
+                                                    <li>
+                                                        <a target="_blank" href="{{ route('page', $menu->slug) }}">{{ $menu->title }}</a>
+                                                    </li>
+                                                @endif
+                                            @endforeach
+                                        @else
+                                            <li><a href="#" target="_blank">{{ __('Blog') }}</a></li>
+                                            <li><a href="#" target="_blank">{{ __('Documentation') }}</a></li>
+                                            <li><a href="#" target="_blank">{{ __('ChangeLog') }}</a></li>
+                                            <li><a href="#" target="_blank">{{ __('Support') }}</a></li>
+                                        @endif
+                                    </ul>
+                                </div>
+                            @endif
+                            @if ($settings['footer_column_4_enabled'] == 'active')
+                                <div class="col-6 col-md-{{ $footer_col }} wow fadeInUp" data-wow-delay="0.6s">
+                                    <h5 class="mb-3 mb-sm-4 text-white">{{ $settings['footer_column_4'] }}</h5>
+                                    @php
+                                        $active_footer_menu4 = !empty($settings['footer_column_4_pages'])
+                                            ? json_decode($settings['footer_column_4_pages'], true)
+                                            : [];
+                                    @endphp
+                                    <ul class="list-unstyled footer-link">
+                                        @if (!empty($active_footer_menu4))
+                                            @foreach ($menus as $menu)
+                                                @if (in_array($menu->id, $active_footer_menu4))
+                                                    <li>
+                                                        <a target="_blank" href="{{ route('page', $menu->slug) }}">{{ $menu->title }}</a>
+                                                    </li>
+                                                @endif
+                                            @endforeach
+                                        @else
+                                            <li><a href="#" target="_blank">{{ __('Blog') }}</a></li>
+                                            <li><a href="#" target="_blank">{{ __('Documentation') }}</a></li>
+                                            <li><a href="#" target="_blank">{{ __('ChangeLog') }}</a></li>
+                                            <li><a href="#" target="_blank">{{ __('Support') }}</a></li>
+                                        @endif
+                                    </ul>
+                                </div>
+                            @endif
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
-    </footer>
+    @endif
+
+    <div class="sub-footer">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col my-1 wow fadeInUp" data-wow-delay="0.4s">
+                    <p class="mb-0 text-white text-opacity-75">
+                        @if (!empty($settings['copyright']))
+                            {{ $settings['copyright'] }}
+                        @else
+                            {{ __('Copyright') }} {{ date('Y') }} {{ env('APP_NAME') }}
+                        @endif
+                    </p>
+                </div>
+                <div class="col-auto my-1">
+                    <ul class="list-inline footer-sos-link mb-0">
+                        <li class="list-inline-item wow fadeInUp" data-wow-delay="0.4s">
+                            <a href="#" class="link-primary">
+                                <svg class="pc-icon">
+                                    <use xlink:href="#custom-facebook"></use>
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
     <!-- [ footer ] End -->
     <!-- Required Js -->
     <script src="{{ asset('js/jquery.js') }}"></script>

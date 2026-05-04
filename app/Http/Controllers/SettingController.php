@@ -116,92 +116,206 @@ class SettingController extends Controller
 
 
     public function generalData(Request $request)
-    {
-        $user = \Auth::user();
-        $userType = $user->type;
-        $parentId = parentId(); // Assume 1 for super admin
+{
+    // Log start of function
+    \Log::info('=== START: generalData method ===');
 
-        $validator = \Validator::make($request->all(), [
-            'application_name' => 'required',
-        ]);
+    $user = \Auth::user();
+    $userType = $user->type;
+    $parentId = parentId();
 
-        $fileFields = ['logo', 'favicon', 'light_logo', 'landing_logo'];
+    \Log::info('User info:', [
+        'user_id' => $user->id,
+        'user_type' => $userType,
+        'parent_id' => $parentId
+    ]);
 
+    // Validation
+    $validator = \Validator::make($request->all(), [
+        'application_name' => 'required',
+    ]);
 
-        // Add file validation for each file field
-        foreach ($fileFields as $field) {
-            if ($request->hasFile($field)) {
-                $validator->addRules([$field => 'mimes:png']);
-            }
+    $fileFields = ['logo', 'favicon', 'light_logo', 'landing_logo'];
+
+    // Add file validation
+    foreach ($fileFields as $field) {
+        if ($request->hasFile($field)) {
+            $validator->addRules([$field => 'mimes:png']);
         }
+    }
 
-        if ($validator->fails()) {
-            return redirect()->back()->with('error', $validator->getMessageBag()->first());
-        }
+    if ($validator->fails()) {
+        \Log::error('Validation failed:', $validator->getMessageBag()->toArray());
+        return redirect()->back()->with('error', $validator->getMessageBag()->first());
+    }
 
-        // Save App Name
-        if (!empty($request->application_name)) {
+    // Save App Name
+    if (!empty($request->application_name)) {
+        \Log::info('Saving app_name: ' . $request->application_name);
+        try {
             Custom::setCommon(['APP_NAME' => $request->application_name]);
 
             \DB::insert(
                 'INSERT INTO settings (`value`, `name`, `parent_id`) VALUES (?, ?, ?)
-             ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)',
+                 ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)',
                 [$request->application_name, 'app_name', $parentId]
             );
+            \Log::info('app_name saved successfully');
+        } catch (\Exception $e) {
+            \Log::error('Error saving app_name: ' . $e->getMessage());
         }
+    }
 
-        // Save Copyright
-        if (!empty($request->copyright)) {
+    // Save Copyright
+    if (!empty($request->copyright)) {
+        \Log::info('Saving copyright: ' . $request->copyright);
+        try {
             \DB::insert(
                 'INSERT INTO settings (`value`, `name`, `parent_id`) VALUES (?, ?, ?)
-             ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)',
+                 ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)',
                 [$request->copyright, 'copyright', $parentId]
             );
+            \Log::info('copyright saved successfully');
+        } catch (\Exception $e) {
+            \Log::error('Error saving copyright: ' . $e->getMessage());
         }
+    }
 
-        // Upload and store logo file names in DB
-        foreach ($fileFields as $key => $field) {
-            if ($request->hasFile($field)) {
+    // Upload and store logo files
+    \Log::info('Starting file upload process...');
 
-                $upload = uploadLogoFile($request->file($field), $field, $parentId, $userType);
+    foreach ($fileFields as $field) {
+        \Log::info('Checking field: ' . $field);
 
-                if ($upload['flag'] != 1) {
-                    return redirect()->back()->with('error', __($upload['msg']));
-                }
+        if ($request->hasFile($field)) {
+            \Log::info('File found for: ' . $field);
 
-                $filename = $upload['filename'];
+            try {
+                $file = $request->file($field);
+                \Log::info('File details:', [
+                    'original_name' => $file->getClientOriginalName(),
+                    'size' => $file->getSize(),
+                    'mime' => $file->getMimeType()
+                ]);
+
+                // Direct file upload - bypass the helper function for debugging
+                $uploadPath = 'upload/logo/';
+                $filename = ($userType === 'super admin')
+                    ? "{$field}.png"
+                    : "{$parentId}_{$field}.png";
+
                 $settingKey = ($userType === 'super admin') ? $field : 'company_' . $field;
 
-                \DB::insert(
+                \Log::info('Preparing to save:', [
+                    'filename' => $filename,
+                    'setting_key' => $settingKey,
+                    'upload_path' => $uploadPath
+                ]);
+
+                // Store the file
+                $stored = $file->storeAs($uploadPath, $filename, 'public');
+
+                if (!$stored) {
+                    \Log::error('File store failed for: ' . $field);
+                    return redirect()->back()->with('error', "Failed to upload {$field}");
+                }
+
+                \Log::info('File stored successfully at: ' . $stored);
+
+                // Verify file exists on disk
+                $fullPath = storage_path('app/public/' . $uploadPath . $filename);
+                \Log::info('File verification:', [
+                    'path' => $fullPath,
+                    'exists' => file_exists($fullPath) ? 'YES' : 'NO',
+                    'size' => file_exists($fullPath) ? filesize($fullPath) : 0
+                ]);
+
+                // Save to database
+                \Log::info('Saving to database:', [
+                    'value' => $filename,
+                    'name' => $settingKey,
+                    'parent_id' => $parentId
+                ]);
+
+                // Check if record exists
+                $existing = \DB::table('settings')
+                    ->where('name', $settingKey)
+                    ->where('parent_id', $parentId)
+                    ->first();
+
+                if ($existing) {
+                    \Log::info('Existing record found:', ['old_value' => $existing->value]);
+                    // Delete old file if exists
+                    if ($existing->value && $existing->value != $filename) {
+                        $oldFilePath = storage_path('app/public/' . $uploadPath . $existing->value);
+                        if (file_exists($oldFilePath)) {
+                            unlink($oldFilePath);
+                            \Log::info('Deleted old file: ' . $oldFilePath);
+                        }
+                    }
+                }
+
+                // Insert or update
+                $result = \DB::insert(
                     'INSERT INTO settings (`value`, `name`, `parent_id`) VALUES (?, ?, ?)
-                 ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)',
+                     ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)',
                     [$filename, $settingKey, $parentId]
                 );
+
+                \Log::info('Database insert result: ' . ($result ? 'success' : 'failed'));
+
+                // Verify the save
+                $saved = \DB::table('settings')
+                    ->where('name', $settingKey)
+                    ->where('parent_id', $parentId)
+                    ->first();
+
+                \Log::info('Verification after save:', [
+                    'found' => $saved ? 'YES' : 'NO',
+                    'value' => $saved->value ?? 'N/A'
+                ]);
+
+            } catch (\Exception $e) {
+                \Log::error('Error processing file ' . $field . ': ' . $e->getMessage());
+                \Log::error($e->getTraceAsString());
+                return redirect()->back()->with('error', 'Error uploading ' . $field . ': ' . $e->getMessage());
             }
+        } else {
+            \Log::info('No file found for: ' . $field);
         }
+    }
 
-        // Extra toggles for super admin
-        if ($userType === 'super admin') {
-            $toggles = [
-                'landing_page'              => $request->landing_page ?? 'off',
-                'register_page'             => $request->register_page ?? 'off',
-                'owner_email_verification'  => $request->owner_email_verification ?? 'off',
-                'pricing_feature'           => $request->pricing_feature,
-            ];
+    // Extra toggles for super admin
+    if ($userType === 'super admin') {
+        \Log::info('Saving super admin toggles');
 
-            foreach ($toggles as $key => $val) {
+        $toggles = [
+            'landing_page'              => $request->landing_page ?? 'off',
+            'register_page'             => $request->register_page ?? 'off',
+            'owner_email_verification'  => $request->owner_email_verification ?? 'off',
+            'pricing_feature'           => $request->pricing_feature ?? 'off',
+        ];
+
+        foreach ($toggles as $key => $val) {
+            try {
                 \DB::insert(
                     'INSERT INTO settings (`value`, `name`, `type`, `parent_id`) VALUES (?, ?, ?, ?)
-                 ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)',
+                     ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)',
                     [$val, $key, 'common', $parentId]
                 );
+                \Log::info("Saved toggle: {$key} = {$val}");
+            } catch (\Exception $e) {
+                \Log::error("Error saving toggle {$key}: " . $e->getMessage());
             }
         }
-
-        return redirect()->back()
-            ->with('success', __('General setting successfully saved.'))
-            ->with('tab', 'general_settings');
     }
+
+    \Log::info('=== END: generalData method - SUCCESS ===');
+
+    return redirect()->back()
+        ->with('success', __('General setting successfully saved.'))
+        ->with('tab', 'general_settings');
+}
 
 
 
