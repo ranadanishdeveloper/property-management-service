@@ -890,13 +890,13 @@
                 <div class="col-md-4 wow fadeInUp" data-wow-delay="0.2s">
                     <div class="landing-logo">
                         <!-- Using SAME landing logo as navbar -->
-                        <img src="{{ !empty($settings['landing_logo']) ? fetch_file($settings['landing_logo'], 'upload/logo/') : $default_landing_logo }}"
+                        <img src="{{ !empty($settings['light_logo']) ? fetch_file($settings['light_logo'], 'upload/logo/') : $default_landing_logo }}"
                              alt="image"
                              class="img-fluid" />
                     </div>
                     <h4 class="my-3 text-white">
-                        {{ !empty($Section_10_content_value['Sec10_title']) ? $Section_10_content_value['Sec10_title'] : 'About Smart Tenant' }}
-                    </h4>
+    {{ !empty($settings['app_name']) ? $settings['app_name'] : 'ITECHLEADZ PMS' }}
+</h4>
                     <p class="mb-4 text-white text-opacity-75">
                         {!! !empty($Section_10_content_value['Sec10_info'])
                             ? $Section_10_content_value['Sec10_info']
