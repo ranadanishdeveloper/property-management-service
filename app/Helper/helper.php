@@ -1458,80 +1458,28 @@ if (!function_exists('handleFileUpload')) {
     function handleFileUpload($file, $uploadPath, $customValidation = [])
     {
         try {
-            $settings = settings(1);
+            $uploadPath = trim($uploadPath, '/');
 
-            if (empty($settings['storage_type'])) {
-                throw new \Exception(__('Please set proper configuration for storage.'));
-            }
-
-            // Setup filename
             $originalName = $file->getClientOriginalName();
             $fileNameOnly = pathinfo($originalName, PATHINFO_FILENAME);
             $extension = $file->getClientOriginalExtension();
-            $fileName = $fileNameOnly . '_' . time() . '.' . $extension;
+            $fileName = $fileNameOnly . '_' . time() . '_' . rand(1, 100) . '.' . $extension;
 
-            // Determine disk and MIME types
-            switch ($settings['storage_type']) {
-                case 'wasabi':
-                    config([
-                        'filesystems.disks.wasabi.key' => $settings['wasabi_key'],
-                        'filesystems.disks.wasabi.secret' => $settings['wasabi_secret'],
-                        'filesystems.disks.wasabi.region' => $settings['wasabi_region'],
-                        'filesystems.disks.wasabi.bucket' => $settings['wasabi_bucket'],
-                        'filesystems.disks.wasabi.endpoint' => 'https://s3.' . $settings['wasabi_region'] . '.wasabisys.com',
-                    ]);
-                    $disk = 'wasabi';
-                    $mimes = $settings['wasabi_file_type'] ?? '';
-                    break;
+            // IMPORTANT: Use 'public' disk to save to storage/app/public/
+            $path = $file->storeAs($uploadPath, $fileName, 'public');
 
-                case 's3':
-                    config([
-                        'filesystems.disks.s3.key' => $settings['aws_s3_key'],
-                        'filesystems.disks.s3.secret' => $settings['aws_s3_secret'],
-                        'filesystems.disks.s3.region' => $settings['aws_s3_region'],
-                        'filesystems.disks.s3.bucket' => $settings['aws_s3_bucket'],
-                    ]);
-                    $disk = 's3';
-                    $mimes = $settings['aws_s3_file_type'] ?? '';
-                    break;
-
-                default:
-                    $disk = 'local';
-                    $mimes = $settings['local_file_type'] ?? '';
-                    break;
-            }
-
-            // Validate file
-            $validation = count($customValidation) > 0 ? $customValidation : ['mimes:' . $mimes];
-            $validator = \Validator::make(
-                ['upload_file' => $file],
-                ['upload_file' => $validation]
-            );
-
-            if ($validator->fails()) {
+            if (!$path) {
                 return [
                     'flag' => 0,
-                    'msg' => $validator->messages()->first()
+                    'msg' => 'Failed to upload file'
                 ];
-            }
-
-            // Upload logic
-            if ($disk === 'local') {
-                $destination = storage_path($uploadPath);
-                if (!file_exists($destination)) {
-                    mkdir($destination, 0777, true);
-                }
-                $file->move($destination, $fileName);
-            } else {
-                \Storage::disk($disk)->putFileAs($uploadPath, $file, $fileName);
             }
 
             return [
                 'flag' => 1,
                 'msg' => 'Upload successful',
-                'path' => $uploadPath . '/' . $fileName,
                 'filename' => $fileName,
-                'disk' => $disk,
+                'path' => $path
             ];
         } catch (\Exception $e) {
             return [
@@ -1541,7 +1489,6 @@ if (!function_exists('handleFileUpload')) {
         }
     }
 }
-
 
 if (!function_exists('uploadLogoFile')) {
     function uploadLogoFile($file, $fieldName, $parentId, $userType)
