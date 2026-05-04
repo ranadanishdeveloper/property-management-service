@@ -4923,7 +4923,7 @@ textarea.is-invalid.dataTable-input {
 .page-link.active, .active > .page-link {
     z-index: 3;
     color: var(--bs-secondary);
-    background-color: rgba(var(--bs-secondary-rgb), 0.2);
+    background-color: rgba(204, 73, 9, 1);
     border-color: var(--bs-pagination-active-border-color);
 }
 .page-link.disabled, .disabled > .page-link {
@@ -6971,7 +6971,7 @@ textarea.is-invalid.dataTable-input {
 
 .text-bg-secondary {
   color: #ffffff !important;
-  background-color: RGBA(var(--bs-secondary-rgb), var(--bs-bg-opacity, 1)) !important;
+  background-color: rgb(230, 110, 40) !important;
 }
 
 .text-bg-success {
@@ -7016,9 +7016,9 @@ textarea.is-invalid.dataTable-input {
 }
 
 .link-secondary {
-  color: RGBA(var(--bs-secondary-rgb), var(--bs-link-opacity, 1)) !important;
-  -webkit-text-decoration-color: RGBA(var(--bs-secondary-rgb), var(--bs-link-underline-opacity, 1)) !important;
-          text-decoration-color: RGBA(var(--bs-secondary-rgb), var(--bs-link-underline-opacity, 1)) !important;
+  color: rgb(230, 110, 40) !important;
+  -webkit-text-decoration-color: rgb(230, 110, 40) !important;
+          text-decoration-color: rgb(230, 110, 40) !important;
 }
 .link-secondary:hover, .link-secondary:focus {
   color: RGBA(82, 13, 194, var(--bs-link-opacity, 1)) !important;
@@ -7461,7 +7461,7 @@ textarea.is-invalid.dataTable-input {
   --bs-focus-ring-color: rgba(var(--bs-primary-rgb), var(--bs-focus-ring-opacity));
 }
 [data-pc-direction=ltr] .focus-ring-secondary {
-  --bs-focus-ring-color: rgba(var(--bs-secondary-rgb), var(--bs-focus-ring-opacity));
+  --bs-focus-ring-color: rgb(230, 110, 40);
 }
 [data-pc-direction=ltr] .focus-ring-success {
   --bs-focus-ring-color: rgba(var(--bs-success-rgb), var(--bs-focus-ring-opacity));
@@ -7577,7 +7577,7 @@ textarea.is-invalid.dataTable-input {
 }
 [data-pc-direction=ltr] .border-secondary {
   --bs-border-opacity: 1;
-  border-color: rgba(var(--bs-secondary-rgb), var(--bs-border-opacity)) !important;
+  border-color: rgb(230, 110, 40) !important;
 }
 [data-pc-direction=ltr] .border-success {
   --bs-border-opacity: 1;
@@ -8423,7 +8423,7 @@ textarea.is-invalid.dataTable-input {
 
 [data-pc-direction=ltr] .text-secondary {
   --bs-text-opacity: 1;
-  color: rgba(var(--bs-secondary-rgb), var(--bs-text-opacity)) !important;
+  color: rgb(230, 110, 40) !important;
 }
 [data-pc-direction=ltr] .text-success {
   --bs-text-opacity: 1;
@@ -8580,8 +8580,8 @@ textarea.is-invalid.dataTable-input {
 }
 [data-pc-direction=ltr] .link-underline-secondary {
   --bs-link-underline-opacity: 1;
-  -webkit-text-decoration-color: rgba(var(--bs-secondary-rgb), var(--bs-link-underline-opacity)) !important;
-          text-decoration-color: rgba(var(--bs-secondary-rgb), var(--bs-link-underline-opacity)) !important;
+  -webkit-text-decoration-color: rgb(230, 110, 40) !important;
+          text-decoration-color: rgb(230, 110, 40) !important;
 }
 [data-pc-direction=ltr] .link-underline-success {
   --bs-link-underline-opacity: 1;
@@ -8660,7 +8660,7 @@ textarea.is-invalid.dataTable-input {
 }
 [data-pc-direction=ltr] .bg-secondary {
   --bs-bg-opacity: 1;
-  background-color: rgba(var(--bs-secondary-rgb), var(--bs-bg-opacity)) !important;
+  background-color: rgb(230, 110, 40) !important;
 }
 [data-pc-direction=ltr] .bg-success {
   --bs-bg-opacity: 1;
@@ -13330,7 +13330,7 @@ textarea.is-invalid.dataTable-input {
 }
 [data-pc-direction=rtl] .text-secondary {
   --bs-text-opacity: 1;
-  color: rgba(var(--bs-secondary-rgb), var(--bs-text-opacity)) !important;
+  color: rgb(230, 110, 40) !important;
 }
 [data-pc-direction=rtl] .text-success {
   --bs-text-opacity: 1;
@@ -13402,7 +13402,7 @@ textarea.is-invalid.dataTable-input {
 }
 [data-pc-direction=rtl] .bg-secondary {
   --bs-bg-opacity: 1;
-  background-color: rgba(var(--bs-secondary-rgb), var(--bs-bg-opacity)) !important;
+  background-color: rgb(230, 110, 40) !important;
 }
 [data-pc-direction=rtl] .bg-success {
   --bs-bg-opacity: 1;
@@ -20552,7 +20552,7 @@ pre[class*=language-] > code {
 }
 .pc-header .dropdown-user-profile .dropdown-item:hover {
     color: var(--bs-secondary);
-    background: rgba(var(--bs-secondary-rgb), 0.2);
+    background: rgb(230, 110, 40);
 }
 .pc-header .dropdown-user-profile .upgradeplan-block {
   position: relative;
@@ -27999,11 +27999,11 @@ select[data-multiselectsplitter-secondselect-selector].dataTable-input {
 
 [data-pc-preset*=preset-] .mail-wrapper .mail-menulist .list-group-item.active {
   color: var(--bs-secondary);
-  background: rgba(var(--bs-secondary-rgb), 0.1);
+  background: rgb(230, 110, 40);
 }
 [data-pc-preset*=preset-] .mail-wrapper .mail-menulist .list-group-item.active .avtar {
   color: var(--bs-secondary);
-  background: rgba(var(--bs-secondary-rgb), 0.1);
+  background: rgb(230, 110, 40);
 }
 [data-pc-preset*=preset-] .mail-wrapper .mail-menulist .list-group-item.active .material-icons-two-tone {
   background-color: var(--bs-secondary);
@@ -28134,7 +28134,7 @@ select[data-multiselectsplitter-secondselect-selector].dataTable-input {
 }
 
 .fc-event {
-    background: rgba(var(--bs-secondary-rgb), 0.2);
+    background: rgb(230, 110, 40);
     color: #6610f2;
     border-radius: 2px;
     border: none;
@@ -28193,7 +28193,7 @@ select[data-multiselectsplitter-secondselect-selector].dataTable-input {
 .fc-toolbar-chunk .d-inline-flex .introjs-tooltip .introjs-button,
 .introjs-tooltip .fc-toolbar-chunk .d-inline-flex .introjs-button {
   color: var(--bs-secondary);
-  background-color: rgba(var(--bs-secondary-rgb), 0.15);
+  background-color: rgb(230, 110, 40);
   border: none;
   box-shadow: none;
 }
@@ -28215,7 +28215,7 @@ select[data-multiselectsplitter-secondselect-selector].dataTable-input {
 }
 .fc .fc-button-primary,
 .fc-toolbar-chunk .fc-button-primary {
-  background-color: rgba(var(--bs-secondary-rgb), 0.1) !important;
+  background-color: rgb(230, 110, 40) !important;
   color: var(--bs-secondary);
   border: var(--bs-secondary);
   padding: 9px 16px;
@@ -28584,7 +28584,7 @@ select[data-multiselectsplitter-secondselect-selector].dataTable-input {
   color: #6610f2;
 }
 .checkout-tabs .nav-link:hover .avtar {
-  background-color: rgba(var(--bs-secondary-rgb), 0.15);
+  background-color: rgb(230, 110, 40);
   color: var(--bs-secondary);
 }
 .checkout-tabs .nav-item.show .nav-link,
@@ -29156,7 +29156,7 @@ select[data-multiselectsplitter-secondselect-selector].dataTable-input {
 }
 .course-price .form-check label .badge {
   color: var(--bs-body-color);
-  background: rgba(var(--bs-secondary-rgb), 0.1);
+  background: rgb(230, 110, 40);
   border-radius: var(--bs-border-radius);
 }
 .course-price .form-check-input {
@@ -31456,7 +31456,7 @@ div.dataTables_wrapper div.dt-row {
   z-index: 1030;
   transition: all 0.15s ease-in-out;
   border-radius: 50% 50% 4px 50%;
-  box-shadow: 0 12px 14px 0 rgba(var(--bs-secondary-rgb), 0.3);
+  box-shadow: 0 12px 14px 0 rgb(230, 110, 40);
   background: var(--bs-secondary);
 }
 .pct-c-btn a {

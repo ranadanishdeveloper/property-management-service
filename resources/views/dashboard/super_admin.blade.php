@@ -90,7 +90,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
-                            <div class="avtar bg-light-secondary">
+                            <div class="avtar bg-light">
                                 <i class="ti ti-users f-24"></i>
                             </div>
                         </div>

@@ -1,9 +1,9 @@
 @php
     // Fix for admin logo
     if (auth()->user()->type == 'super admin') {
-        $admin_logo = getSettingsValByName('logo');  // Super admin uses 'logo'
+        $admin_logo = getSettingsValByName('logo'); // Super admin uses 'logo'
     } else {
-        $admin_logo = getSettingsValByName('company_logo');  // Other users use 'company_logo'
+        $admin_logo = getSettingsValByName('company_logo'); // Other users use 'company_logo'
     }
 
     $ids = parentId();
@@ -16,23 +16,23 @@
 
     // Fix for light logo
     if (auth()->user()->type == 'super admin') {
-        $light_logo = getSettingsValByName('light_logo');  // Super admin uses 'light_logo'
+        $light_logo = getSettingsValByName('light_logo'); // Super admin uses 'light_logo'
     } else {
-        $light_logo = getSettingsValByName('company_light_logo');  // Other users use 'company_light_logo'
+        $light_logo = getSettingsValByName('company_light_logo'); // Other users use 'company_light_logo'
     }
 @endphp
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
         <div class="m-header">
             <a href="#" class="b-brand text-primary">
-    @if ($theme_mode == 'dark')
-        <img src="{{ !empty($light_logo) ? fetch_file($light_logo, 'upload/logo/') : asset(Storage::url('upload/logo/light_logo.png')) }}"
-            alt="" class="logo logo-lg" />
-    @else
-        <img src="{{ !empty($admin_logo) ? fetch_file($admin_logo, 'upload/logo/') : asset(Storage::url('upload/logo/logo.png')) }}"
-            alt="" class="logo logo-lg" />
-    @endif
-</a>
+                @if ($theme_mode == 'dark')
+                    <img style="max-height: 80px;" src="{{ !empty($light_logo) ? fetch_file($light_logo, 'upload/logo/') : asset(Storage::url('upload/logo/light_logo.png')) }}"
+                        alt="" class="logo logo-lg" />
+                @else
+                    <img style="max-height: 80px;" src="{{ !empty($admin_logo) ? fetch_file($admin_logo, 'upload/logo/') : asset(Storage::url('upload/logo/logo.png')) }}"
+                        alt="" class="logo logo-lg" />
+                @endif
+            </a>
 
         </div>
         <div class="navbar-content">

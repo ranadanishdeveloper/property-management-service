@@ -269,7 +269,7 @@ div:where(.swal2-icon) {
 
 .account-tabs .nav-item .nav-link.active {
     color: var(--bs-secondary-rgb);
-    background: rgba(var(--bs-secondary-rgb), 0.1);
+    background: rgb(230, 110, 40);
 }
 
 form label {

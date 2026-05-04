@@ -4,78 +4,59 @@ namespace App\Http\Controllers;
 
 use App\Models\HomePage;
 use App\Models\Page;
-use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class HomePageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         if (!Auth::user()->can('manage home page')) {
             return redirect()->back()->with('error', __('Permission Denied.'));
         }
+
         $loginUser = Auth::user();
         $pages = Page::where('enabled', 1)->pluck('title', 'id');
         $HomePage = HomePage::get();
+
         return view('home_pages.index', compact('loginUser', 'pages', 'HomePage'));
     }
 
+    public function create() {}
+    public function store(Request $request) {}
+    public function show(HomePage $homePage) {}
+    public function edit(HomePage $homePage) {}
+
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * CLEAN PATH (removes broken %20 or multiple URLs)
      */
-    public function create()
+    private function cleanPath($path)
     {
-        //
+        if (is_array($path)) {
+            return $path[0] ?? '';
+        }
+
+        return trim(explode(' ', $path)[0]);
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * UPLOAD HELPER (IMPORTANT)
      */
-    public function store(Request $request)
+    private function uploadImage($file, $prefix)
     {
-        //
+        $name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $ext = $file->getClientOriginalExtension();
+
+        $fileName = $name . '_' . $prefix . '_' . date('YmdHis') . '.' . $ext;
+
+        // stores in: storage/app/public/upload/homepage
+        Storage::disk('public')->putFileAs('upload/homepage', $file, $fileName);
+
+        // DB value (NO extra "storage")
+        return 'upload/homepage/' . $fileName;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\HomePage  $homePage
-     * @return \Illuminate\Http\Response
-     */
-    public function show(HomePage $homePage)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\HomePage  $homePage
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(HomePage $homePage)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\HomePage  $homePage
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, HomePage $homePage, $id)
     {
         if (!Auth::user()->can('edit home page')) {
@@ -83,165 +64,143 @@ class HomePageController extends Controller
         }
 
         $homePage = HomePage::find($id);
-        $old_content_value = '';
-        if (!empty($request->content_value)) {
-            $old_content_value = json_decode($homePage->content_value, true);
-        }
-        $content_value = $request->content_value;
 
+        $old = json_decode($homePage->content_value, true) ?? [];
+        $content = $request->content_value;
+
+        /* =========================
+           SECTION FOOTER IMAGE
+        ========================= */
         if (!empty($request->content_value['section_footer_image'])) {
-            $section_footer_image = $request->content_value['section_footer_image'];
-            $filenameWithExt = $section_footer_image->getClientOriginalName();
-            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-            $extension = $section_footer_image->getClientOriginalExtension();
-            $fileNameToStore = $filename . '_section_footer_image_' . date('Ymdhisa') . '.' . $extension;
-
-            $dir = storage_path('upload/homepage/');
-            if (!file_exists($dir)) {
-                mkdir($dir, 0777, true);
-            }
-
-            $section_footer_image->storeAs('upload/homepage/', $fileNameToStore);
-            $content_value['section_footer_image_path'] = 'upload/homepage/' . $fileNameToStore;
+            $content['section_footer_image_path'] =
+                $this->uploadImage(
+                    $request->content_value['section_footer_image'],
+                    'footer'
+                );
         } else {
-            $content_value['section_footer_image_path'] = !empty($old_content_value['section_footer_image_path']) ? $old_content_value['section_footer_image_path'] : '';
+            $content['section_footer_image_path'] =
+                $old['section_footer_image_path'] ?? '';
         }
 
+        /* =========================
+           SECTION MAIN IMAGE
+        ========================= */
         if (!empty($request->content_value['section_main_image'])) {
-            $section_main_image = $request->content_value['section_main_image'];
-            $filenameWithExt = $section_main_image->getClientOriginalName();
-            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-            $extension = $section_main_image->getClientOriginalExtension();
-            $fileNameToStore = $filename . '_section_main_image_' . date('Ymdhisa') . '.' . $extension;
-
-            $dir = storage_path('upload/homepage/');
-            if (!file_exists($dir)) {
-                mkdir($dir, 0777, true);
-            }
-
-            $section_main_image->storeAs('upload/homepage/', $fileNameToStore);
-            $content_value['section_main_image_path'] = 'upload/homepage/' . $fileNameToStore;
+            $content['section_main_image_path'] =
+                $this->uploadImage(
+                    $request->content_value['section_main_image'],
+                    'main'
+                );
         } else {
-            $content_value['section_main_image_path'] = !empty($old_content_value['section_main_image_path']) ? $old_content_value['section_main_image_path'] : '';
+            $content['section_main_image_path'] =
+                $old['section_main_image_path'] ?? '';
         }
 
+        /* =========================
+           BOX 1-3
+        ========================= */
         for ($i = 1; $i <= 3; $i++) {
-            if (!empty($request->content_value['box' . $i . '_number_image'])) {
-                $box_image_path = $request->content_value['box' . $i . '_number_image'];
-                $filenameWithExt = $box_image_path->getClientOriginalName();
-                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-                $extension = $box_image_path->getClientOriginalExtension();
-                $fileNameToStore = $filename . '_box_image_path_' . $i . date('Ymdhisa') . '.' . $extension;
 
-                $dir = storage_path('upload/homepage/');
-                if (!file_exists($dir)) {
-                    mkdir($dir, 0777, true);
-                }
+            $key = 'box' . $i . '_number_image';
 
-                $box_image_path->storeAs('upload/homepage/', $fileNameToStore);
-                $content_value['box_image_' . $i . '_path'] = 'upload/homepage/' . $fileNameToStore;
+            if (!empty($request->content_value[$key])) {
+                $content['box_image_' . $i . '_path'] =
+                    $this->uploadImage(
+                        $request->content_value[$key],
+                        'box' . $i
+                    );
             } else {
-                $content_value['box_image_' . $i . '_path'] = !empty($old_content_value['box_image_' . $i . '_path']) ? $old_content_value['box_image_' . $i . '_path'] : '';
+                $content['box_image_' . $i . '_path'] =
+                    $old['box_image_' . $i . '_path'] ?? '';
             }
         }
 
+        /* =========================
+           BOX 2 SECTION
+        ========================= */
         for ($ik = 1; $ik <= 2; $ik++) {
-            if (!empty($request->content_value['Box' . $ik . '_image'])) {
-                $box_image_path = $request->content_value['Box' . $ik . '_image'];
-                $filenameWithExt = $box_image_path->getClientOriginalName();
-                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-                $extension = $box_image_path->getClientOriginalExtension();
-                $fileNameToStore = $filename . '_Section_33_image_' . $ik . date('Ymdhisa') . '.' . $extension;
 
-                $dir = storage_path('upload/homepage/');
-                if (!file_exists($dir)) {
-                    mkdir($dir, 0777, true);
-                }
+            $key = 'Box' . $ik . '_image';
 
-                $box_image_path->storeAs('upload/homepage/', $fileNameToStore);
-                $content_value['Box' . $ik . '_image_path'] = 'upload/homepage/' . $fileNameToStore;
+            if (!empty($request->content_value[$key])) {
+                $content['Box' . $ik . '_image_path'] =
+                    $this->uploadImage(
+                        $request->content_value[$key],
+                        'section33_' . $ik
+                    );
             } else {
-                $content_value['Box' . $ik . '_image_path'] = !empty($old_content_value['Box' . $ik . '_image_path']) ? $old_content_value['Box' . $ik . '_image_path'] : '';
+                $content['Box' . $ik . '_image_path'] =
+                    $old['Box' . $ik . '_image_path'] ?? '';
             }
         }
 
+        /* =========================
+           SECTION 4
+        ========================= */
         for ($is4 = 1; $is4 <= 6; $is4++) {
-            if (!empty($request->content_value['Sec4_box' . $is4 . '_image'])) {
-                $box_image_path = $request->content_value['Sec4_box' . $is4 . '_image'];
-                $filenameWithExt = $box_image_path->getClientOriginalName();
-                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-                $extension = $box_image_path->getClientOriginalExtension();
-                $fileNameToStore = $filename . '_Section_4_image_' . $is4 . date('Ymdhisa') . '.' . $extension;
 
-                $dir = storage_path('upload/homepage/');
-                if (!file_exists($dir)) {
-                    mkdir($dir, 0777, true);
-                }
+            $key = 'Sec4_box' . $is4 . '_image';
 
-                $box_image_path->storeAs('upload/homepage/', $fileNameToStore);
-                $content_value['Sec4_box' . $is4 . '_image_path'] = 'upload/homepage/' . $fileNameToStore;
+            if (!empty($request->content_value[$key])) {
+                $content['Sec4_box' . $is4 . '_image_path'] =
+                    $this->uploadImage(
+                        $request->content_value[$key],
+                        'sec4_' . $is4
+                    );
             } else {
-                $content_value['Sec4_box' . $is4 . '_image_path'] = !empty($old_content_value['Sec4_box' . $is4 . '_image_path']) ? $old_content_value['Sec4_box' . $is4 . '_image_path'] : '';
+                $content['Sec4_box' . $is4 . '_image_path'] =
+                    $old['Sec4_box' . $is4 . '_image_path'] ?? '';
             }
         }
 
-        if (!empty($content_value['Sec6_Box_title'])) {
-            for ($is6 = 0; $is6 <= count($content_value['Sec6_Box_title']); $is6++) {
+        /* =========================
+           SECTION 6
+        ========================= */
+        if (!empty($content['Sec6_Box_title'])) {
+            for ($is6 = 0; $is6 < count($content['Sec6_Box_title']); $is6++) {
+
                 if (!empty($request->content_value['Sec6_box_image'][$is6])) {
-                    $box_image_path = $request->content_value['Sec6_box_image'][$is6];
-                    $filenameWithExt = $box_image_path->getClientOriginalName();
-                    $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-                    $extension = $box_image_path->getClientOriginalExtension();
-                    $fileNameToStore = $filename . '_Section_6_image_' . $is6 . date('Ymdhisa') . '.' . $extension;
-
-                    $dir = storage_path('upload/homepage/');
-                    if (!file_exists($dir)) {
-                        mkdir($dir, 0777, true);
-                    }
-
-                    $box_image_path->storeAs('upload/homepage/', $fileNameToStore);
-                    $content_value['Sec6_box' . $is6 . '_image_path'] = 'upload/homepage/' . $fileNameToStore;
+                    $content['Sec6_box' . $is6 . '_image_path'] =
+                        $this->uploadImage(
+                            $request->content_value['Sec6_box_image'][$is6],
+                            'sec6_' . $is6
+                        );
                 } else {
-                    $content_value['Sec6_box' . $is6 . '_image_path'] = !empty($old_content_value['Sec6_box' . $is6 . '_image_path']) ? $old_content_value['Sec6_box' . $is6 . '_image_path'] : '';
+                    $content['Sec6_box' . $is6 . '_image_path'] =
+                        $old['Sec6_box' . $is6 . '_image_path'] ?? '';
                 }
             }
         }
 
+        /* =========================
+           SECTION 7
+        ========================= */
         for ($is7 = 1; $is7 <= 8; $is7++) {
-            if (!empty($request->content_value['Sec7_box'.$is7.'_image'])) {
-                $box_image_path = $request->content_value['Sec7_box'.$is7.'_image'];
-                $filenameWithExt = $box_image_path->getClientOriginalName();
-                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-                $extension = $box_image_path->getClientOriginalExtension();
-                $fileNameToStore = $filename . '_Section_7_image_' . $is7 . date('Ymdhisa') . '.' . $extension;
 
-                $dir = storage_path('upload/homepage/');
-                if (!file_exists($dir)) {
-                    mkdir($dir, 0777, true);
-                }
+            $key = 'Sec7_box' . $is7 . '_image';
 
-                $box_image_path->storeAs('upload/homepage/', $fileNameToStore);
-                $content_value['Sec7_box' . $is7 . '_image_path'] = 'upload/homepage/' . $fileNameToStore;
+            if (!empty($request->content_value[$key])) {
+                $content['Sec7_box' . $is7 . '_image_path'] =
+                    $this->uploadImage(
+                        $request->content_value[$key],
+                        'sec7_' . $is7
+                    );
             } else {
-                $content_value['Sec7_box' . $is7 . '_image_path'] = !empty($old_content_value['Sec7_box' . $is7 . '_image_path']) ? $old_content_value['Sec7_box' . $is7 . '_image_path'] : '';
+                $content['Sec7_box' . $is7 . '_image_path'] =
+                    $old['Sec7_box' . $is7 . '_image_path'] ?? '';
             }
         }
 
-
-
-        $homePage->content_value = $content_value;
+        /* =========================
+           SAVE
+        ========================= */
+        $homePage->content_value = $content;
         $homePage->save();
-        return redirect()->back()->with('tab', $request->tab)->with('success', __('Home Page Content Updated Successfully.'));
+
+        return redirect()->back()
+            ->with('tab', $request->tab)
+            ->with('success', __('Home Page Content Updated Successfully.'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\HomePage  $homePage
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(HomePage $homePage)
-    {
-        //
-    }
+    public function destroy(HomePage $homePage) {}
 }
