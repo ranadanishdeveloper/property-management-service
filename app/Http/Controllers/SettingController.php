@@ -285,6 +285,10 @@ class SettingController extends Controller
         }
     }
 
+
+
+
+
     // Extra toggles for super admin
     if ($userType === 'super admin') {
         \Log::info('Saving super admin toggles');
