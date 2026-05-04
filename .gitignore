@@ -5,12 +5,15 @@
 .env
 vendor/
 
-# Ignore all of storage first
-/storage/*
 
 # Then include uploads folder
-!/storage/app/
-/storage/app/*
-!/storage/app/public/
-/storage/app/public/*
+
+# Ignore storage except uploads
+/storage/framework/*
+/storage/logs/*
+/storage/sessions/*
+/storage/installed
+/storage/uploads/*
+/storage/public/*
 !/storage/app/public/upload/
+!/storage/upload/logo/
