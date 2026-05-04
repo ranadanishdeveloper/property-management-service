@@ -1,15 +1,16 @@
 /vendor/srmklive
 /.idea
 /.vscode
-# Laravel storage
-/storage
-/storage/app
-/storage/logs
-/storage/framework
-
-# Cache
 /bootstrap/cache
-
-# Environment
 .env
 vendor/
+
+# Ignore all of storage first
+/storage/*
+
+# Then include uploads folder
+!/storage/app/
+/storage/app/*
+!/storage/app/public/
+/storage/app/public/*
+!/storage/app/public/upload/
