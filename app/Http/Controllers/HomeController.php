@@ -81,6 +81,7 @@ class HomeController extends Controller
 
 
 
+
                 return view('dashboard.index', compact('result'));
             }
         } else {

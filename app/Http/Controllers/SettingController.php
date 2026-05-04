@@ -289,6 +289,8 @@ class SettingController extends Controller
 
 
 
+
+
     // Extra toggles for super admin
     if ($userType === 'super admin') {
         \Log::info('Saving super admin toggles');
@@ -300,6 +302,7 @@ class SettingController extends Controller
             'pricing_feature'           => $request->pricing_feature ?? 'off',
         ];
 
+        
         foreach ($toggles as $key => $val) {
             try {
                 \DB::insert(

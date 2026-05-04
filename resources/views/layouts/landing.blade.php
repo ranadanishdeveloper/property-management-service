@@ -1059,6 +1059,7 @@
         </div>
     </div>
 </footer>
+
     <!-- [ footer ] End -->
     <!-- Required Js -->
     <script src="{{ asset('js/jquery.js') }}"></script>

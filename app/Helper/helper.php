@@ -1490,6 +1490,8 @@ if (!function_exists('handleFileUpload')) {
     }
 }
 
+
+
 if (!function_exists('uploadLogoFile')) {
     function uploadLogoFile($file, $fieldName, $parentId, $userType)
     {

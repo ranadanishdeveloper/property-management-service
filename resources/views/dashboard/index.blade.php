@@ -15,6 +15,7 @@
             toolbar: {
                 show: false
             }
+            
         },
         colors: ['#cc4909', '#0a2342'],
         dataLabels: {
