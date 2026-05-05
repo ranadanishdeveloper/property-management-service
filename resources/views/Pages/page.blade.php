@@ -142,7 +142,7 @@
     <div class="front-header-image">
         <div class="bg-img-overlay" style="background-image: url('../assets/images/pages/header-bg.jpg')"></div>
         <div class="privacy-details">
-            <h1 class="text-center text-white pt-5 f-46">{{ $page->title }}</h1>
+            <h1 class="text-center text-white mt-5 pt-5 f-46">{{ $page->title }}</h1>
             <p class="text-center text-white pt-3 f-16">{{ __('Last updated on') }}
                 {{ dateFormat($page->updated_at) }}</p>
         </div>

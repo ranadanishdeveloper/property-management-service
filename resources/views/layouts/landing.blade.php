@@ -69,10 +69,13 @@
 
     <nav class="navbar navbar-expand-md navbar-light default">
         <div class="container">
-            <a class="navbar-brand landing-logo" href="#">
-                <img src="{{ !empty($settings['landing_logo']) ? fetch_file($settings['landing_logo'], 'upload/logo/') : $default_landing_logo }}"
-                    alt="logo" class="img-fluid " />
-            </a>
+           <a class="navbar-brand landing-logo" href="#">
+    <img 
+        src="{{ !empty($settings['landing_logo']) ? fetch_file($settings['landing_logo'], 'upload/logo/') : $default_landing_logo }}"
+        alt="logo"
+        style="height:80px; width:auto; max-width:100%; object-fit:contain;"
+    />
+</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false"
                 aria-label="Toggle navigation">
