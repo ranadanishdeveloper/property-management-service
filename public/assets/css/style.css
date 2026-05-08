@@ -4922,7 +4922,7 @@ textarea.is-invalid.dataTable-input {
 }
 .page-link.active, .active > .page-link {
     z-index: 3;
-    color: var(--bs-secondary);
+    color: white;
     background-color: rgba(204, 73, 9, 1);
     border-color: var(--bs-pagination-active-border-color);
 }

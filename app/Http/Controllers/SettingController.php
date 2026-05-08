@@ -1045,7 +1045,7 @@ public function verifyCustomDomain(Request $request)
 {
     $domain = $request->domain;
     $user = Auth::user();
-    $serverIp = $_SERVER['SERVER_ADDR'] ?? gethostbyname(gethostname());
+   $serverIp = '13.61.10.174';
 
     try {
         $domainIp = gethostbyname($domain);
