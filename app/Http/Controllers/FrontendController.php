@@ -19,30 +19,126 @@ use Illuminate\Support\Facades\Crypt;
 
 class FrontendController extends Controller
 {
-    public function themePage($code = null)
+
+ public function subdomainIndex(Request $request)
     {
-        $user = User::where('code', $code)->firstOrFail();
-
-        $settings = settingsById($user->id);
-        $parent_id = $user->id;
-        $allAmenities = Amenity::where('parent_id', $user->id)->get();
-
-        $listingTypes = Property::where('parent_id', $user->id)
-            ->whereIn('listing_type', ['sell', 'rent'])
-            ->select('listing_type')
-            ->distinct()
-            ->pluck('listing_type')
-            ->toArray();
-
-        $propertiesByType = Property::where('parent_id', $user->id)
-            ->whereIn('listing_type', $listingTypes)
-            ->get()
-            ->groupBy('listing_type');
-
-        return view('theme.index', compact('settings', 'parent_id', 'user', 'allAmenities', 'listingTypes', 'propertiesByType'));
+        $owner = $request->attributes->get('owner');
+        if (!$owner) {
+            abort(404);
+        }
+        return $this->themePage($owner->code);
     }
 
+    public function subdomainProperties(Request $request)
+    {
+        $owner = $request->attributes->get('owner');
+        if (!$owner) {
+            abort(404);
+        }
 
+        $properties = Property::where('parent_id', $owner->id)
+                              ->where('is_active', 1)
+                              ->get();
+
+        return view('frontend.properties', compact('properties', 'owner'));
+    }
+
+    public function subdomainPropertyDetail(Request $request, $id)
+    {
+        $owner = $request->attributes->get('owner');
+        if (!$owner) {
+            abort(404);
+        }
+
+        $property = Property::where('id', $id)
+                            ->where('parent_id', $owner->id)
+                            ->firstOrFail();
+
+        return view('frontend.property-detail', compact('property', 'owner'));
+    }
+
+    public function subdomainBlog(Request $request)
+    {
+        $owner = $request->attributes->get('owner');
+        if (!$owner) {
+            abort(404);
+        }
+
+        $blogs = Blog::where('parent_id', $owner->id)
+                     ->where('status', 'published')
+                     ->orderBy('created_at', 'desc')
+                     ->paginate(10);
+
+        return view('frontend.blog', compact('blogs', 'owner'));
+    }
+
+    public function subdomainBlogDetail(Request $request, $slug)
+    {
+        $owner = $request->attributes->get('owner');
+        if (!$owner) {
+            abort(404);
+        }
+
+        $blog = Blog::where('slug', $slug)
+                    ->where('parent_id', $owner->id)
+                    ->firstOrFail();
+
+        return view('frontend.blog-detail', compact('blog', 'owner'));
+    }
+
+    public function subdomainContact(Request $request)
+    {
+        $owner = $request->attributes->get('owner');
+        if (!$owner) {
+            abort(404);
+        }
+
+        return view('frontend.contact', compact('owner'));
+    }
+public function themePage($code = null, Request $request = null)
+{
+    $user = User::where('code', $code)->firstOrFail();
+
+    // Check if owner has custom domain enabled and verified
+    $hasCustomDomain = $user->custom_domain_enabled &&
+                       $user->custom_domain_verified &&
+                       $user->custom_domain;
+
+    $currentHost = request()->getHost();
+    // $serverIp = '13.61.10.174';
+    $serverIp = '127.0.0.1';
+
+    // If owner has custom domain AND visitor is on preview URL → Redirect to custom domain
+    if ($hasCustomDomain && ($currentHost === $serverIp || $currentHost === '127.0.0.1' || $currentHost === 'localhost' || filter_var($currentHost, FILTER_VALIDATE_IP))) {
+        $protocol = request()->secure() ? 'https' : 'http';
+        $customUrl = $protocol . '://' . $user->custom_domain;
+
+        if (request()->getQueryString()) {
+            $customUrl .= '?' . request()->getQueryString();
+        }
+
+        return redirect()->to($customUrl);
+    }
+
+    // Your existing theme page code continues here...
+    $settings = settingsById($user->id);
+    $parent_id = $user->id;
+    $allAmenities = Amenity::where('parent_id', $user->id)->get();
+
+    $listingTypes = Property::where('parent_id', $user->id)
+        ->whereIn('listing_type', ['sell', 'rent'])
+        ->select('listing_type')
+        ->distinct()
+        ->pluck('listing_type')
+        ->toArray();
+
+    $propertiesByType = Property::where('parent_id', $user->id)
+        ->whereIn('listing_type', $listingTypes)
+        ->get()
+        ->groupBy('listing_type');
+
+    return view('theme.index', compact('settings', 'parent_id', 'user', 'allAmenities', 'listingTypes', 'propertiesByType'));
+}
     public function searchLocation(Request $request, $code)
     {
         $locationSlug = $request->input('location');

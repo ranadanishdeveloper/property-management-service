@@ -11,45 +11,46 @@ use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Traits\HasRoles;
 use Lab404\Impersonate\Models\Impersonate;
 
-
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasRoles;
     use Notifiable;
     use Impersonate;
 
-
-    protected $fillable = [
-        'first_name',
-        'last_name',
-        'email',
-        'password',
-        'type',
-        'phone_number',
-        'profile',
-        'lang',
-        'subscription',
-        'subscription_expire_date',
-        'parent_id',
-        'is_active',
-        'twofa_secret',
-        'code',
-
-    ];
-
+  protected $fillable = [
+    'first_name',
+    'last_name',
+    'email',
+    'password',
+    'type',
+    'phone_number',
+    'profile',
+    'lang',
+    'subscription',
+    'subscription_expire_date',
+    'parent_id',
+    'is_active',
+    'twofa_secret',
+    'code',
+    // CUSTOM DOMAIN FIELDS - ADD THESE
+    'custom_domain',
+    'custom_domain_enabled',
+    'custom_domain_verified',
+    'domain_verification_token',
+    'domain_verified_at',
+];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
     public function canImpersonate()
     {
-        // Example: Only admins can impersonate others
         return $this->type == 'super admin';
     }
 
@@ -62,6 +63,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return User::whereNotIn('type', ['tenant', 'maintainer'])->where('parent_id', $this->id)->count();
     }
+
     public function totalTenant()
     {
         return User::where('type', 'tenant')->where('parent_id', $this->id)->count();
@@ -72,7 +74,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return ucfirst($this->first_name) . ' ' . ucfirst($this->last_name);
     }
 
-
     public function totalContact()
     {
         return Contact::where('parent_id', '=', parentId())->count();
@@ -82,6 +83,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return User::where('type', $role)->where('parent_id', parentId())->count();
     }
+
     public static function getDevice($user)
     {
         $mobileType = '/(?:phone|windows\s+phone|ipod|blackberry|(?:android|bb\d+|meego|silk|googlebot) .+? mobile|palm|windows\s+ce|opera mini|avantgo|mobilesafari|docomo)/i';
@@ -101,6 +103,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return Property::where('parent_id', parentId())->count();
     }
+
     public function totalUnit()
     {
         return PropertyUnit::where('parent_id', parentId())->count();
@@ -143,25 +146,41 @@ class User extends Authenticatable implements MustVerifyEmail
         return User::find(parentId());
     }
 
-
     public function SubscriptionLeftDay()
     {
         $Subscription = Subscription::find($this->subscription);
         if ($Subscription->interval == 'Unlimited') {
-            $return = '<span class="text-success">' . __('Unlimited Days Left') . '</span>';
+            return '<span class="text-success">' . __('Unlimited Days Left') . '</span>';
         } else {
             $date1 = date_create(date('Y-m-d'));
             $date2 = date_create($this->subscription_expire_date);
             $diff = date_diff($date1, $date2);
             $days = $diff->format("%R%a");
             if ($days > 0) {
-                $return = '<span class="text-success">' . $days . __(' Days Left') . '</span>';
+                return '<span class="text-success">' . $days . __(' Days Left') . '</span>';
             } else {
-                $return = '<span class="text-danger">' . $days . __(' Days Left') . '</span>';
+                return '<span class="text-danger">' . $days . __(' Days Left') . '</span>';
             }
         }
+    }
 
+      // ============================================
+    // CUSTOM DOMAIN METHODS
+    // ============================================
 
-        return $return;
+    public function isCustomDomainActive()
+    {
+        return $this->custom_domain_enabled &&
+               $this->custom_domain_verified &&
+               $this->custom_domain;
+    }
+
+    public function getCustomDomainUrlAttribute()
+    {
+        if ($this->isCustomDomainActive()) {
+            $protocol = app()->environment('production') ? 'https' : 'http';
+            return $protocol . '://' . $this->custom_domain;
+        }
+        return null;
     }
 }

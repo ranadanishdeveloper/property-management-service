@@ -39,8 +39,6 @@ class RegisteredUserController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
-     *
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
@@ -52,12 +50,14 @@ class RegisteredUserController extends Controller
         }
         $this->validate($request, $validation);
 
-
+        // Validate only name, email, password (REMOVED company_name)
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
+
+        // Prepare user data (REMOVED subdomain, website_status, company_name)
         $userData = [
             'first_name' => $request->name,
             'email' => $request->email,
@@ -68,20 +68,27 @@ class RegisteredUserController extends Controller
             'code' => uniqid(),
             'parent_id' => 1,
         ];
+
         $owner_email_verification = getSettingsValByName('owner_email_verification');
+
+        // Create user
         $owner = User::create($userData);
+
+        // Assign owner role
         $userRole = Role::findByName('owner');
         $owner->assignRole($userRole);
+
+        // Login the user
         Auth::login($owner);
+
+        // Create default data for new owner
         defaultTenantCreate($owner->id);
         defaultMaintainerCreate($owner->id);
         defaultTemplate($owner->id);
-
-        // Default frontend Template
         FrontHomePageSection($owner->id);
         AdditionalPageSection($owner->id);
 
-
+        // Handle email verification if enabled
         if ($owner_email_verification == 'on') {
             $token = sha1($owner->email);
             $url = route('email-verification', $token);
@@ -98,14 +105,16 @@ class RegisteredUserController extends Controller
             ];
             $to = $owner->email;
             $response = sendEmailVerification($to, $data);
+
             if ($response['status'] == 'success') {
                 auth()->logout();
                 return redirect()->route('login')->with('error', __('We have sent an account verification email to your registered email inbox. Please check your email and follow the instructions to verify your account.'));
             } else {
                 $owner->delete();
-                return redirect()->back()->with('error',  $response['message']);
+                return redirect()->back()->with('error', $response['message']);
             }
         } else {
+            // Send welcome email
             $module = 'owner_create';
             $setting = settings();
             if (!empty($owner)) {

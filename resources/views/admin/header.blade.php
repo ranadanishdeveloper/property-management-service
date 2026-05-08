@@ -26,12 +26,34 @@
         <div class="ms-auto">
             <ul class="list-unstyled">
                 @if (\Auth::user()->type == 'owner')
+                    @php
+                        // Check if owner has custom domain enabled and verified
+                        $hasCustomDomain =
+                            \Auth::user()->custom_domain_enabled &&
+                            \Auth::user()->custom_domain_verified &&
+                            \Auth::user()->custom_domain;
+
+                        if ($hasCustomDomain) {
+                            // Show custom domain URL
+                            $protocol = app()->environment('production') ? 'https' : 'http';
+                            $port = request()->getPort();
+                            $websiteUrl = $protocol . '://' . \Auth::user()->custom_domain;
+                            if ($port && !in_array($port, [80, 443])) {
+                                $websiteUrl .= ':' . $port;
+                            }
+                            $tooltipTitle = __('Your website is live on custom domain');
+                        } else {
+                            // Show preview URL
+                            $websiteUrl = route('web.page', \Auth::user()->code);
+                            $tooltipTitle = __('Copy preview URL (Enable custom domain for professional URL)');
+                        }
+                    @endphp
                     <li class="dropdown pc-h-item">
                         <a href="#"
                             class="pc-head-link head-link-secondary dropdown-toggle arrow-none me-0 copy_link"
-                            data-url="{{ route('web.page', \Auth::user()->code) }}" data-bs-placement="bottom"
-                            data-bs-toggle="tooltip" data-bs-original-title="{{ __('Click to Copy') }}"><i
-                                class="ti ti-copy fs-15"></i>
+                            data-url="{{ $websiteUrl }}" data-bs-placement="bottom" data-bs-toggle="tooltip"
+                            data-bs-original-title="{{ $tooltipTitle }}">
+                            <i class="ti ti-copy fs-15"></i>
                         </a>
                     </li>
                 @endif

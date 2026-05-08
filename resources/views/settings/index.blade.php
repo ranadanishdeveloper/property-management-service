@@ -24,6 +24,35 @@
 @endphp
 @push('script-page')
     <script>
+         function verifyDomain() {
+            var domain = document.querySelector('input[name="custom_domain"]').value;
+            if (!domain) {
+                toastr.error('Please enter your domain first');
+                return;
+            }
+
+            $.ajax({
+                url: '{{ route("setting.custom.domain.verify") }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    domain: domain
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        toastr.success(response.message);
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function() {
+                    toastr.error('Failed to verify domain. Make sure DNS is configured correctly.');
+                }
+            });
+        }
         if ($('.classic-editor').length > 0) {
             ClassicEditor.create(document.querySelector('.classic-editor')).catch((error) => {
                 console.error(error);
@@ -40,9 +69,38 @@
         setTimeout(() => {
             feather.replace();
         }, 500);
+
+        function verifyDomain() {
+            var domain = document.querySelector('input[name="custom_domain"]').value;
+            if (!domain) {
+                toastr.error('Please enter your domain first');
+                return;
+            }
+
+            $.ajax({
+                url: '{{ route("setting.custom.domain.verify") }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    domain: domain
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        toastr.success(response.message);
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function() {
+                    toastr.error('Failed to verify domain. Make sure DNS is configured correctly.');
+                }
+            });
+        }
     </script>
 @endpush
-
 
 @section('content')
     <div class="row">
@@ -63,8 +121,7 @@
                                                 </div>
                                                 <div class="flex-grow-1 ms-2">
                                                     <h5 class="mb-0">{{ __('User Profile') }}</h5>
-                                                    <small
-                                                        class="text-muted">{{ __('User Account Profile Settings') }}</small>
+                                                    <small class="text-muted">{{ __('User Account Profile Settings') }}</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -116,6 +173,24 @@
                                                 <div class="flex-grow-1 ms-2">
                                                     <h5 class="mb-0">{{ __('Company') }}</h5>
                                                     <small class="text-muted">{{ __('Company Settings') }}</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                @endif
+                                <!-- CUSTOM DOMAIN TAB - ONLY FOR OWNER -->
+                                @if (\Auth::user()->type == 'owner')
+                                    <li class="nav-item">
+                                        <a class="nav-link {{ empty($activeTab) || $activeTab == 'custom_domain_settings' ? ' active ' : '' }}"
+                                            id="profile-tab-custom-domain" data-bs-toggle="tab" href="#custom_domain_settings" role="tab"
+                                            aria-selected="true">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0">
+                                                    <i class="ti ti-world me-2 f-20"></i>
+                                                </div>
+                                                <div class="flex-grow-1 ms-2">
+                                                    <h5 class="mb-0">{{ __('Custom Domain') }}</h5>
+                                                    <small class="text-muted">{{ __('Custom Domain Settings') }}</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -183,8 +258,7 @@
                                                 </div>
                                                 <div class="flex-grow-1 ms-2">
                                                     <h5 class="mb-0">{{ __('Google Recaptcha') }}</h5>
-                                                    <small
-                                                        class="text-muted">{{ __('Google Recaptcha Settings') }}</small>
+                                                    <small class="text-muted">{{ __('Google Recaptcha Settings') }}</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -201,8 +275,7 @@
                                                 </div>
                                                 <div class="flex-grow-1 ms-2">
                                                     <h5 class="mb-0">{{ __('2 Factors Authentication') }}</h5>
-                                                    <small
-                                                        class="text-muted">{{ __('2 Factors Authentication Settings') }}</small>
+                                                    <small class="text-muted">{{ __('2 Factors Authentication Settings') }}</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -211,7 +284,7 @@
                                 @if (Gate::check('manage storage settings'))
                                     <li class="nav-item">
                                         <a class="nav-link {{ empty($activeTab) || $activeTab == 'storage' ? ' active ' : '' }} "
-                                            id="profile-tab-9" data-bs-toggle="tab" href="#storage" role="tab"
+                                            id="profile-tab-10" data-bs-toggle="tab" href="#storage" role="tab"
                                             aria-selected="true">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0">
@@ -219,8 +292,7 @@
                                                 </div>
                                                 <div class="flex-grow-1 ms-2">
                                                     <h5 class="mb-0">{{ __('Cloud Storage') }}</h5>
-                                                    <small
-                                                        class="text-muted">{{ __('Cloud Storage Integration Settings') }}</small>
+                                                    <small class="text-muted">{{ __('Cloud Storage Integration Settings') }}</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -229,7 +301,7 @@
                                 @if (Gate::check('manage agreement'))
                                     <li class="nav-item">
                                         <a class="nav-link {{ empty($activeTab) || $activeTab == 'agreement' ? ' active ' : '' }} "
-                                            id="profile-tab-9" data-bs-toggle="tab" href="#agreement" role="tab"
+                                            id="profile-tab-11" data-bs-toggle="tab" href="#agreement" role="tab"
                                             aria-selected="true">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0">
@@ -246,15 +318,15 @@
                                 @if (Gate::check('manage twilio settings'))
                                     <li class="nav-item">
                                         <a class="nav-link {{ empty($activeTab) || $activeTab == 'twilio' ? ' active ' : '' }} "
-                                            id="profile-tab-9" data-bs-toggle="tab" href="#twilio" role="tab"
+                                            id="profile-tab-12" data-bs-toggle="tab" href="#twilio" role="tab"
                                             aria-selected="true">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0">
                                                     <i class="ti ti-message-dots me-2 f-20"></i>
                                                 </div>
                                                 <div class="flex-grow-1 ms-2">
-                                                    <h5 class="mb-0">{{ __('twilio Settings') }}</h5>
-                                                    <small class="text-muted">{{ __('twilio Settings') }}</small>
+                                                    <h5 class="mb-0">{{ __('Twilio Settings') }}</h5>
+                                                    <small class="text-muted">{{ __('Twilio SMS Settings') }}</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -263,15 +335,15 @@
                                 @if (Gate::check('manage openai settings'))
                                     <li class="nav-item">
                                         <a class="nav-link {{ empty($activeTab) || $activeTab == 'openai' ? ' active ' : '' }} "
-                                            id="profile-tab-9" data-bs-toggle="tab" href="#openai" role="tab"
+                                            id="profile-tab-13" data-bs-toggle="tab" href="#openai" role="tab"
                                             aria-selected="true">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0">
                                                     <i class="ti ti-message-dots me-2 f-20"></i>
                                                 </div>
                                                 <div class="flex-grow-1 ms-2">
-                                                    <h5 class="mb-0">{{ __('Openai Settings') }}</h5>
-                                                    <small class="text-muted">{{ __('openai Settings') }}</small>
+                                                    <h5 class="mb-0">{{ __('OpenAI Settings') }}</h5>
+                                                    <small class="text-muted">{{ __('OpenAI API Settings') }}</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -288,7 +360,6 @@
                                         {{ Form::model($loginUser, ['route' => ['setting.account'], 'method' => 'post', 'enctype' => 'multipart/form-data']) }}
                                         <div class="d-flex align-items-center mb-3">
                                             <div class="flex-shrink-0">
-
                                                 <img src="{{ !empty($loginUser->profile) ? fetch_file($loginUser->profile, 'upload/profile/') : $profile }}"
                                                     alt="user-image" class="img-fluid rounded-circle wid-80" />
                                             </div>
@@ -378,8 +449,6 @@
                                                     {{ Form::text('copyright', $settings['copyright'], ['class' => 'form-control', 'placeholder' => __('Enter copyright ')]) }}
                                                 </div>
                                             </div>
-
-
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     {{ Form::label('logo', __('Logo'), ['class' => 'form-label']) }}
@@ -387,9 +456,7 @@
                                                         target="_blank"><i class="ti ti-eye ms-2 f-15"></i></a>
                                                     {{ Form::file('logo', ['class' => 'form-control', 'accept' => 'image/png']) }}
                                                 </div>
-
                                             </div>
-
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     {{ Form::label('favicon', __('Favicon'), ['class' => 'form-label']) }}
@@ -417,7 +484,7 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <div class="form-group">
-                                                        {{ Form::label('landing_logo', __('Owner Email Verification'), ['class' => 'form-label']) }}
+                                                        {{ Form::label('owner_email_verification', __('Owner Email Verification'), ['class' => 'form-label']) }}
                                                         <div class="flex-shrink-0">
                                                             <div class="form-check form-switch">
                                                                 <input class="form-check-input" type="checkbox"
@@ -430,7 +497,7 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <div class="form-group">
-                                                        {{ Form::label('landing_logo', __('Registration Page'), ['class' => 'form-label']) }}
+                                                        {{ Form::label('register_page', __('Registration Page'), ['class' => 'form-label']) }}
                                                         <div class="flex-shrink-0">
                                                             <div class="form-check form-switch">
                                                                 <input class="form-check-input" type="checkbox"
@@ -442,7 +509,7 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <div class="form-group">
-                                                        {{ Form::label('landing_logo', __('Landing Page'), ['class' => 'form-label']) }}
+                                                        {{ Form::label('landing_page', __('Landing Page'), ['class' => 'form-label']) }}
                                                         <div class="flex-shrink-0">
                                                             <div class="form-check form-switch">
                                                                 <input class="form-check-input" type="checkbox"
@@ -457,11 +524,9 @@
                                                         {{ Form::label('pricing_feature', __('Pricing Feature'), ['class' => 'form-label']) }}
                                                         <div class="flex-shrink-0">
                                                             <div class="form-check form-switch">
-                                                                <input type="hidden" name="pricing_feature"
-                                                                    value="off">
+                                                                <input type="hidden" name="pricing_feature" value="off">
                                                                 <input class="form-check-input" type="checkbox"
-                                                                    id="pricing_feature" name="pricing_feature"
-                                                                    value="on"
+                                                                    id="pricing_feature" name="pricing_feature" value="on"
                                                                     {{ $settings['pricing_feature'] == 'on' ? 'checked' : '' }}>
                                                             </div>
                                                         </div>
@@ -505,17 +570,15 @@
                                             </div>
                                             <div class="col-md-6">
                                                 {{ Form::label('timezone', __('Timezone'), ['class' => 'form-label text-dark']) }}
-                                                <select type="text" name="timezone" class="form-control basic-select"
-                                                    id="timezone">
+                                                <select type="text" name="timezone" class="form-control basic-select" id="timezone">
                                                     <option value="">{{ __('Select Timezone') }}</option>
                                                     @foreach ($timezones as $k => $timezone)
-                                                        <option value="{{ $k }}"
-                                                            {{ $settings['timezone'] == $k ? 'selected' : '' }}>
-                                                            {{ $timezone }}</option>
+                                                        <option value="{{ $k }}" {{ $settings['timezone'] == $k ? 'selected' : '' }}>
+                                                            {{ $timezone }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>
-
                                             <div class="form-group col-md-6">
                                                 {{ Form::label('invoice_number_prefix', __('Invoice Number Prefix'), ['class' => 'form-label']) }}
                                                 {{ Form::text('invoice_number_prefix', $settings['invoice_number_prefix'], ['class' => 'form-control', 'placeholder' => __('Enter invoice number prefix')]) }}
@@ -529,73 +592,50 @@
                                                 {{ Form::text('agreement_number_prefix', $settings['agreement_number_prefix'], ['class' => 'form-control', 'placeholder' => __('Enter agreement number prefix')]) }}
                                             </div>
                                             <div class="form-group col-md-3">
-                                                {{ Form::label('company_zipcode', __('System Date Format'), ['class' => 'form-label']) }}
+                                                {{ Form::label('company_date_format', __('System Date Format'), ['class' => 'form-label']) }}
                                                 <div class="">
                                                     <div class="custom-control custom-radio">
-                                                        <input type="radio" id="company_date_format1"
-                                                            name="company_date_format" class="custom-control-input"
-                                                            value="M j, Y"
-                                                            {{ $settings['company_date_format'] == 'M j, Y' ? 'checked' : '' }}>
-                                                        <label class="custom-control-label"
-                                                            for="company_date_format1">{{ date('M d,Y') }}</label>
+                                                        <input type="radio" id="company_date_format1" name="company_date_format" class="custom-control-input"
+                                                            value="M j, Y" {{ $settings['company_date_format'] == 'M j, Y' ? 'checked' : '' }}>
+                                                        <label class="custom-control-label" for="company_date_format1">{{ date('M d,Y') }}</label>
                                                     </div>
                                                     <div class="custom-control custom-radio">
-                                                        <input type="radio" id="company_date_format2"
-                                                            name="company_date_format" class="custom-control-input"
-                                                            value="y-m-d"
-                                                            {{ $settings['company_date_format'] == 'y-m-d' ? 'checked' : '' }}>
-                                                        <label class="custom-control-label"
-                                                            for="company_date_format2">{{ date('y-m-d') }}</label>
+                                                        <input type="radio" id="company_date_format2" name="company_date_format" class="custom-control-input"
+                                                            value="y-m-d" {{ $settings['company_date_format'] == 'y-m-d' ? 'checked' : '' }}>
+                                                        <label class="custom-control-label" for="company_date_format2">{{ date('y-m-d') }}</label>
                                                     </div>
                                                     <div class="custom-control custom-radio">
-                                                        <input type="radio" id="company_date_format3"
-                                                            name="company_date_format" class="custom-control-input"
-                                                            value="d-m-y"
-                                                            {{ $settings['company_date_format'] == 'd-m-y' ? 'checked' : '' }}>
-                                                        <label class="custom-control-label"
-                                                            for="company_date_format3">{{ date('d-m-y') }}</label>
+                                                        <input type="radio" id="company_date_format3" name="company_date_format" class="custom-control-input"
+                                                            value="d-m-y" {{ $settings['company_date_format'] == 'd-m-y' ? 'checked' : '' }}>
+                                                        <label class="custom-control-label" for="company_date_format3">{{ date('d-m-y') }}</label>
                                                     </div>
                                                     <div class="custom-control custom-radio">
-                                                        <input type="radio" id="company_date_format4"
-                                                            name="company_date_format" class="custom-control-input"
-                                                            value="m-d-y"
-                                                            {{ $settings['company_date_format'] == 'm-d-y' ? 'checked' : '' }}>
-                                                        <label class="custom-control-label"
-                                                            for="company_date_format4">{{ date('m-d-y') }}</label>
+                                                        <input type="radio" id="company_date_format4" name="company_date_format" class="custom-control-input"
+                                                            value="m-d-y" {{ $settings['company_date_format'] == 'm-d-y' ? 'checked' : '' }}>
+                                                        <label class="custom-control-label" for="company_date_format4">{{ date('m-d-y') }}</label>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="form-group col-md-3">
-                                                {{ Form::label('company_zipcode', __('System Time Format'), ['class' => 'form-label']) }}
+                                                {{ Form::label('company_time_format', __('System Time Format'), ['class' => 'form-label']) }}
                                                 <div class="">
                                                     <div class="custom-control custom-radio">
-                                                        <input type="radio" id="company_time_format1"
-                                                            name="company_time_format" class="custom-control-input"
-                                                            value="H:i"
-                                                            {{ $settings['company_time_format'] == 'H:i' ? 'checked' : '' }}>
-                                                        <label class="custom-control-label"
-                                                            for="company_time_format1">{{ date('H:i') }}</label>
+                                                        <input type="radio" id="company_time_format1" name="company_time_format" class="custom-control-input"
+                                                            value="H:i" {{ $settings['company_time_format'] == 'H:i' ? 'checked' : '' }}>
+                                                        <label class="custom-control-label" for="company_time_format1">{{ date('H:i') }}</label>
                                                     </div>
                                                     <div class="custom-control custom-radio">
-                                                        <input type="radio" id="company_time_format2"
-                                                            name="company_time_format" class="custom-control-input"
-                                                            value="g:i A"
-                                                            {{ $settings['company_time_format'] == 'g:i A' ? 'checked' : '' }}>
-                                                        <label class="custom-control-label"
-                                                            for="company_time_format2">{{ date('g:i A') }}</label>
+                                                        <input type="radio" id="company_time_format2" name="company_time_format" class="custom-control-input"
+                                                            value="g:i A" {{ $settings['company_time_format'] == 'g:i A' ? 'checked' : '' }}>
+                                                        <label class="custom-control-label" for="company_time_format2">{{ date('g:i A') }}</label>
                                                     </div>
                                                     <div class="custom-control custom-radio">
-                                                        <input type="radio" id="company_time_format3"
-                                                            name="company_time_format" class="custom-control-input"
-                                                            value="g:i a"
-                                                            {{ $settings['company_time_format'] == 'g:i a' ? 'checked' : '' }}>
-                                                        <label class="custom-control-label"
-                                                            for="company_time_format3">{{ date('g:i a') }}</label>
+                                                        <input type="radio" id="company_time_format3" name="company_time_format" class="custom-control-input"
+                                                            value="g:i a" {{ $settings['company_time_format'] == 'g:i a' ? 'checked' : '' }}>
+                                                        <label class="custom-control-label" for="company_time_format3">{{ date('g:i a') }}</label>
                                                     </div>
                                                 </div>
                                             </div>
-
-
                                         </div>
                                         <div class="row mt-3">
                                             <div class="col-6"></div>
@@ -606,6 +646,162 @@
                                         {{ Form::close() }}
                                     </div>
                                 @endif
+
+                                <!-- CUSTOM DOMAIN TAB CONTENT - ONLY FOR OWNER -->
+                              @if (\Auth::user()->type == 'owner')
+    <div class="tab-pane {{ !empty($activeTab) && $activeTab == 'custom_domain_settings' ? ' active show ' : '' }}"
+        id="custom_domain_settings" role="tabpanel" aria-labelledby="custom_domain_settings">
+
+        {{ Form::open(['route' => ['setting.custom.domain'], 'method' => 'post']) }}
+
+        <div class="row">
+            <!-- Step 1: Enter Domain -->
+            <div class="col-md-12 mb-3">
+                <div class="card bg-light border">
+                    <div class="card-body">
+                        <h5><i class="ti ti-link"></i> {{ __('Step 1: Enter Your Domain') }}</h5>
+                        <div class="form-group mt-3">
+                            {{ Form::label('custom_domain', __('Custom Domain'), ['class' => 'form-label']) }}
+                            {{ Form::text('custom_domain', \Auth::user()->custom_domain, [
+                                'class' => 'form-control',
+                                'placeholder' => __('example: mycompany.com')
+                            ]) }}
+                            <small class="text-muted">
+                                {{ __('Do not include http://, https://, www., or trailing slashes') }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: DNS Configuration Instructions -->
+            <div class="col-md-12 mb-3">
+                <div class="card bg-light border">
+                    <div class="card-body">
+                        <h5><i class="ti ti-dns"></i> {{ __('Step 2: Configure DNS Records') }}</h5>
+                        <p class="text-muted">{{ __('Add these DNS records to your domain registrar (GoDaddy, Namecheap, etc.):') }}</p>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>{{ __('Type') }}</th>
+                                        <th>{{ __('Name/Host') }}</th>
+                                        <th>{{ __('Value/Points To') }}</th>
+                                        <th>{{ __('TTL') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="badge bg-primary">A</span></td>
+                                        <td><code>@</code> {{ __('or') }} <code>{{ \Auth::user()->custom_domain ?: 'yourdomain.com' }}</code></td>
+                                        <td><code>13.61.10.174</code></td>
+                                        <td>3600</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge bg-primary">A</span></td>
+                                        <td><code>www</code></td>
+                                        <td><code>13.61.10.174</code></td>
+                                        <td>3600</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="alert alert-info mt-2">
+                            <i class="ti ti-info-circle"></i>
+                            {{ __('DNS changes may take 24-48 hours to propagate worldwide. After adding records, wait a few minutes before verifying.') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Verify Domain -->
+            <div class="col-md-12 mb-3">
+                <div class="card bg-light border">
+                    <div class="card-body">
+                        <h5><i class="ti ti-check-circle"></i> {{ __('Step 3: Verify Domain Ownership') }}</h5>
+
+                        @if(\Auth::user()->custom_domain_verified)
+                            <div class="alert alert-success">
+                                <i class="ti ti-circle-check"></i>
+                                <strong>{{ __('Domain verified successfully!') }}</strong>
+                                <br>
+                                <small>{{ __('Verified at: ') }} {{ \Auth::user()->domain_verified_at ?? 'N/A' }}</small>
+                            </div>
+                        @else
+                            <button type="button" class="btn btn-primary" onclick="verifyDomain()">
+                                <i class="ti ti-check"></i> {{ __('Verify Domain') }}
+                            </button>
+                            <small class="text-muted ms-2">{{ __('Click to check if DNS records are configured correctly') }}</small>
+
+                            @if(\Auth::user()->custom_domain)
+                                <div class="alert alert-warning mt-2">
+                                    <i class="ti ti-alert-triangle"></i>
+                                    {{ __('Domain not verified yet. Please add the DNS records above and click Verify.') }}
+                                </div>
+                            @endif
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Enable Custom Domain -->
+            <div class="col-md-12 mb-3">
+                <div class="card bg-light border">
+                    <div class="card-body">
+                        <h5><i class="ti ti-toggle-right"></i> {{ __('Step 4: Enable Custom Domain') }}</h5>
+
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox"
+                                id="custom_domain_enabled" name="custom_domain_enabled" value="1"
+                                {{ \Auth::user()->custom_domain_enabled ? 'checked' : '' }}
+                                {{ !\Auth::user()->custom_domain_verified ? 'disabled' : '' }}>
+                            <label class="form-check-label" for="custom_domain_enabled">
+                                {{ __('Enable Custom Domain') }}
+                            </label>
+                        </div>
+
+                        @if(!\Auth::user()->custom_domain_verified && \Auth::user()->custom_domain)
+                            <div class="alert alert-warning mt-2">
+                                <i class="ti ti-alert-triangle"></i>
+                                {{ __('Please verify your domain first before enabling.') }}
+                            </div>
+                        @endif
+
+                        @if(\Auth::user()->custom_domain_enabled && \Auth::user()->custom_domain_verified && \Auth::user()->custom_domain)
+                            <div class="alert alert-success mt-2">
+                                <i class="ti ti-circle-check"></i>
+                                {{ __('Your website is now live at: ') }}
+                                <strong>
+                                    <a href="http://{{ \Auth::user()->custom_domain }}" target="_blank">
+                                        http://{{ \Auth::user()->custom_domain }}
+                                    </a>
+                                </strong>
+                            </div>
+                        @endif
+
+                        @if(\Auth::user()->custom_domain_enabled && !\Auth::user()->custom_domain_verified)
+                            <div class="alert alert-danger mt-2">
+                                <i class="ti ti-circle-x"></i>
+                                {{ __('Domain verification failed. Please check your DNS records and try again.') }}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12 text-end">
+                {{ Form::submit(__('Save Settings'), ['class' => 'btn btn-secondary btn-rounded']) }}
+            </div>
+        </div>
+
+        {{ Form::close() }}
+    </div>
+@endif
+
                                 @if (Gate::check('manage email settings'))
                                     <div class="tab-pane {{ !empty($activeTab) && $activeTab == 'email_SMTP_settings' ? ' active show ' : '' }}"
                                         id="email_SMTP_settings" role="tabpanel" aria-labelledby="email_SMTP_settings">
@@ -646,11 +842,9 @@
                                         </div>
                                         <div class="row mt-3">
                                             <div class="col-6"></div>
-                                            <div class="col-6  text-end">
-                                                <a href="#" data-size="md"
-                                                    data-url="{{ route('setting.smtp.test') }}"
-                                                    data-title="{{ __('Add Email') }}"
-                                                    class='btn btn-primary btn-rounded customModal me-1'>
+                                            <div class="col-6 text-end">
+                                                <a href="#" data-size="md" data-url="{{ route('setting.smtp.test') }}"
+                                                    data-title="{{ __('Add Email') }}" class='btn btn-primary btn-rounded customModal me-1'>
                                                     {{ __('Test Mail') }} </a>
                                                 {{ Form::submit(__('Save'), ['class' => 'btn btn-secondary btn-rounded']) }}
                                             </div>
@@ -661,7 +855,6 @@
                                 @if (Gate::check('manage payment settings'))
                                     <div class="tab-pane {{ !empty($activeTab) && $activeTab == 'payment_settings' ? ' active show ' : '' }}"
                                         id="payment_settings" role="tabpanel" aria-labelledby="payment_settings">
-
                                         {{ Form::model($settings, ['route' => ['setting.payment'], 'method' => 'post']) }}
                                         <div class="row">
                                             <div class="form-group col-md-6">
@@ -674,8 +867,6 @@
                                             </div>
                                         </div>
                                         <hr>
-
-                                        {{-- ------------------------Stripe Payment settings------------------------------- --}}
                                         <div class="row mt-2">
                                             <div class="col-auto">
                                                 {{ Form::label('stripe_payment', __('Stripe Payment'), ['class' => 'form-label']) }}
@@ -683,8 +874,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <div class="form-check custom-chek">
-                                                        <input class="form-check-input" type="checkbox"
-                                                            name="stripe_payment" id="stripe_payment"
+                                                        <input class="form-check-input" type="checkbox" name="stripe_payment" id="stripe_payment"
                                                             {{ $settings['STRIPE_PAYMENT'] == 'on' ? 'checked' : '' }}>
                                                     </div>
                                                 </div>
@@ -701,7 +891,6 @@
                                             </div>
                                         </div>
                                         <hr>
-                                        {{-- ------------------------Paypal Payment settings------------------------------- --}}
                                         <div class="row mt-2">
                                             <div class="col-auto">
                                                 {{ Form::label('paypal_payment', __('Paypal Payment'), ['class' => 'form-label']) }}
@@ -709,8 +898,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <div class="form-check custom-chek">
-                                                        <input class="form-check-input" type="checkbox"
-                                                            name="paypal_payment" id="paypal_payment"
+                                                        <input class="form-check-input" type="checkbox" name="paypal_payment" id="paypal_payment"
                                                             {{ $settings['paypal_payment'] == 'on' ? 'checked' : '' }}>
                                                     </div>
                                                 </div>
@@ -720,18 +908,14 @@
                                             <div class="form-group col-md-12">
                                                 {{ Form::label('paypal_mode', __('Account Mode'), ['class' => 'form-label me-2']) }}
                                                 <div class="form-check custom-chek form-check-inline">
-                                                    <input class="form-check-input" type="radio" value="sandbox"
-                                                        id="sandbox" name="paypal_mode"
+                                                    <input class="form-check-input" type="radio" value="sandbox" id="sandbox" name="paypal_mode"
                                                         {{ $settings['paypal_mode'] == 'sandbox' ? 'checked' : '' }}>
-                                                    <label class="form-check-label" for="sandbox">{{ __('Sandbox') }}
-                                                    </label>
+                                                    <label class="form-check-label" for="sandbox">{{ __('Sandbox') }}</label>
                                                 </div>
                                                 <div class="form-check custom-chek form-check-inline">
-                                                    <input class="form-check-input" type="radio" value="live"
-                                                        id="live" name="paypal_mode"
+                                                    <input class="form-check-input" type="radio" value="live" id="live" name="paypal_mode"
                                                         {{ $settings['paypal_mode'] == 'live' ? 'checked' : '' }}>
-                                                    <label class="form-check-label" for="live">{{ __('Live') }}
-                                                    </label>
+                                                    <label class="form-check-label" for="live">{{ __('Live') }}</label>
                                                 </div>
                                             </div>
                                             <div class="form-group col-md-6">
@@ -744,7 +928,6 @@
                                             </div>
                                         </div>
                                         <hr>
-                                        {{-- ------------------------Bank Transfer settings------------------------------- --}}
                                         <div class="row mt-2">
                                             <div class="col-auto">
                                                 {{ Form::label('bank_transfer_payment', __('Bank Transfer Payment'), ['class' => 'form-label']) }}
@@ -752,8 +935,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <div class="form-check custom-chek">
-                                                        <input class="form-check-input" type="checkbox"
-                                                            name="bank_transfer_payment" id="bank_transfer_payment"
+                                                        <input class="form-check-input" type="checkbox" name="bank_transfer_payment" id="bank_transfer_payment"
                                                             {{ $settings['bank_transfer_payment'] == 'on' ? 'checked' : '' }}>
                                                     </div>
                                                 </div>
@@ -781,9 +963,7 @@
                                                 {{ Form::textarea('bank_other_details', $settings['bank_other_details'], ['class' => 'form-control', 'rows' => 1, 'placeholder' => __('Enter bank other details')]) }}
                                             </div>
                                         </div>
-
                                         <hr>
-                                        {{-- ------------------------Flutterwave settings------------------------------- --}}
                                         <div class="row mt-2">
                                             <div class="col-auto">
                                                 {{ Form::label('flutterwave_payment', __('Flutterwave Payment'), ['class' => 'form-label']) }}
@@ -791,14 +971,12 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <div class="form-check custom-chek">
-                                                        <input class="form-check-input" type="checkbox"
-                                                            name="flutterwave_payment" id="flutterwave_payment"
+                                                        <input class="form-check-input" type="checkbox" name="flutterwave_payment" id="flutterwave_payment"
                                                             {{ $settings['flutterwave_payment'] == 'on' ? 'checked' : '' }}>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
                                         <div class="row">
                                             <div class="form-group col-md-6">
                                                 {{ Form::label('flutterwave_public_key', __('Public Key'), ['class' => 'form-label']) }}
@@ -808,12 +986,8 @@
                                                 {{ Form::label('flutterwave_secret_key', __('Secret Key'), ['class' => 'form-label']) }}
                                                 {{ Form::text('flutterwave_secret_key', $settings['flutterwave_secret_key'], ['class' => 'form-control', 'placeholder' => __('Enter flutterwave secret key')]) }}
                                             </div>
-
                                         </div>
-
-
                                         <hr>
-                                        {{-- ------------------------Paystack settings------------------------------- --}}
                                         <div class="row mt-2">
                                             <div class="col-auto">
                                                 {{ Form::label('paystack_payment', __('Paystack Payment'), ['class' => 'form-label']) }}
@@ -821,14 +995,12 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <div class="form-check custom-chek">
-                                                        <input class="form-check-input" type="checkbox"
-                                                            name="paystack_payment" id="paystack_payment"
+                                                        <input class="form-check-input" type="checkbox" name="paystack_payment" id="paystack_payment"
                                                             {{ $settings['paystack_payment'] == 'on' ? 'checked' : '' }}>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
                                         <div class="row">
                                             <div class="form-group col-md-6">
                                                 {{ Form::label('paystack_public_key', __('Public Key'), ['class' => 'form-label']) }}
@@ -838,16 +1010,13 @@
                                                 {{ Form::label('paystack_secret_key', __('Secret Key'), ['class' => 'form-label']) }}
                                                 {{ Form::text('paystack_secret_key', $settings['paystack_secret_key'], ['class' => 'form-control', 'placeholder' => __('Enter Paystack secret key')]) }}
                                             </div>
-
                                         </div>
-
                                         <div class="row mt-3">
                                             <div class="col-6"></div>
                                             <div class="col-6 text-end">
                                                 {{ Form::submit(__('Save'), ['class' => 'btn btn-secondary btn-rounded']) }}
                                             </div>
                                         </div>
-
                                         {{ Form::close() }}
                                     </div>
                                 @endif
@@ -856,11 +1025,9 @@
                                         id="site_SEO_settings" role="tabpanel" aria-labelledby="site_SEO_settings">
                                         {{ Form::model($settings, ['route' => ['setting.site.seo'], 'method' => 'post', 'enctype' => 'multipart/form-data']) }}
                                         <div class="row">
-
                                             <div class="col-xl-12 col-lg-12">
                                                 <div class="card">
                                                     <div class="card-body">
-
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
@@ -899,7 +1066,6 @@
                                                                 {{ Form::submit(__('Save'), ['class' => 'btn btn-secondary btn-rounded']) }}
                                                             </div>
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -909,9 +1075,7 @@
                                 @endif
                                 @if (Gate::check('manage google recaptcha settings'))
                                     <div class="tab-pane {{ !empty($activeTab) && $activeTab == 'google_recaptcha_settings' ? ' active show ' : '' }}"
-                                        id="google_recaptcha_settings" role="tabpanel"
-                                        aria-labelledby="google_recaptcha_settings">
-
+                                        id="google_recaptcha_settings" role="tabpanel" aria-labelledby="google_recaptcha_settings">
                                         {{ Form::model($settings, ['route' => ['setting.google.recaptcha'], 'method' => 'post']) }}
                                         <div class="row mt-2">
                                             <div class="col-auto">
@@ -920,13 +1084,11 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <div class="form-check custom-chek">
-                                                        <input class="form-check-input" type="checkbox"
-                                                            name="google_recaptcha" id="google_recaptcha"
+                                                        <input class="form-check-input" type="checkbox" name="google_recaptcha" id="google_recaptcha"
                                                             {{ $settings['google_recaptcha'] == 'on' ? 'checked' : '' }}>
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
                                         <div class="row">
                                             <div class="form-group col-md-6">
@@ -938,7 +1100,6 @@
                                                 {{ Form::text('recaptcha_secret', $settings['recaptcha_secret'], ['class' => 'form-control ', 'placeholder' => __('Enter recaptcha secret')]) }}
                                             </div>
                                         </div>
-
                                         <div class="row mt-3">
                                             <div class="col-6"></div>
                                             <div class="col-6 text-end">
@@ -946,13 +1107,11 @@
                                             </div>
                                         </div>
                                         {{ Form::close() }}
-
                                     </div>
                                 @endif
                                 @if (Gate::check('manage 2FA settings'))
                                     <div class="tab-pane {{ !empty($activeTab) && $activeTab == '2FA' ? ' active show ' : '' }}"
                                         id="2FA" role="tabpanel" aria-labelledby="2FA">
-
                                         {{ Form::model($settings, ['route' => ['setting.twofa.enable'], 'method' => 'post']) }}
                                         <div class="row mt-2">
                                             <div class="col-12">
@@ -966,8 +1125,7 @@
                                                     <h5>
                                                         {{ __('2-factors authentication is currently enable.') }}
                                                         <a href="{{ route('2fa.disable') }}" class="ms-2">
-                                                            <span
-                                                                class='btn btn-danger btn-rounded'>{{ __('click to disabled') }}</span>
+                                                            <span class='btn btn-danger btn-rounded'>{{ __('click to disabled') }}</span>
                                                         </a>
                                                     </h5>
                                                 @endif
@@ -976,20 +1134,17 @@
                                                 <div class="col-12">
                                                     <ol class="list-left-align mt-10">
                                                         <li>
-                                                            {!! __('Open your OTP app and <b>scan the following QR-code') !!}</b>
+                                                            {!! __('Open your OTP app and <b>scan the following QR-code</b>') !!}
                                                             <p class="text-center">
                                                                 <img src="{!! QrCode2FA() !!}" alt="2FA">
                                                             </p>
                                                         </li>
-
                                                         <li>
                                                             {{ __('Generate a One Time Password (OTP) and enter the value below.') }}
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <input name="otp"
-                                                                        class="form-control mr-1{{ $errors->has('otp') ? ' is-invalid' : '' }}"
-                                                                        type="number" min="0" max="999999"
-                                                                        step="1" required autocomplete="off">
+                                                                    <input name="otp" class="form-control mr-1{{ $errors->has('otp') ? ' is-invalid' : '' }}"
+                                                                        type="number" min="0" max="999999" step="1" required autocomplete="off">
                                                                     @if ($errors->has('otp'))
                                                                         <span class="invalid-feedback text-left">
                                                                             <strong>{{ $errors->first('otp') }}</strong>
@@ -1010,10 +1165,8 @@
                                             </div>
                                         @endif
                                         {{ Form::close() }}
-
                                     </div>
                                 @endif
-
                                 @if (Gate::check('manage storage settings'))
                                     <div class="tab-pane {{ !empty($activeTab) && $activeTab == 'storage' ? ' active show ' : '' }}"
                                         id="storage" role="tabpanel" aria-labelledby="storage">
@@ -1023,40 +1176,25 @@
                                                 <div class="accordion" id="accordionExample">
                                                     <div class="accordion-item">
                                                         <h2 class="accordion-header" id="headingOne">
-                                                            <button
-                                                                class="accordion-button {{ empty($settings['storage_type']) || $settings['storage_type'] == 'local' ? '' : 'collapsed' }}"
-                                                                type="button" data-bs-toggle="collapse"
-                                                                data-bs-target="#collapseOne" aria-expanded="true"
-                                                                aria-controls="collapseOne">
+                                                            <button class="accordion-button {{ empty($settings['storage_type']) || $settings['storage_type'] == 'local' ? '' : 'collapsed' }}"
+                                                                type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                                                 <div class="form-check form-switch onoff_storage">
-                                                                    <input type="radio"
-                                                                        class="form-check-input input-primary storage_switch"
-                                                                        id="customswitchv1" name="storage_type"
-                                                                        value="local"
-                                                                        {{ empty($settings['storage_type']) || $settings['storage_type'] == 'local' ? 'checked' : '' }}>
+                                                                    <input type="radio" class="form-check-input input-primary storage_switch" id="customswitchv1"
+                                                                        name="storage_type" value="local" {{ empty($settings['storage_type']) || $settings['storage_type'] == 'local' ? 'checked' : '' }}>
                                                                 </div>
-                                                                <h4 class="mb-0 acc_title">
-                                                                    <b>{{ __('Local Storage') }}</b>
-                                                                </h4>
+                                                                <h4 class="mb-0 acc_title"><b>{{ __('Local Storage') }}</b></h4>
                                                             </button>
                                                         </h2>
-                                                        <div id="collapseOne"
-                                                            class="accordion-collapse collapse {{ empty($settings['storage_type']) || $settings['storage_type'] == 'local' ? 'show' : '' }}"
-                                                            aria-labelledby="headingOne"
-                                                            data-bs-parent="#accordionExample">
+                                                        <div id="collapseOne" class="accordion-collapse collapse {{ empty($settings['storage_type']) || $settings['storage_type'] == 'local' ? 'show' : '' }}"
+                                                            aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                                             <div class="accordion-body">
                                                                 <div class="row">
                                                                     <div class="col-md-12 form-group">
                                                                         {{ Form::label('local_file_type', __('File Type'), ['class' => 'form-label']) }}
-                                                                        {!! Form::select(
-                                                                            'local_file_type[]',
-                                                                            FilesExtension(),
-                                                                            !empty($settings['local_file_type']) ? explode(',', $settings['local_file_type']) : null,
-                                                                            [
-                                                                                'class' => 'form-control hidesearch',
-                                                                                'multiple' => true,
-                                                                            ],
-                                                                        ) !!}
+                                                                        {!! Form::select('local_file_type[]', FilesExtension(), !empty($settings['local_file_type']) ? explode(',', $settings['local_file_type']) : null, [
+                                                                            'class' => 'form-control hidesearch',
+                                                                            'multiple' => true,
+                                                                        ]) !!}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1064,27 +1202,17 @@
                                                     </div>
                                                     <div class="accordion-item">
                                                         <h2 class="accordion-header position-relative" id="headingTwo">
-                                                            <button
-                                                                class="accordion-button {{ !empty($settings['storage_type']) && $settings['storage_type'] == 's3' ? '' : 'collapsed' }}"
-                                                                type="button" data-bs-toggle="collapse"
-                                                                data-bs-target="#collapseTwo" aria-expanded="false"
-                                                                aria-controls="collapseTwo">
+                                                            <button class="accordion-button {{ !empty($settings['storage_type']) && $settings['storage_type'] == 's3' ? '' : 'collapsed' }}"
+                                                                type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                                                 <div class="form-check form-switch onoff_storage">
-                                                                    <input type="radio"
-                                                                        class="form-check-input input-primary storage_switch"
-                                                                        id="customswitchv2" name="storage_type"
-                                                                        value="s3"
-                                                                        {{ !empty($settings['storage_type']) && $settings['storage_type'] == 's3' ? 'checked' : '' }}>
+                                                                    <input type="radio" class="form-check-input input-primary storage_switch" id="customswitchv2"
+                                                                        name="storage_type" value="s3" {{ !empty($settings['storage_type']) && $settings['storage_type'] == 's3' ? 'checked' : '' }}>
                                                                 </div>
-
-                                                                <h4 class="mb-0"><b>{{ __('AWS S3 Storage') }}</b>
-                                                                </h4>
+                                                                <h4 class="mb-0"><b>{{ __('AWS S3 Storage') }}</b></h4>
                                                             </button>
                                                         </h2>
-                                                        <div id="collapseTwo"
-                                                            class="accordion-collapse collapse  {{ !empty($settings['storage_type']) && $settings['storage_type'] == 's3' ? 'show' : '' }}"
-                                                            aria-labelledby="headingTwo"
-                                                            data-bs-parent="#accordionExample">
+                                                        <div id="collapseTwo" class="accordion-collapse collapse {{ !empty($settings['storage_type']) && $settings['storage_type'] == 's3' ? 'show' : '' }}"
+                                                            aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                                             <div class="accordion-body">
                                                                 <div class="row">
                                                                     <div class="col-md-6 form-group">
@@ -1113,15 +1241,10 @@
                                                                     </div>
                                                                     <div class="col-md-12 form-group">
                                                                         {{ Form::label('aws_s3_file_type', __('File Type'), ['class' => 'form-label']) }}
-                                                                        {!! Form::select(
-                                                                            'aws_s3_file_type[]',
-                                                                            FilesExtension(),
-                                                                            !empty($settings['aws_s3_file_type']) ? explode(',', $settings['aws_s3_file_type']) : null,
-                                                                            [
-                                                                                'class' => 'form-control hidesearch',
-                                                                                'multiple' => true,
-                                                                            ],
-                                                                        ) !!}
+                                                                        {!! Form::select('aws_s3_file_type[]', FilesExtension(), !empty($settings['aws_s3_file_type']) ? explode(',', $settings['aws_s3_file_type']) : null, [
+                                                                            'class' => 'form-control hidesearch',
+                                                                            'multiple' => true,
+                                                                        ]) !!}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1129,26 +1252,17 @@
                                                     </div>
                                                     <div class="accordion-item">
                                                         <h2 class="accordion-header position-relative" id="headingThree">
-                                                            <button
-                                                                class="accordion-button {{ !empty($settings['storage_type']) && $settings['storage_type'] == 'wasabi' ? '' : 'collapsed' }}"
-                                                                type="button" data-bs-toggle="collapse"
-                                                                data-bs-target="#collapseThree" aria-expanded="false"
-                                                                aria-controls="collapseThree">
+                                                            <button class="accordion-button {{ !empty($settings['storage_type']) && $settings['storage_type'] == 'wasabi' ? '' : 'collapsed' }}"
+                                                                type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                                                                 <div class="form-check form-switch onoff_storage">
-                                                                    <input type="radio"
-                                                                        class="form-check-input input-primary storage_switch"
-                                                                        id="customswitchv3" name="storage_type"
-                                                                        value="wasabi"
-                                                                        {{ !empty($settings['storage_type']) && $settings['storage_type'] == 'wasabi' ? 'checked' : '' }}>
+                                                                    <input type="radio" class="form-check-input input-primary storage_switch" id="customswitchv3"
+                                                                        name="storage_type" value="wasabi" {{ !empty($settings['storage_type']) && $settings['storage_type'] == 'wasabi' ? 'checked' : '' }}>
                                                                 </div>
-                                                                <h4 class="mb-0"><b>{{ __('Wasabi Storage') }}</b>
-                                                                </h4>
+                                                                <h4 class="mb-0"><b>{{ __('Wasabi Storage') }}</b></h4>
                                                             </button>
                                                         </h2>
-                                                        <div id="collapseThree"
-                                                            class="accordion-collapse collapse {{ !empty($settings['storage_type']) && $settings['storage_type'] == 'wasabi' ? 'show' : '' }}"
-                                                            aria-labelledby="headingThree"
-                                                            data-bs-parent="#accordionExample">
+                                                        <div id="collapseThree" class="accordion-collapse collapse {{ !empty($settings['storage_type']) && $settings['storage_type'] == 'wasabi' ? 'show' : '' }}"
+                                                            aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                                                             <div class="accordion-body">
                                                                 <div class="row">
                                                                     <div class="col-md-6 form-group">
@@ -1171,18 +1285,12 @@
                                                                         {{ Form::label('wasabi_url', __('Wasabi URL'), ['class' => 'form-label']) }}
                                                                         {{ Form::text('wasabi_url', $settings['wasabi_url'], ['class' => 'form-control', 'placeholder' => __('Enter URL')]) }}
                                                                     </div>
-
                                                                     <div class="col-md-12 form-group">
                                                                         {{ Form::label('wasabi_file_type', __('File Type'), ['class' => 'form-label']) }}
-                                                                        {!! Form::select(
-                                                                            'wasabi_file_type[]',
-                                                                            FilesExtension(),
-                                                                            !empty($settings['wasabi_file_type']) ? explode(',', $settings['wasabi_file_type']) : null,
-                                                                            [
-                                                                                'class' => 'form-control hidesearch',
-                                                                                'multiple' => true,
-                                                                            ],
-                                                                        ) !!}
+                                                                        {!! Form::select('wasabi_file_type[]', FilesExtension(), !empty($settings['wasabi_file_type']) ? explode(',', $settings['wasabi_file_type']) : null, [
+                                                                            'class' => 'form-control hidesearch',
+                                                                            'multiple' => true,
+                                                                        ]) !!}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1195,25 +1303,21 @@
                                             </div>
                                         </div>
                                         {{ Form::close() }}
-
                                     </div>
                                 @endif
-
                                 @if (Gate::check('manage agreement'))
                                     <div class="tab-pane {{ !empty($activeTab) && $activeTab == 'agreement' ? ' active show ' : '' }}"
                                         id="agreement" role="tabpanel" aria-labelledby="agreement">
-
                                         {{ Form::model($settings, ['route' => ['setting.agreement'], 'method' => 'post']) }}
                                         <div class="row mt-2">
-                                            <div class="form-group  col-md-12">
+                                            <div class="form-group col-md-12">
                                                 {{ Form::label('terms_condition', __('Terms & Condition'), ['class' => 'form-label']) }}
                                                 {{ Form::textarea('terms_condition', null, ['class' => 'form-control classic-editor']) }}
                                             </div>
-                                            <div class="form-group  col-md-12">
+                                            <div class="form-group col-md-12">
                                                 {{ Form::label('agreement_description', __('Description'), ['class' => 'form-label']) }}
                                                 {{ Form::textarea('agreement_description', null, ['class' => 'form-control classic-editor2']) }}
                                             </div>
-
                                         </div>
                                         <div class="row mt-3">
                                             <div class="col-12 text-end">
@@ -1221,32 +1325,28 @@
                                             </div>
                                         </div>
                                         {{ Form::close() }}
-
                                     </div>
                                 @endif
-
                                 @if (Gate::check('manage twilio settings'))
                                     <div class="tab-pane {{ !empty($activeTab) && $activeTab == 'twilio' ? ' active show ' : '' }}"
                                         id="twilio" role="tabpanel" aria-labelledby="twilio">
-
                                         {{ Form::model($settings, ['route' => ['setting.twilio'], 'method' => 'post']) }}
-
                                         <div class="row">
                                             <div class="form-group col-md-12">
-                                                {{ Form::label('twilio_sid', __('twilio SID'), ['class' => 'form-label']) }}
-                                                {{ Form::text('twilio_sid', $settings['twilio_sid'], ['class' => 'form-control  mb-2', 'placeholder' => __('Enter SID')]) }}
+                                                {{ Form::label('twilio_sid', __('Twilio SID'), ['class' => 'form-label']) }}
+                                                {{ Form::text('twilio_sid', $settings['twilio_sid'], ['class' => 'form-control mb-2', 'placeholder' => __('Enter SID')]) }}
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="form-group col-md-12">
-                                                {{ Form::label('twilio_token', __('twilio Token'), ['class' => 'form-label']) }}
-                                                {{ Form::text('twilio_token', $settings['twilio_token'], ['class' => 'form-control  mb-2', 'placeholder' => __('Enter Token')]) }}
+                                                {{ Form::label('twilio_token', __('Twilio Token'), ['class' => 'form-label']) }}
+                                                {{ Form::text('twilio_token', $settings['twilio_token'], ['class' => 'form-control mb-2', 'placeholder' => __('Enter Token')]) }}
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="form-group col-md-12">
-                                                {{ Form::label('twilio_from_number', __('twilio From Number'), ['class' => 'form-label']) }}
-                                                {{ Form::text('twilio_from_number', $settings['twilio_from_number'], ['class' => 'form-control  mb-2', 'placeholder' => __('Enter From Numner')]) }}
+                                                {{ Form::label('twilio_from_number', __('Twilio From Number'), ['class' => 'form-label']) }}
+                                                {{ Form::text('twilio_from_number', $settings['twilio_from_number'], ['class' => 'form-control mb-2', 'placeholder' => __('Enter From Number')]) }}
                                             </div>
                                         </div>
                                         <div class="row mt-3">
@@ -1256,34 +1356,25 @@
                                             </div>
                                         </div>
                                         {{ Form::close() }}
-
-
                                     </div>
                                 @endif
                                 @can('manage openai settings')
                                     <div class="tab-pane {{ !empty($activeTab) && $activeTab == 'openai' ? ' active show ' : '' }}"
                                         id="openai" role="tabpanel" aria-labelledby="openai">
-
                                         <form action="{{ route('openai.settings') }}" method="POST">
                                             @csrf
-
                                             <div class="row">
                                                 <div class="form-group col-md-12">
-                                                    <label for="openai_secret_key"
-                                                        class="form-label">{{ __('Open ai secret key') }}</label>
+                                                    <label for="openai_secret_key" class="form-label">{{ __('Open AI Secret Key') }}</label>
                                                     <input type="text" name="openai_secret_key" id="openai_secret_key"
-                                                        value="{{ $settings['openai_secret_key'] ?? '' }}"
-                                                        class="form-control mb-2"
+                                                        value="{{ $settings['openai_secret_key'] ?? '' }}" class="form-control mb-2"
                                                         placeholder="{{ __('Enter open ai secret key') }}">
                                                 </div>
                                             </div>
-
                                             <div class="row mt-3">
                                                 <div class="col-6"></div>
                                                 <div class="col-6 text-end">
-                                                    <button type="submit" class="btn btn-secondary btn-rounded">
-                                                        {{ __('Save') }}
-                                                    </button>
+                                                    <button type="submit" class="btn btn-secondary btn-rounded">{{ __('Save') }}</button>
                                                 </div>
                                             </div>
                                         </form>

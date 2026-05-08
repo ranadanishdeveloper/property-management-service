@@ -29,9 +29,12 @@
             @if (session('success'))
                 <div class="alert alert-success" role="alert">{{ session('success') }}</div>
             @endif
+
+            <!-- REMOVED: Company Name Field -->
+
             <div class="form-floating mb-3">
                 <input type="text" class="form-control" id="name" name="name"
-                    placeholder="{{ __('Name') }}" />
+                    placeholder="{{ __('Name') }}" value="{{ old('name') }}" required />
                 <label for="name">{{ __('Name') }}</label>
                 @error('name')
                     <span class="invalid-name text-danger" role="alert">
@@ -41,7 +44,7 @@
             </div>
             <div class="form-floating mb-3">
                 <input type="email" class="form-control" id="email" name="email"
-                    placeholder="{{ __('Email address') }}" />
+                    placeholder="{{ __('Email address') }}" value="{{ old('email') }}" required />
                 <label for="email">{{ __('Email address') }}</label>
                 @error('email')
                     <span class="invalid-email text-danger" role="alert">
@@ -51,7 +54,7 @@
             </div>
             <div class="form-floating mb-3">
                 <input type="password" class="form-control" id="password" name="password"
-                    placeholder="{{ __('Password') }}" />
+                    placeholder="{{ __('Password') }}" required />
                 <label for="password">{{ __('Password') }}</label>
                 @error('password')
                     <span class="invalid-password text-danger" role="alert">
@@ -61,7 +64,7 @@
             </div>
             <div class="form-floating mb-3">
                 <input type="password" class="form-control" id="password_confirmation" name="password_confirmation"
-                    placeholder="{{ __('Password Confirmation') }}" />
+                    placeholder="{{ __('Password Confirmation') }}" required />
                 <label for="password_confirmation">{{ __('Password Confirmation') }}</label>
                 @error('password_confirmation')
                     <span class="invalid-password_confirmation text-danger" role="alert">

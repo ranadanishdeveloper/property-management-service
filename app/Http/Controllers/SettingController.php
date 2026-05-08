@@ -302,7 +302,7 @@ class SettingController extends Controller
             'pricing_feature'           => $request->pricing_feature ?? 'off',
         ];
 
-        
+
         foreach ($toggles as $key => $val) {
             try {
                 \DB::insert(
@@ -1024,4 +1024,53 @@ class SettingController extends Controller
 
         return redirect()->back()->with('success', 'Open ai settings updated successfully.')->with('tab', 'openai');
     }
+
+
+public function updateCustomDomain(Request $request)
+{
+    $user = Auth::user();
+
+    $request->validate([
+        'custom_domain' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9][a-zA-Z0-9\.\-]+[a-zA-Z0-9]$/',
+    ]);
+
+    $user->custom_domain = $request->custom_domain;
+    $user->custom_domain_enabled = $request->has('custom_domain_enabled');
+    $user->save();
+
+    return redirect()->back()->with('success', __('Custom domain settings saved.'));
+}
+
+public function verifyCustomDomain(Request $request)
+{
+    $domain = $request->domain;
+    $user = Auth::user();
+    $serverIp = $_SERVER['SERVER_ADDR'] ?? gethostbyname(gethostname());
+
+    try {
+        $domainIp = gethostbyname($domain);
+
+        if ($domainIp === $serverIp) {
+            $user->custom_domain_verified = true;
+            $user->domain_verified_at = now();
+            $user->save();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => __('Domain verified! It points to this server.')
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => __('Domain does not point to this server. Current IP: ') . $domainIp . __(' Expected: ') . $serverIp
+            ]);
+        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => __('Could not resolve domain. Make sure DNS is configured.')
+        ]);
+    }
+}
+
 }

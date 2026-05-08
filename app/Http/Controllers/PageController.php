@@ -168,4 +168,35 @@ class PageController extends Controller
             return redirect()->back()->with('error', __('Page not found.'));
         }
     }
+    public function subdomainPage(Request $request, $slug)
+    {
+        $owner = $request->attributes->get('owner');
+
+        $page = Page::where('slug', $slug)
+                    ->where('parent_id', $owner->id)
+                    ->first();
+
+        if ($page) {
+            return view('Pages.page', compact('page', 'owner'));
+        }
+
+        abort(404, 'Page not found');
+    }
+    public function customDomainPage(Request $request, $slug)
+    {
+        $owner = $request->attributes->get('owner');
+        if (!$owner) {
+            abort(404);
+        }
+
+        $page = Page::where('slug', $slug)
+                    ->where('parent_id', $owner->id)
+                    .first();
+
+        if ($page) {
+            return view('Pages.page', compact('page', 'owner'));
+        }
+
+        abort(404, 'Page not found');
+    }
 }

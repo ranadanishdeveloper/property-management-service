@@ -9,7 +9,25 @@ use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
+    public function subdomainContactStore(Request $request)
+    {
+        $owner = $request->attributes->get('owner');
 
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'message' => 'required|string',
+        ]);
+
+        Contact::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'message' => $validated['message'],
+            'parent_id' => $owner->id,
+        ]);
+
+        return redirect()->back()->with('success', 'Message sent successfully!');
+    }
     public function index()
     {
         if (\Auth::user()->can('manage contact')) {
@@ -144,4 +162,28 @@ class ContactController extends Controller
 
         return redirect()->back()->with('success', __('Contact successfully created.'));
     }
-}
+
+
+        public function customDomainContactStore(Request $request)
+    {
+        $owner = $request->attributes->get('owner');
+        if (!$owner) {
+            abort(404);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'message' => 'required|string',
+        ]);
+
+        Contact::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'message' => $validated['message'],
+            'parent_id' => $owner->id,
+        ]);
+
+        return redirect()->back()->with('success', 'Message sent successfully!');
+    }
+    }
