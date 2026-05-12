@@ -64,10 +64,11 @@ if ($isCustomDomain) {
         Route::post('/contact-us', [ContactController::class, 'customDomainContactStore'])->name('custom.domain.contact.store');
         Route::get('/page/{slug}', [PageController::class, 'customDomainPage'])->name('custom.domain.page');
 
-        // ADD THIS MISSING ROUTE
-        Route::get('/search/location', [FrontendController::class, 'customDomainSearchLocation'])->name('search.location');
-    });
-}
+         Route::get('/search/location', [FrontendController::class, 'customDomainSearchLocation'])->name('search.location');
+         });
+
+
+
 
     // For ANY other route on custom domain - return 404
     Route::any('/{any}', function () {
