@@ -20,7 +20,54 @@ use Illuminate\Support\Facades\Crypt;
 class FrontendController extends Controller
 {
 
- public function subdomainIndex(Request $request)
+    private function getTenant()
+    {
+        return app('tenant');
+    }
+
+    public function customDomainIndex()
+    {
+        $tenant = $this->getTenant();
+
+        return $this->themePage($tenant->code);
+    }
+
+    public function customDomainProperties(Request $request)
+    {
+        $tenant = $this->getTenant();
+
+        return $this->propertyPage($request, $tenant->code);
+    }
+
+    public function customDomainPropertyDetail($id)
+    {
+        $tenant = $this->getTenant();
+
+        return $this->detailPage($tenant->code, $id);
+    }
+
+    public function customDomainBlog(Request $request)
+    {
+        $tenant = $this->getTenant();
+
+        return $this->blogPage($request, $tenant->code);
+    }
+
+    public function customDomainBlogDetail($slug)
+    {
+        $tenant = $this->getTenant();
+
+        return $this->blogDetailPage($tenant->code, $slug);
+    }
+
+    public function customDomainContact(Request $request)
+    {
+        $tenant = $this->getTenant();
+
+        return $this->contactPage($request, $tenant->code);
+    }
+
+    public function subdomainIndex(Request $request)
     {
         $owner = $request->attributes->get('owner');
         if (!$owner) {
@@ -329,7 +376,9 @@ public function themePage($code = null, Request $request = null)
     {
         $user = User::where('code', $code)->firstOrFail();
         $settings = settingsById($user->id);
-        $blog = Blog::where('slug', $slug)->firstOrFail();
+        $blog = Blog::where('slug', $slug)
+        ->where('parent_id', $user->id)
+        ->firstOrFail();
 
         return view('theme.blog-detail', compact('blog', 'settings', 'user'));
     }
@@ -397,10 +446,14 @@ public function themePage($code = null, Request $request = null)
     {
 
         $ids = Crypt::decrypt($id);
-        $property = Property::where('id', $ids)->first();
-        $units = PropertyUnit::where('property_id', $property->id)->orderBy('id', 'desc')->get();
-
         $user = User::where('code', $code)->firstOrFail();
+
+        $ids = Crypt::decrypt($id);
+
+        $property = Property::where('id', $ids)
+            ->where('parent_id', $user->id)
+            ->firstOrFail();
+        $units = PropertyUnit::where('property_id', $property->id)->orderBy('id', 'desc')->get();
         $settings = settingsById($user->id);
 
 
@@ -430,7 +483,10 @@ public function themePage($code = null, Request $request = null)
 
     public function getStates(Request $request)
     {
-        $states = Property::where('country', $request->country)
+        $tenant = app('tenant');
+
+        $states = Property::where('parent_id', $tenant->id)
+            ->where('country', $request->country)
             ->distinct()
             ->pluck('state');
 
@@ -439,7 +495,10 @@ public function themePage($code = null, Request $request = null)
 
     public function getCities(Request $request)
     {
-        $cities = Property::where('state', $request->state)
+        $tenant = app('tenant');
+
+        $cities = Property::where('parent_id', $tenant->id)
+            ->where('state', $request->state)
             ->distinct()
             ->pluck('city');
 

@@ -14,8 +14,19 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
-        if (! $request->expectsJson()) {
-            return route('login');
+        $host = $request->getHost();
+
+        $mainDomains = [
+            '13.61.10.174',
+            'localhost',
+            '127.0.0.1',
+            'your-main-domain.com',
+        ];
+
+        if (!in_array(str_replace('www.', '', $host), $mainDomains)) {
+            abort(404);
         }
+
+        return route('login');
     }
 }

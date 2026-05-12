@@ -1,5 +1,4 @@
 <?php
-
 use App\Http\Controllers\AdditionalController;
 use App\Http\Controllers\AdvantageController;
 use App\Http\Controllers\AgreementController;
@@ -44,228 +43,239 @@ use App\Http\Controllers\ReportController;
 |--------------------------------------------------------------------------
 */
 
-// ============================================
-// CUSTOM DOMAIN ROUTES - MUST BE AT THE VERY TOP
-// ============================================
-Route::group(['middleware' => ['check.custom.domain']], function () {
-    Route::get('/', [FrontendController::class, 'customDomainIndex'])->name('custom.domain.home');
-    Route::get('/properties', [FrontendController::class, 'customDomainProperties'])->name('custom.domain.properties');
-    Route::get('/property/{id}', [FrontendController::class, 'customDomainPropertyDetail'])->name('custom.domain.property.detail');
-    Route::get('/blog', [FrontendController::class, 'customDomainBlog'])->name('custom.domain.blog');
-    Route::get('/blog/{slug}', [FrontendController::class, 'customDomainBlogDetail'])->name('custom.domain.blog.detail');
-    Route::get('/contact', [FrontendController::class, 'customDomainContact'])->name('custom.domain.contact');
-    Route::post('/contact-us', [ContactController::class, 'customDomainContactStore'])->name('custom.domain.contact.store');
-    Route::get('/page/{slug}', [PageController::class, 'customDomainPage'])->name('custom.domain.page');
-});
+$host = request()->getHost();
 
-// ============================================
-// MAIN APPLICATION ROUTES
-// ============================================
+$adminDomains = [
+    '127.0.0.1',
+    'localhost',
+    '127.0.0.1:8000',
+];
 
-require __DIR__ . '/auth.php';
+if (!in_array($host, $adminDomains)) {
+    Route::middleware(['check.custom.domain'])->group(function () {
 
-Route::get('/', [HomeController::class, 'index'])->middleware(['XSS']);
-Route::get('home', [HomeController::class, 'index'])->name('home')->middleware(['XSS']);
-Route::get('dashboard', [HomeController::class, 'index'])->name('dashboard')->middleware(['XSS']);
+        Route::get('/', [FrontendController::class, 'customDomainIndex']);
 
-// User Management
-Route::resource('users', UserController::class)->middleware(['auth', 'XSS']);
+        Route::get('/properties', [FrontendController::class, 'customDomainProperties']);
 
-Route::get('login/otp', [OTPController::class, 'show'])->name('otp.show')->middleware(['XSS']);
-Route::post('login/otp', [OTPController::class, 'check'])->name('otp.check')->middleware(['XSS']);
-Route::get('login/2fa/disable', [OTPController::class, 'disable'])->name('2fa.disable')->middleware(['XSS']);
+        Route::get('/property/{id}', [FrontendController::class, 'customDomainPropertyDetail']);
 
-// Subscription Routes
-Route::group(['middleware' => ['auth', 'XSS']], function () {
-    Route::resource('subscriptions', SubscriptionController::class);
-    Route::get('coupons/history', [CouponController::class, 'history'])->name('coupons.history');
-    Route::delete('coupons/history/{id}/destroy', [CouponController::class, 'historyDestroy'])->name('coupons.history.destroy');
-    Route::get('coupons/apply', [CouponController::class, 'apply'])->name('coupons.apply');
-    Route::resource('coupons', CouponController::class);
-    Route::get('subscription/transaction', [SubscriptionController::class, 'transaction'])->name('subscription.transaction');
-    Route::post('subscription/{id}/stripe/payment', [SubscriptionController::class, 'stripePayment'])->name('subscription.stripe.payment');
-});
+        Route::get('/blog', [FrontendController::class, 'customDomainBlog']);
 
-// Settings Routes
-Route::group(['middleware' => ['auth', 'XSS']], function () {
-    Route::get('settings', [SettingController::class, 'index'])->name('setting.index');
-    Route::post('settings/account', [SettingController::class, 'accountData'])->name('setting.account');
-    Route::delete('settings/account/delete', [SettingController::class, 'accountDelete'])->name('setting.account.delete');
-    Route::post('settings/password', [SettingController::class, 'passwordData'])->name('setting.password');
-    Route::post('settings/general', [SettingController::class, 'generalData'])->name('setting.general');
-    Route::post('settings/smtp', [SettingController::class, 'smtpData'])->name('setting.smtp');
-    Route::get('settings/smtp-test', [SettingController::class, 'smtpTest'])->name('setting.smtp.test');
-    Route::post('settings/smtp-test', [SettingController::class, 'smtpTestMailSend'])->name('setting.smtp.testing');
-    Route::post('settings/payment', [SettingController::class, 'paymentData'])->name('setting.payment');
-    Route::post('settings/site-seo', [SettingController::class, 'siteSEOData'])->name('setting.site.seo');
-    Route::post('settings/google-recaptcha', [SettingController::class, 'googleRecaptchaData'])->name('setting.google.recaptcha');
-    Route::post('settings/company', [SettingController::class, 'companyData'])->name('setting.company');
-    Route::post('settings/2fa', [SettingController::class, 'twofaEnable'])->name('setting.twofa.enable');
-    Route::post('settings/agreement', [SettingController::class, 'agreement'])->name('setting.agreement');
-    Route::get('footer-setting', [SettingController::class, 'footerSetting'])->name('footerSetting');
-    Route::post('settings/footer', [SettingController::class, 'footerData'])->name('setting.footer');
-    Route::get('language/{lang}', [SettingController::class, 'lanquageChange'])->name('language.change');
-    Route::post('theme/settings', [SettingController::class, 'themeSettings'])->name('theme.settings');
-    Route::post('storage/settings', [SettingController::class, 'storageSetting'])->name('storage.setting');
-    Route::post('settings/twilio', [SettingController::class, 'twilio'])->name('setting.twilio');
-    Route::post('openai/settings', [SettingController::class, 'openai'])->name('openai.settings');
-});
+        Route::get('/blog/{slug}', [FrontendController::class, 'customDomainBlogDetail']);
 
-// Custom Domain Settings Routes (for Owner)
-Route::group(['middleware' => ['auth', 'XSS']], function () {
-    Route::post('/settings/custom-domain', [SettingController::class, 'updateCustomDomain'])->name('setting.custom.domain');
-    Route::post('/settings/custom-domain/verify', [SettingController::class, 'verifyCustomDomain'])->name('setting.custom.domain.verify');
-});
+        Route::get('/contact', [FrontendController::class, 'customDomainContact']);
 
-// Role & Permissions
-Route::resource('permission', PermissionController::class)->middleware(['auth', 'XSS']);
-Route::resource('role', RoleController::class)->middleware(['auth', 'XSS']);
+    });
+}
 
-// Note & Contact
-Route::resource('note', NoticeBoardController::class)->middleware(['auth', 'XSS']);
-Route::resource('contact', ContactController::class)->middleware(['auth', 'XSS']);
+if (in_array($host, $adminDomains)) {
 
-// Logged History
-Route::group(['middleware' => ['auth', 'XSS']], function () {
-    Route::get('logged/history', [UserController::class, 'loggedHistory'])->name('logged.history');
-    Route::get('logged/{id}/history/show', [UserController::class, 'loggedHistoryShow'])->name('logged.history.show');
-    Route::delete('logged/{id}/history', [UserController::class, 'loggedHistoryDestroy'])->name('logged.history.destroy');
-});
+    require __DIR__ . '/auth.php';
 
-// Plan Payment
-Route::group(['middleware' => ['auth', 'XSS']], function () {
-    Route::post('subscription/{id}/bank-transfer', [PaymentController::class, 'subscriptionBankTransfer'])->name('subscription.bank.transfer');
-    Route::get('subscription/{id}/bank-transfer/action/{status}', [PaymentController::class, 'subscriptionBankTransferAction'])->name('subscription.bank.transfer.action');
-    Route::post('subscription/{id}/paypal', [PaymentController::class, 'subscriptionPaypal'])->name('subscription.paypal');
-    Route::get('subscription/{id}/paypal/{status}', [PaymentController::class, 'subscriptionPaypalStatus'])->name('subscription.paypal.status');
-    Route::post('subscription/{id}/{user_id}/manual-assign-package', [PaymentController::class, 'subscriptionManualAssignPackage'])->name('subscription.manual_assign_package');
-});
+    Route::get('/', [HomeController::class, 'index'])->middleware(['XSS']);
+    Route::get('home', [HomeController::class, 'index'])->name('home')->middleware(['XSS']);
+    Route::get('dashboard', [HomeController::class, 'index'])->name('dashboard')->middleware(['XSS']);
 
-// Notification
-Route::resource('notification', NotificationController::class)->middleware(['auth', 'XSS']);
-Route::get('email-verification/{token}', [VerifyEmailController::class, 'verifyEmail'])->name('email-verification')->middleware(['XSS']);
+    // User Management
+    Route::resource('users', UserController::class)->middleware(['auth', 'XSS']);
 
-// FAQ, Home Page, Pages, Auth Page
-Route::resource('FAQ', FAQController::class)->middleware(['auth', 'XSS']);
-Route::resource('homepage', HomePageController::class)->middleware(['auth', 'XSS']);
-Route::resource('pages', PageController::class)->middleware(['auth', 'XSS']);
-Route::resource('authPage', AuthPageController::class)->middleware(['auth', 'XSS']);
+    Route::get('login/otp', [OTPController::class, 'show'])->name('otp.show')->middleware(['XSS']);
+    Route::post('login/otp', [OTPController::class, 'check'])->name('otp.check')->middleware(['XSS']);
+    Route::get('login/2fa/disable', [OTPController::class, 'disable'])->name('2fa.disable')->middleware(['XSS']);
 
-// Property Management
-Route::group(['middleware' => ['auth', 'XSS']], function () {
-    Route::resource('property', PropertyController::class);
-    Route::get('property/{pid}/unit/create', [PropertyController::class, 'unitCreate'])->name('unit.create');
-    Route::post('property/{pid}/unit/store', [PropertyController::class, 'unitStore'])->name('unit.store');
-    Route::get('units/direct-create', [PropertyController::class, 'unitdirectCreate'])->name('unit.direct-create');
-    Route::post('unit/direct-store', [PropertyController::class, 'unitdirectStore'])->name('unit.direct-store');
-    Route::get('property/{pid}/unit/{id}/edit', [PropertyController::class, 'unitEdit'])->name('unit.edit');
-    Route::get('unit/{id}/show', [PropertyController::class, 'unitShow'])->name('unit.show');
-    Route::get('units', [PropertyController::class, 'units'])->name('unit.index');
-    Route::put('property/{pid}/unit/{id}/update', [PropertyController::class, 'unitUpdate'])->name('unit.update');
-    Route::delete('property/{pid}/unit/{id}/destroy', [PropertyController::class, 'unitDestroy'])->name('unit.destroy');
-    Route::get('property/{pid}/unit', [PropertyController::class, 'getPropertyUnit'])->name('property.unit');
-    Route::delete('/property/document/{pid}', [PropertyController::class, 'fileDestroy'])->name('property.image.delete');
-});
+    // Subscription Routes
+    Route::group(['middleware' => ['auth', 'XSS']], function () {
+        Route::resource('subscriptions', SubscriptionController::class);
+        Route::get('coupons/history', [CouponController::class, 'history'])->name('coupons.history');
+        Route::delete('coupons/history/{id}/destroy', [CouponController::class, 'historyDestroy'])->name('coupons.history.destroy');
+        Route::get('coupons/apply', [CouponController::class, 'apply'])->name('coupons.apply');
+        Route::resource('coupons', CouponController::class);
+        Route::get('subscription/transaction', [SubscriptionController::class, 'transaction'])->name('subscription.transaction');
+        Route::post('subscription/{id}/stripe/payment', [SubscriptionController::class, 'stripePayment'])->name('subscription.stripe.payment');
+    });
 
-// Tenant Management
-Route::resource('tenant', TenantController::class)->middleware(['auth', 'XSS']);
-Route::get('tenant/{tid}/exit', [TenantController::class, 'tenantExit'])->name('tenant.exit');
-Route::put('tenant/{tid}/update', [TenantController::class, 'tenantExitUpdate'])->name('tenant.exitupdate');
-Route::delete('/tenant/document/{id}', [TenantController::class, 'fileDestroy'])->name('tenant.document.delete');
-Route::get('tenant/{pid}/unit', [TenantController::class, 'getPropertyUnit'])->name('tenant.unit');
-Route::get('/tenant/unit-details/{id}', [TenantController::class, 'getUnitDetails'])->name('tenant.unit.details');
+    // Settings Routes
+    Route::group(['middleware' => ['auth', 'XSS']], function () {
+        Route::get('settings', [SettingController::class, 'index'])->name('setting.index');
+        Route::post('settings/account', [SettingController::class, 'accountData'])->name('setting.account');
+        Route::delete('settings/account/delete', [SettingController::class, 'accountDelete'])->name('setting.account.delete');
+        Route::post('settings/password', [SettingController::class, 'passwordData'])->name('setting.password');
+        Route::post('settings/general', [SettingController::class, 'generalData'])->name('setting.general');
+        Route::post('settings/smtp', [SettingController::class, 'smtpData'])->name('setting.smtp');
+        Route::get('settings/smtp-test', [SettingController::class, 'smtpTest'])->name('setting.smtp.test');
+        Route::post('settings/smtp-test', [SettingController::class, 'smtpTestMailSend'])->name('setting.smtp.testing');
+        Route::post('settings/payment', [SettingController::class, 'paymentData'])->name('setting.payment');
+        Route::post('settings/site-seo', [SettingController::class, 'siteSEOData'])->name('setting.site.seo');
+        Route::post('settings/google-recaptcha', [SettingController::class, 'googleRecaptchaData'])->name('setting.google.recaptcha');
+        Route::post('settings/company', [SettingController::class, 'companyData'])->name('setting.company');
+        Route::post('settings/2fa', [SettingController::class, 'twofaEnable'])->name('setting.twofa.enable');
+        Route::post('settings/agreement', [SettingController::class, 'agreement'])->name('setting.agreement');
+        Route::get('footer-setting', [SettingController::class, 'footerSetting'])->name('footerSetting');
+        Route::post('settings/footer', [SettingController::class, 'footerData'])->name('setting.footer');
+        Route::get('language/{lang}', [SettingController::class, 'lanquageChange'])->name('language.change');
+        Route::post('theme/settings', [SettingController::class, 'themeSettings'])->name('theme.settings');
+        Route::post('storage/settings', [SettingController::class, 'storageSetting'])->name('storage.setting');
+        Route::post('settings/twilio', [SettingController::class, 'twilio'])->name('setting.twilio');
+        Route::post('openai/settings', [SettingController::class, 'openai'])->name('openai.settings');
+    });
 
-// Types
-Route::resource('type', TypeController::class)->middleware(['auth', 'XSS']);
+    // Custom Domain Settings Routes (for Owner)
+    Route::group(['middleware' => ['auth', 'XSS']], function () {
+        Route::post('/settings/custom-domain', [SettingController::class, 'updateCustomDomain'])->name('setting.custom.domain');
+        Route::post('/settings/custom-domain/verify', [SettingController::class, 'verifyCustomDomain'])->name('setting.custom.domain.verify');
+    });
 
-// Invoice
-Route::group(['middleware' => ['auth', 'XSS']], function () {
-    Route::get('invoice/{id}/payment/create', [InvoiceController::class, 'invoicePaymentCreate'])->name('invoice.payment.create');
-    Route::post('invoice/{id}/payment/store', [InvoiceController::class, 'invoicePaymentStore'])->name('invoice.payment.store');
-    Route::delete('invoice/{id}/payment/{pid}/destroy', [InvoiceController::class, 'invoicePaymentDestroy'])->name('invoice.payment.destroy');
-    Route::delete('invoice/type/destroy', [InvoiceController::class, 'invoiceTypeDestroy'])->name('invoice.type.destroy');
-    Route::get('invoice/{id}/reminder', [InvoiceController::class, 'invoicePaymentRemind'])->name('invoice.reminder');
-    Route::post('invoice/{id}/reminder', [InvoiceController::class, 'invoicePaymentRemindData'])->name('invoice.sendEmail');
-    Route::resource('invoice', InvoiceController::class);
-});
+    // Role & Permissions
+    Route::resource('permission', PermissionController::class)->middleware(['auth', 'XSS']);
+    Route::resource('role', RoleController::class)->middleware(['auth', 'XSS']);
 
-// Expense
-Route::resource('expense', ExpenseController::class)->middleware(['auth', 'XSS']);
+    // Note & Contact
+    Route::resource('note', NoticeBoardController::class)->middleware(['auth', 'XSS']);
+    Route::resource('contact', ContactController::class)->middleware(['auth', 'XSS']);
 
-// Maintainer
-Route::resource('maintainer', MaintainerController::class)->middleware(['auth', 'XSS']);
+    // Logged History
+    Route::group(['middleware' => ['auth', 'XSS']], function () {
+        Route::get('logged/history', [UserController::class, 'loggedHistory'])->name('logged.history');
+        Route::get('logged/{id}/history/show', [UserController::class, 'loggedHistoryShow'])->name('logged.history.show');
+        Route::delete('logged/{id}/history', [UserController::class, 'loggedHistoryDestroy'])->name('logged.history.destroy');
+    });
 
-// Maintenance Request
-Route::group(['middleware' => ['auth', 'XSS']], function () {
-    Route::get('maintenance-request/pending', [MaintenanceRequestController::class, 'pendingRequest'])->name('maintenance-request.pending');
-    Route::get('maintenance-request/in-progress', [MaintenanceRequestController::class, 'inProgressRequest'])->name('maintenance-request.inprogress');
-    Route::get('maintenance-request/{id}/action', [MaintenanceRequestController::class, 'action'])->name('maintenance-request.action');
-    Route::post('maintenance-request/{id}/action', [MaintenanceRequestController::class, 'actionData'])->name('maintenance-request.action');
-    Route::resource('maintenance-request', MaintenanceRequestController::class);
-    Route::post('maintenance-request/comment/{id}', [MaintenanceRequestController::class, 'comment'])->name('maintenance-request.comment');
-    Route::delete('/maintenance-request/comment/{id}', [MaintenanceRequestController::class, 'commentDestroy'])->name('maintenance-request.comment.destroy');
-});
+    // Plan Payment
+    Route::group(['middleware' => ['auth', 'XSS']], function () {
+        Route::post('subscription/{id}/bank-transfer', [PaymentController::class, 'subscriptionBankTransfer'])->name('subscription.bank.transfer');
+        Route::get('subscription/{id}/bank-transfer/action/{status}', [PaymentController::class, 'subscriptionBankTransferAction'])->name('subscription.bank.transfer.action');
+        Route::post('subscription/{id}/paypal', [PaymentController::class, 'subscriptionPaypal'])->name('subscription.paypal');
+        Route::get('subscription/{id}/paypal/{status}', [PaymentController::class, 'subscriptionPaypalStatus'])->name('subscription.paypal.status');
+        Route::post('subscription/{id}/{user_id}/manual-assign-package', [PaymentController::class, 'subscriptionManualAssignPackage'])->name('subscription.manual_assign_package');
+    });
 
-// Reports
-Route::group(['middleware' => ['auth', 'XSS']], function () {
-    Route::get('report/income', [ReportController::class, 'income'])->name('report.income');
-    Route::get('report/expense', [ReportController::class, 'expense'])->name('report.expense');
-    Route::get('report/profit-loss', [ReportController::class, 'reportProfitLoss'])->name('report.profit_loss');
-    Route::get('report/property-unit', [ReportController::class, 'reportPropertyUnit'])->name('report.property_unit');
-    Route::get('report/tenant', [ReportController::class, 'tenant'])->name('report.tenant');
-    Route::get('report/maintenance', [ReportController::class, 'maintenance'])->name('report.maintenance');
-});
+    // Notification
+    Route::resource('notification', NotificationController::class)->middleware(['auth', 'XSS']);
+    Route::get('email-verification/{token}', [VerifyEmailController::class, 'verifyEmail'])->name('email-verification')->middleware(['XSS']);
 
-// Agreement, Amenity, Advantage
-Route::resource('agreement', AgreementController::class)->middleware(['auth', 'XSS']);
-Route::resource('amenity', AmenityController::class)->middleware(['auth', 'XSS']);
-Route::resource('advantage', AdvantageController::class)->middleware(['auth', 'XSS']);
+    // FAQ, Home Page, Pages, Auth Page
+    Route::resource('FAQ', FAQController::class)->middleware(['auth', 'XSS']);
+    Route::resource('homepage', HomePageController::class)->middleware(['auth', 'XSS']);
+    Route::resource('pages', PageController::class)->middleware(['auth', 'XSS']);
+    Route::resource('authPage', AuthPageController::class)->middleware(['auth', 'XSS']);
 
-// Public Website Routes (Preview URLs)
-Route::prefix('web/{code}')->group(function () {
-    Route::get('/', [FrontendController::class, 'themePage'])->name('web.page');
-    Route::get('/search/location', [FrontendController::class, 'searchLocation'])->name('search.location');
-    Route::get('/blog', [FrontendController::class, 'blogPage'])->name('blog.home');
-    Route::get('/blog/{slug}', [FrontendController::class, 'blogDetailPage'])->name('blog.detail');
-    Route::get('/contact', [FrontendController::class, 'contactPage'])->name('contact.home');
-    Route::get('/properties', [FrontendController::class, 'propertyPage'])->name('property.home');
-    Route::get('/search/filter', [FrontendController::class, 'search'])->name('search.filter');
-    Route::get('/search/package', [FrontendController::class, 'searchpackage'])->name('search.package');
-    Route::get('/property/{id}', [FrontendController::class, 'detailPage'])->name('property.detail');
-    Route::post('contact-us', [ContactController::class, 'frontDetailStore'])->name('contact-us');
-});
+    // Property Management
+    Route::group(['middleware' => ['auth', 'XSS']], function () {
+        Route::resource('property', PropertyController::class);
+        Route::get('property/{pid}/unit/create', [PropertyController::class, 'unitCreate'])->name('unit.create');
+        Route::post('property/{pid}/unit/store', [PropertyController::class, 'unitStore'])->name('unit.store');
+        Route::get('units/direct-create', [PropertyController::class, 'unitdirectCreate'])->name('unit.direct-create');
+        Route::post('unit/direct-store', [PropertyController::class, 'unitdirectStore'])->name('unit.direct-store');
+        Route::get('property/{pid}/unit/{id}/edit', [PropertyController::class, 'unitEdit'])->name('unit.edit');
+        Route::get('unit/{id}/show', [PropertyController::class, 'unitShow'])->name('unit.show');
+        Route::get('units', [PropertyController::class, 'units'])->name('unit.index');
+        Route::put('property/{pid}/unit/{id}/update', [PropertyController::class, 'unitUpdate'])->name('unit.update');
+        Route::delete('property/{pid}/unit/{id}/destroy', [PropertyController::class, 'unitDestroy'])->name('unit.destroy');
+        Route::get('property/{pid}/unit', [PropertyController::class, 'getPropertyUnit'])->name('property.unit');
+        Route::delete('/property/document/{pid}', [PropertyController::class, 'fileDestroy'])->name('property.image.delete');
+    });
 
-// AJAX Routes
-Route::get('/get-states', [FrontendController::class, 'getStates'])->name('get-states');
-Route::get('/get-cities', [FrontendController::class, 'getCities'])->name('get-cities');
+    // Tenant Management
+    Route::resource('tenant', TenantController::class)->middleware(['auth', 'XSS']);
+    Route::get('tenant/{tid}/exit', [TenantController::class, 'tenantExit'])->name('tenant.exit');
+    Route::put('tenant/{tid}/update', [TenantController::class, 'tenantExitUpdate'])->name('tenant.exitupdate');
+    Route::delete('/tenant/document/{id}', [TenantController::class, 'fileDestroy'])->name('tenant.document.delete');
+    Route::get('tenant/{pid}/unit', [TenantController::class, 'getPropertyUnit'])->name('tenant.unit');
+    Route::get('/tenant/unit-details/{id}', [TenantController::class, 'getUnitDetails'])->name('tenant.unit.details');
 
-// Front Home Page, Additional Page, Blog
-Route::resource('front-home', FrontendController::class)->middleware(['auth', 'XSS']);
-Route::resource('additional', AdditionalController::class)->middleware(['auth', 'XSS']);
-Route::resource('blog', BlogController::class)->middleware(['auth', 'XSS']);
+    // Types
+    Route::resource('type', TypeController::class)->middleware(['auth', 'XSS']);
 
-// Invoice Payment Routes
-Route::group(['middleware' => ['auth', 'XSS']], function () {
-    Route::post('invoice/{id}/banktransfer/payment', [InvoicePaymentController::class, 'banktransferPayment'])->name('invoice.banktransfer.payment');
-    Route::post('invoice/{id}/stripe/payment', [InvoicePaymentController::class, 'stripePayment'])->name('invoice.stripe.payment');
-    Route::post('invoice/{id}/paypal', [InvoicePaymentController::class, 'invoicePaypal'])->name('invoice.paypal');
-    Route::get('invoice/{id}/paypal/{status}', [InvoicePaymentController::class, 'invoicePaypalStatus'])->name('invoice.paypal.status');
-    Route::get('invoice/flutterwave/{id}/{tx_ref}', [InvoicePaymentController::class, 'invoiceFlutterwave'])->name('invoice.flutterwave');
-    Route::get('unit/{pid}/tenant', [InvoiceController::class, 'unitByTenant'])->name('unit.by.tenant');
-    Route::post('invoice/{id}/paystack/payment', [InvoicePaymentController::class, 'invoicePaystack'])->name('invoice.paystack.payment');
-    Route::get('/invoice/paystack/{pay_id}/{i_id}', [InvoicePaymentController::class, 'invoicePaystackStatus'])->name('invoice.paystack');
-});
+    // Invoice
+    Route::group(['middleware' => ['auth', 'XSS']], function () {
+        Route::get('invoice/{id}/payment/create', [InvoiceController::class, 'invoicePaymentCreate'])->name('invoice.payment.create');
+        Route::post('invoice/{id}/payment/store', [InvoiceController::class, 'invoicePaymentStore'])->name('invoice.payment.store');
+        Route::delete('invoice/{id}/payment/{pid}/destroy', [InvoiceController::class, 'invoicePaymentDestroy'])->name('invoice.payment.destroy');
+        Route::delete('invoice/type/destroy', [InvoiceController::class, 'invoiceTypeDestroy'])->name('invoice.type.destroy');
+        Route::get('invoice/{id}/reminder', [InvoiceController::class, 'invoicePaymentRemind'])->name('invoice.reminder');
+        Route::post('invoice/{id}/reminder', [InvoiceController::class, 'invoicePaymentRemindData'])->name('invoice.sendEmail');
+        Route::resource('invoice', InvoiceController::class);
+    });
 
-// AI Templates & N8n
-Route::group(['middleware' => ['auth', 'XSS']], function () {
-    Route::get('generate-template/{title}', [AiTemplateController::class, 'create'])->name('generate.template');
-    Route::post('generate-template-keywords/{id}', [AiTemplateController::class, 'getTemplateKeywords'])->name('generate.template.keywords');
-    Route::post('generate-prompt-response', [AiTemplateController::class, 'AiPromptGenerate'])->name('generate.prompt.response');
-    Route::resource('n8n', N8nController::class);
-});
+    // Expense
+    Route::resource('expense', ExpenseController::class)->middleware(['auth', 'XSS']);
 
-// Public Pages
-Route::get('page/{slug}', [PageController::class, 'page'])->name('page');
+    // Maintainer
+    Route::resource('maintainer', MaintainerController::class)->middleware(['auth', 'XSS']);
 
-// Impersonate
-Route::impersonate();
+    // Maintenance Request
+    Route::group(['middleware' => ['auth', 'XSS']], function () {
+        Route::get('maintenance-request/pending', [MaintenanceRequestController::class, 'pendingRequest'])->name('maintenance-request.pending');
+        Route::get('maintenance-request/in-progress', [MaintenanceRequestController::class, 'inProgressRequest'])->name('maintenance-request.inprogress');
+        Route::get('maintenance-request/{id}/action', [MaintenanceRequestController::class, 'action'])->name('maintenance-request.action');
+        Route::post('maintenance-request/{id}/action', [MaintenanceRequestController::class, 'actionData'])->name('maintenance-request.action');
+        Route::resource('maintenance-request', MaintenanceRequestController::class);
+        Route::post('maintenance-request/comment/{id}', [MaintenanceRequestController::class, 'comment'])->name('maintenance-request.comment');
+        Route::delete('/maintenance-request/comment/{id}', [MaintenanceRequestController::class, 'commentDestroy'])->name('maintenance-request.comment.destroy');
+    });
+
+    // Reports
+    Route::group(['middleware' => ['auth', 'XSS']], function () {
+        Route::get('report/income', [ReportController::class, 'income'])->name('report.income');
+        Route::get('report/expense', [ReportController::class, 'expense'])->name('report.expense');
+        Route::get('report/profit-loss', [ReportController::class, 'reportProfitLoss'])->name('report.profit_loss');
+        Route::get('report/property-unit', [ReportController::class, 'reportPropertyUnit'])->name('report.property_unit');
+        Route::get('report/tenant', [ReportController::class, 'tenant'])->name('report.tenant');
+        Route::get('report/maintenance', [ReportController::class, 'maintenance'])->name('report.maintenance');
+    });
+
+    // Agreement, Amenity, Advantage
+    Route::resource('agreement', AgreementController::class)->middleware(['auth', 'XSS']);
+    Route::resource('amenity', AmenityController::class)->middleware(['auth', 'XSS']);
+    Route::resource('advantage', AdvantageController::class)->middleware(['auth', 'XSS']);
+
+    // Public Website Routes (Preview URLs)
+    Route::prefix('web/{code}')->group(function () {
+        Route::get('/', [FrontendController::class, 'themePage'])->name('web.page');
+        Route::get('/search/location', [FrontendController::class, 'searchLocation'])->name('search.location');
+        Route::get('/blog', [FrontendController::class, 'blogPage'])->name('blog.home');
+        Route::get('/blog/{slug}', [FrontendController::class, 'blogDetailPage'])->name('blog.detail');
+        Route::get('/contact', [FrontendController::class, 'contactPage'])->name('contact.home');
+        Route::get('/properties', [FrontendController::class, 'propertyPage'])->name('property.home');
+        Route::get('/search/filter', [FrontendController::class, 'search'])->name('search.filter');
+        Route::get('/search/package', [FrontendController::class, 'searchpackage'])->name('search.package');
+        Route::get('/property/{id}', [FrontendController::class, 'detailPage'])->name('property.detail');
+        Route::post('contact-us', [ContactController::class, 'frontDetailStore'])->name('contact-us');
+    });
+
+    // AJAX Routes
+    Route::get('/get-states', [FrontendController::class, 'getStates'])->name('get-states');
+    Route::get('/get-cities', [FrontendController::class, 'getCities'])->name('get-cities');
+
+    // Front Home Page, Additional Page, Blog
+    Route::resource('front-home', FrontendController::class)->middleware(['auth', 'XSS']);
+    Route::resource('additional', AdditionalController::class)->middleware(['auth', 'XSS']);
+    Route::resource('blog', BlogController::class)->middleware(['auth', 'XSS']);
+
+    // Invoice Payment Routes
+    Route::group(['middleware' => ['auth', 'XSS']], function () {
+        Route::post('invoice/{id}/banktransfer/payment', [InvoicePaymentController::class, 'banktransferPayment'])->name('invoice.banktransfer.payment');
+        Route::post('invoice/{id}/stripe/payment', [InvoicePaymentController::class, 'stripePayment'])->name('invoice.stripe.payment');
+        Route::post('invoice/{id}/paypal', [InvoicePaymentController::class, 'invoicePaypal'])->name('invoice.paypal');
+        Route::get('invoice/{id}/paypal/{status}', [InvoicePaymentController::class, 'invoicePaypalStatus'])->name('invoice.paypal.status');
+        Route::get('invoice/flutterwave/{id}/{tx_ref}', [InvoicePaymentController::class, 'invoiceFlutterwave'])->name('invoice.flutterwave');
+        Route::get('unit/{pid}/tenant', [InvoiceController::class, 'unitByTenant'])->name('unit.by.tenant');
+        Route::post('invoice/{id}/paystack/payment', [InvoicePaymentController::class, 'invoicePaystack'])->name('invoice.paystack.payment');
+        Route::get('/invoice/paystack/{pay_id}/{i_id}', [InvoicePaymentController::class, 'invoicePaystackStatus'])->name('invoice.paystack');
+    });
+
+    // AI Templates & N8n
+    Route::group(['middleware' => ['auth', 'XSS']], function () {
+        Route::get('generate-template/{title}', [AiTemplateController::class, 'create'])->name('generate.template');
+        Route::post('generate-template-keywords/{id}', [AiTemplateController::class, 'getTemplateKeywords'])->name('generate.template.keywords');
+        Route::post('generate-prompt-response', [AiTemplateController::class, 'AiPromptGenerate'])->name('generate.prompt.response');
+        Route::resource('n8n', N8nController::class);
+    });
+
+    // Public Pages
+    Route::get('page/{slug}', [PageController::class, 'page'])->name('page');
+
+    // Impersonate
+    Route::impersonate();
+}

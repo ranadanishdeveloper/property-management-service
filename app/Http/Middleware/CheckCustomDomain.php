@@ -3,45 +3,47 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
 use App\Models\User;
 
 class CheckCustomDomain
 {
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
         $host = $request->getHost();
 
-        // FOR LOCAL DEVELOPMENT - Skip localhost
-        if ($host === 'localhost' || $host === '127.0.0.1') {
+        // Remove www
+        $host = str_replace('www.', '', $host);
+
+        // Main system domains
+        $mainDomains = [
+            '13.61.10.174',
+            'localhost',
+            '127.0.0.1',
+            'your-main-domain.com',
+        ];
+
+        // If main system domain
+        if (in_array($host, $mainDomains)) {
             return $next($request);
         }
 
-        // FOR PRODUCTION - Skip if using IP address (13.61.10.174)
-        $serverIp = '13.61.10.174';
+        // Find owner
+        $user = User::where('custom_domain', $host)
+            ->where('custom_domain_enabled', 1)
+            ->where('custom_domain_verified', 1)
+            ->first();
 
-        // If visitor is using IP address directly, show main website
-        if ($host === $serverIp || filter_var($host, FILTER_VALIDATE_IP)) {
-            return $next($request);
+        // Domain not found
+        if (!$user) {
+            abort(404, 'Domain not connected');
         }
 
-        // Check if this is a custom domain (like abc.com)
-        $isCustomDomain = !filter_var($host, FILTER_VALIDATE_IP);
+        // Store tenant globally
+        app()->instance('tenant', $user);
 
-        if ($isCustomDomain) {
-            // Find owner by custom domain
-            $owner = User::where('custom_domain', $host)
-                         ->where('custom_domain_enabled', 1)
-                         ->where('custom_domain_verified', 1)
-                         ->first();
+        view()->share('tenant', $user);
 
-            if ($owner) {
-                $request->attributes->set('owner', $owner);
-                $request->attributes->set('owner_code', $owner->code);
-                return $next($request);
-            }
-        }
-
-        // If no owner found for this domain, show main app
         return $next($request);
     }
 }

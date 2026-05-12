@@ -1,19 +1,27 @@
-/vendor/srmklive
-/.idea
-/.vscode
-/bootstrap/cache
-.env
+# Storage files (uploaded images)
+storage/app/public/upload/
+storage/upload/
+storage/framework/
+storage/logs/*.log
+
+# Public storage symlink
+public/storage/
+
+# IDE files
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+
+# Composer
 vendor/
 
+# Environment
+.env
 
-# Then include uploads folder
+# Cache
+bootstrap/cache/*.php
 
-# Ignore storage except uploads
-/storage/framework/*
-/storage/logs/*
-/storage/sessions/*
-/storage/installed
-/storage/uploads/*
-/storage/public/*
-!/storage/app/public/upload/
-!/storage/upload/logo/
+# Logs
+*.log
