@@ -41,14 +41,15 @@ class HomePageController extends Controller
     }
 
     /**
-     * UPLOAD HELPER (IMPORTANT)
+     * UPLOAD HELPER - FIXED (keeps original filename, no timestamp)
      */
     private function uploadImage($file, $prefix)
     {
         $name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $ext = $file->getClientOriginalExtension();
 
-        $fileName = $name . '_' . $prefix . '_' . date('YmdHis') . '.' . $ext;
+        // Keep original filename - NO TIMESTAMP
+        $fileName = $name . '.' . $ext;
 
         // stores in: storage/app/public/upload/homepage
         Storage::disk('public')->putFileAs('upload/homepage', $file, $fileName);
