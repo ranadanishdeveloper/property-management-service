@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AdditionalController;
 use App\Http\Controllers\AdvantageController;
 use App\Http\Controllers\AgreementController;
@@ -46,47 +44,26 @@ use App\Http\Controllers\ReportController;
 |--------------------------------------------------------------------------
 */
 
-$host = request()->getHost();
-
-$adminDomains = [
-    '127.0.0.1',
-    'localhost',
-    '127.0.0.1:8000',
-    '13.61.10.174',
-];
+// ============================================
+// CUSTOM DOMAIN ROUTES - MUST BE AT THE VERY TOP
+// ============================================
+Route::group(['middleware' => ['check.custom.domain']], function () {
+    Route::get('/', [FrontendController::class, 'customDomainIndex'])->name('custom.domain.home');
+    Route::get('/properties', [FrontendController::class, 'customDomainProperties'])->name('custom.domain.properties');
+    Route::get('/property/{id}', [FrontendController::class, 'customDomainPropertyDetail'])->name('custom.domain.property.detail');
+    Route::get('/blog', [FrontendController::class, 'customDomainBlog'])->name('custom.domain.blog');
+    Route::get('/blog/{slug}', [FrontendController::class, 'customDomainBlogDetail'])->name('custom.domain.blog.detail');
+    Route::get('/contact', [FrontendController::class, 'customDomainContact'])->name('custom.domain.contact');
+    Route::post('/contact-us', [ContactController::class, 'customDomainContactStore'])->name('custom.domain.contact.store');
+    Route::get('/page/{slug}', [PageController::class, 'customDomainPage'])->name('custom.domain.page');
+});
 
 // ============================================
-// CUSTOM DOMAIN ROUTES (FRONTEND ONLY)
+// MAIN APPLICATION ROUTES
 // ============================================
-if (!in_array($host, $adminDomains)) {
-    Route::middleware(['check.custom.domain'])->group(function () {
-        Route::get('/', [FrontendController::class, 'customDomainIndex']);
-        Route::get('/properties', [FrontendController::class, 'customDomainProperties']);
-        Route::get('/property/{id}', [FrontendController::class, 'customDomainPropertyDetail']);
-        Route::get('/blog', [FrontendController::class, 'customDomainBlog']);
-        Route::get('/blog/{slug}', [FrontendController::class, 'customDomainBlogDetail']);
-        Route::get('/contact', [FrontendController::class, 'customDomainContact']);
-        Route::post('/contact-us', [ContactController::class, 'customDomainContactStore']);
-        Route::get('/page/{slug}', [PageController::class, 'customDomainPage']);
-    });
+Route::group(['middleware' => ['web']], function () {
 
-    // For any other route on custom domain - 404
-    Route::any('/{any}', function () {
-        abort(404);
-    })->where('any', '.*');
-}
-
-// ============================================
-// MAIN ADMIN ROUTES (BACKEND) - IP access only
-// ============================================
-if (in_array($host, $adminDomains)) {
-
-    // AUTH ROUTES
-    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/register', [RegisteredUserController::class, 'store']);
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    require __DIR__ . '/auth.php';
 
     Route::get('/', [HomeController::class, 'index'])->middleware(['XSS']);
     Route::get('home', [HomeController::class, 'index'])->name('home')->middleware(['XSS']);
@@ -293,4 +270,5 @@ if (in_array($host, $adminDomains)) {
 
     // Impersonate
     Route::impersonate();
-}
+});
+

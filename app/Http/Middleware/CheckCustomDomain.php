@@ -20,7 +20,7 @@ class CheckCustomDomain
             '13.61.10.174',
             'localhost',
             '127.0.0.1',
-            'your-main-domain.com',
+
         ];
 
         // If main system domain
