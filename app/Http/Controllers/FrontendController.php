@@ -344,122 +344,127 @@ public function customDomainGetCities(Request $request)
         return view('front-home.index', compact('loginUser', 'frontHomePage'));
     }
 
-    public function update(Request $request, FrontHomePage $homePage, $id)
-    {
-        if (!Auth::user()->can('edit front home page')) {
-            return redirect()->back()->with('error', __('Permission Denied.'));
-        }
-
-        $homePage = FrontHomePage::find($id);
-        $old_content_value = '';
-        if (!empty($request->content_value)) {
-            $old_content_value = json_decode($homePage->content_value, true);
-        }
-        $content_value = $request->content_value;
-
-        /* section 0 */
-        if (!empty($request->content_value['banner_image1'])) {
-            $banner_image1 = $request->content_value['banner_image1'];
-            $filenameWithExt = $banner_image1->getClientOriginalName();
-            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-            $extension = $banner_image1->getClientOriginalExtension();
-            $fileNameToStore = $filename . '_banner_image1_' . date('Ymdhisa') . '.' . $extension;
-
-            $dir = storage_path('upload/fronthomepage/');
-            if (!file_exists($dir)) {
-                mkdir($dir, 0777, true);
-            }
-
-            $banner_image1->storeAs('upload/fronthomepage/', $fileNameToStore);
-            $content_value['banner_image1_path'] = 'upload/fronthomepage/' . $fileNameToStore;
-        } else {
-            $content_value['banner_image1_path'] = !empty($old_content_value['banner_image1_path']) ? $old_content_value['banner_image1_path'] : '';
-        }
-
-        /* section 1 */
-        for ($is4 = 1; $is4 <= 4; $is4++) {
-            if (!empty($request->content_value['Sec1_box' . $is4 . '_image'])) {
-                $box_image_path = $request->content_value['Sec1_box' . $is4 . '_image'];
-                $filenameWithExt = $box_image_path->getClientOriginalName();
-                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-                $extension = $box_image_path->getClientOriginalExtension();
-                $fileNameToStore = $filename . '_Section_4_image_' . $is4 . date('Ymdhisa') . '.' . $extension;
-
-                $dir = storage_path('upload/fronthomepage/');
-                if (!file_exists($dir)) {
-                    mkdir($dir, 0777, true);
-                }
-
-                $box_image_path->storeAs('upload/fronthomepage/', $fileNameToStore);
-                $content_value['Sec1_box' . $is4 . '_image_path'] = 'upload/fronthomepage/' . $fileNameToStore;
-            } else {
-                $content_value['Sec1_box' . $is4 . '_image_path'] = !empty($old_content_value['Sec1_box' . $is4 . '_image_path']) ? $old_content_value['Sec1_box' . $is4 . '_image_path'] : '';
-            }
-        }
-
-        /* section 4 */
-        if (!empty($request->content_value['about_image'])) {
-            $about_image = $request->content_value['about_image'];
-            $filenameWithExt = $about_image->getClientOriginalName();
-            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-            $extension = $about_image->getClientOriginalExtension();
-            $fileNameToStore = $filename . '_about_image_' . date('Ymdhisa') . '.' . $extension;
-
-            $dir = storage_path('upload/fronthomepage/');
-            if (!file_exists($dir)) {
-                mkdir($dir, 0777, true);
-            }
-
-            $about_image->storeAs('upload/fronthomepage/', $fileNameToStore);
-            $content_value['about_image_path'] = 'upload/fronthomepage/' . $fileNameToStore;
-        } else {
-            $content_value['about_image_path'] = !empty($old_content_value['about_image_path']) ? $old_content_value['about_image_path'] : '';
-        }
-
-        /* section 6 */
-        if (!empty($request->content_value['banner_image2'])) {
-            $banner_image2 = $request->content_value['banner_image2'];
-            $filenameWithExt = $banner_image2->getClientOriginalName();
-            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-            $extension = $banner_image2->getClientOriginalExtension();
-            $fileNameToStore = $filename . '_banner_image2_' . date('Ymdhisa') . '.' . $extension;
-
-            $dir = storage_path('upload/fronthomepage/');
-            if (!file_exists($dir)) {
-                mkdir($dir, 0777, true);
-            }
-
-            $banner_image2->storeAs('upload/fronthomepage/', $fileNameToStore);
-            $content_value['banner_image2_path'] = 'upload/fronthomepage/' . $fileNameToStore;
-        } else {
-            $content_value['banner_image2_path'] = !empty($old_content_value['banner_image2_path']) ? $old_content_value['banner_image2_path'] : '';
-        }
-
-        /* section 7 */
-        for ($is7 = 1; $is7 <= 8; $is7++) {
-            if (!empty($request->content_value['Sec7_box' . $is7 . '_image'])) {
-                $box_image_path = $request->content_value['Sec7_box' . $is7 . '_image'];
-                $filenameWithExt = $box_image_path->getClientOriginalName();
-                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-                $extension = $box_image_path->getClientOriginalExtension();
-                $fileNameToStore = $filename . '_Section_7_image_' . $is7 . date('Ymdhisa') . '.' . $extension;
-
-                $dir = storage_path('upload/fronthomepage/');
-                if (!file_exists($dir)) {
-                    mkdir($dir, 0777, true);
-                }
-
-                $box_image_path->storeAs('upload/fronthomepage/', $fileNameToStore);
-                $content_value['Sec7_box' . $is7 . '_image_path'] = 'upload/fronthomepage/' . $fileNameToStore;
-            } else {
-                $content_value['Sec7_box' . $is7 . '_image_path'] = !empty($old_content_value['Sec7_box' . $is7 . '_image_path']) ? $old_content_value['Sec7_box' . $is7 . '_image_path'] : '';
-            }
-        }
-
-        $homePage->content_value = $content_value;
-        $homePage->save();
-        return redirect()->back()->with('tab', $request->tab)->with('success', __('Home Page Content Updated Successfully.'));
+   public function update(Request $request, FrontHomePage $homePage, $id)
+{
+    if (!Auth::user()->can('edit front home page')) {
+        return redirect()->back()->with('error', __('Permission Denied.'));
     }
+
+    $homePage = FrontHomePage::find($id);
+    $old_content_value = '';
+    if (!empty($request->content_value)) {
+        $old_content_value = json_decode($homePage->content_value, true);
+    }
+    $content_value = $request->content_value;
+
+    /* section 0 - banner_image1 */
+    if (!empty($request->content_value['banner_image1'])) {
+        $banner_image1 = $request->content_value['banner_image1'];
+        $filenameWithExt = $banner_image1->getClientOriginalName();
+        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+        $extension = $banner_image1->getClientOriginalExtension();
+        // FIXED: No timestamp, keep original name
+        $fileNameToStore = $filename . '.' . $extension;
+
+        $dir = storage_path('upload/fronthomepage/');
+        if (!file_exists($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $banner_image1->storeAs('upload/fronthomepage/', $fileNameToStore);
+        $content_value['banner_image1_path'] = 'upload/fronthomepage/' . $fileNameToStore;
+    } else {
+        $content_value['banner_image1_path'] = !empty($old_content_value['banner_image1_path']) ? $old_content_value['banner_image1_path'] : '';
+    }
+
+    /* section 1 - Sec1_box images */
+    for ($is4 = 1; $is4 <= 4; $is4++) {
+        if (!empty($request->content_value['Sec1_box' . $is4 . '_image'])) {
+            $box_image_path = $request->content_value['Sec1_box' . $is4 . '_image'];
+            $filenameWithExt = $box_image_path->getClientOriginalName();
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            $extension = $box_image_path->getClientOriginalExtension();
+            // FIXED: No timestamp, keep original name
+            $fileNameToStore = $filename . '.' . $extension;
+
+            $dir = storage_path('upload/fronthomepage/');
+            if (!file_exists($dir)) {
+                mkdir($dir, 0777, true);
+            }
+
+            $box_image_path->storeAs('upload/fronthomepage/', $fileNameToStore);
+            $content_value['Sec1_box' . $is4 . '_image_path'] = 'upload/fronthomepage/' . $fileNameToStore;
+        } else {
+            $content_value['Sec1_box' . $is4 . '_image_path'] = !empty($old_content_value['Sec1_box' . $is4 . '_image_path']) ? $old_content_value['Sec1_box' . $is4 . '_image_path'] : '';
+        }
+    }
+
+    /* section 4 - about_image */
+    if (!empty($request->content_value['about_image'])) {
+        $about_image = $request->content_value['about_image'];
+        $filenameWithExt = $about_image->getClientOriginalName();
+        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+        $extension = $about_image->getClientOriginalExtension();
+        // FIXED: No timestamp, keep original name
+        $fileNameToStore = $filename . '.' . $extension;
+
+        $dir = storage_path('upload/fronthomepage/');
+        if (!file_exists($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $about_image->storeAs('upload/fronthomepage/', $fileNameToStore);
+        $content_value['about_image_path'] = 'upload/fronthomepage/' . $fileNameToStore;
+    } else {
+        $content_value['about_image_path'] = !empty($old_content_value['about_image_path']) ? $old_content_value['about_image_path'] : '';
+    }
+
+    /* section 6 - banner_image2 */
+    if (!empty($request->content_value['banner_image2'])) {
+        $banner_image2 = $request->content_value['banner_image2'];
+        $filenameWithExt = $banner_image2->getClientOriginalName();
+        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+        $extension = $banner_image2->getClientOriginalExtension();
+        // FIXED: No timestamp, keep original name
+        $fileNameToStore = $filename . '.' . $extension;
+
+        $dir = storage_path('upload/fronthomepage/');
+        if (!file_exists($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $banner_image2->storeAs('upload/fronthomepage/', $fileNameToStore);
+        $content_value['banner_image2_path'] = 'upload/fronthomepage/' . $fileNameToStore;
+    } else {
+        $content_value['banner_image2_path'] = !empty($old_content_value['banner_image2_path']) ? $old_content_value['banner_image2_path'] : '';
+    }
+
+    /* section 7 - Sec7_box images */
+    for ($is7 = 1; $is7 <= 8; $is7++) {
+        if (!empty($request->content_value['Sec7_box' . $is7 . '_image'])) {
+            $box_image_path = $request->content_value['Sec7_box' . $is7 . '_image'];
+            $filenameWithExt = $box_image_path->getClientOriginalName();
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            $extension = $box_image_path->getClientOriginalExtension();
+            // FIXED: No timestamp, keep original name
+            $fileNameToStore = $filename . '.' . $extension;
+
+            $dir = storage_path('upload/fronthomepage/');
+            if (!file_exists($dir)) {
+                mkdir($dir, 0777, true);
+            }
+
+            $box_image_path->storeAs('upload/fronthomepage/', $fileNameToStore);
+            $content_value['Sec7_box' . $is7 . '_image_path'] = 'upload/fronthomepage/' . $fileNameToStore;
+        } else {
+            $content_value['Sec7_box' . $is7 . '_image_path'] = !empty($old_content_value['Sec7_box' . $is7 . '_image_path']) ? $old_content_value['Sec7_box' . $is7 . '_image_path'] : '';
+        }
+    }
+
+    $homePage->content_value = $content_value;
+    $homePage->save();
+    return redirect()->back()->with('tab', $request->tab)->with('success', __('Home Page Content Updated Successfully.'));
+}
 
     public function blogPage(Request $request, $code)
     {
