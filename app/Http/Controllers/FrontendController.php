@@ -48,6 +48,36 @@ public function customDomainSearchPackage(Request $request)
     }
     return $this->searchpackage($request, $owner->code);
 }
+
+public function customDomainGetStates(Request $request)
+{
+    $owner = $request->attributes->get('owner');
+    if (!$owner) {
+        return response()->json([]);
+    }
+
+    $states = Property::where('parent_id', $owner->id)
+        ->where('country', $request->country)
+        ->distinct()
+        ->pluck('state');
+
+    return response()->json($states);
+}
+
+public function customDomainGetCities(Request $request)
+{
+    $owner = $request->attributes->get('owner');
+    if (!$owner) {
+        return response()->json([]);
+    }
+
+    $cities = Property::where('parent_id', $owner->id)
+        ->where('state', $request->state)
+        ->distinct()
+        ->pluck('city');
+
+    return response()->json($cities);
+}
     public function customDomainProperties(Request $request)
     {
         $owner = $request->attributes->get('owner');

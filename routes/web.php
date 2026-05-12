@@ -66,6 +66,8 @@ if ($isCustomDomain) {
         Route::get('/search/location', [FrontendController::class, 'customDomainSearchLocation'])->name('search.location');
         Route::get('/search/filter', [FrontendController::class, 'customDomainSearch'])->name('search.filter');
         Route::get('/search/package', [FrontendController::class, 'customDomainSearchPackage'])->name('search.package');
+         Route::get('/get-states', [FrontendController::class, 'customDomainGetStates'])->name('get-states');
+        Route::get('/get-cities', [FrontendController::class, 'customDomainGetCities'])->name('get-cities');
     });
 
     // Block all admin routes on custom domain
