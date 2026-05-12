@@ -1,6 +1,6 @@
 <?php
 
-dd(request()->getHost());
+
 use App\Http\Controllers\AdditionalController;
 use App\Http\Controllers\AdvantageController;
 use App\Http\Controllers\AgreementController;
