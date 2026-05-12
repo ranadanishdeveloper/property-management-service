@@ -24,14 +24,14 @@ class FrontendController extends Controller
     // CUSTOM DOMAIN METHODS (for custom domain like xpertlogics.com)
     // ============================================
 
-    public function customDomainIndex(Request $request)
-    {
-        $owner = $request->attributes->get('owner');
-        if (!$owner) {
-            abort(404);
-        }
-        return $this->themePage($owner->code);
+   public function customDomainIndex(Request $request)
+{
+    $owner = $request->attributes->get('owner');
+    if (!$owner) {
+        abort(404);
     }
+    return $this->themePage($owner->code)->with('is_custom_domain', true);
+}
 public function customDomainSearchLocation(Request $request)
 {
     $owner = $request->attributes->get('owner');
@@ -169,49 +169,52 @@ public function customDomainSearchLocation(Request $request)
     // MAIN THEME PAGE (with redirect logic)
     // ============================================
 
-    public function themePage($code = null, Request $request = null)
-    {
-        $user = User::where('code', $code)->firstOrFail();
+   public function themePage($code = null, Request $request = null)
+{
+    $user = User::where('code', $code)->firstOrFail();
 
-        // Check if owner has custom domain enabled and verified
-        $hasCustomDomain = $user->custom_domain_enabled &&
-                           $user->custom_domain_verified &&
-                           $user->custom_domain;
+    // Check if owner has custom domain enabled and verified
+    $hasCustomDomain = $user->custom_domain_enabled &&
+                       $user->custom_domain_verified &&
+                       $user->custom_domain;
 
-        $currentHost = request()->getHost();
-        $serverIp = '13.61.10.174';
+    $currentHost = request()->getHost();
+    $serverIp = '13.61.10.174';
 
-        // If owner has custom domain AND visitor is on preview URL → Redirect to custom domain
-        if ($hasCustomDomain && ($currentHost === $serverIp || $currentHost === '127.0.0.1' || $currentHost === 'localhost' || filter_var($currentHost, FILTER_VALIDATE_IP))) {
-            $protocol = request()->secure() ? 'https' : 'http';
-            $customUrl = $protocol . '://' . $user->custom_domain;
+    // Determine if this is a custom domain request
+    $isCustomDomain = !in_array($currentHost, ['13.61.10.174', '127.0.0.1', 'localhost']);
 
-            if (request()->getQueryString()) {
-                $customUrl .= '?' . request()->getQueryString();
-            }
+    // If owner has custom domain AND visitor is on preview URL → Redirect to custom domain
+    if ($hasCustomDomain && ($currentHost === $serverIp || $currentHost === '127.0.0.1' || $currentHost === 'localhost' || filter_var($currentHost, FILTER_VALIDATE_IP))) {
+        $protocol = request()->secure() ? 'https' : 'http';
+        $customUrl = $protocol . '://' . $user->custom_domain;
 
-            return redirect()->to($customUrl);
+        if (request()->getQueryString()) {
+            $customUrl .= '?' . request()->getQueryString();
         }
 
-        // Your existing theme page code continues here...
-        $settings = settingsById($user->id);
-        $parent_id = $user->id;
-        $allAmenities = Amenity::where('parent_id', $user->id)->get();
-
-        $listingTypes = Property::where('parent_id', $user->id)
-            ->whereIn('listing_type', ['sell', 'rent'])
-            ->select('listing_type')
-            ->distinct()
-            ->pluck('listing_type')
-            ->toArray();
-
-        $propertiesByType = Property::where('parent_id', $user->id)
-            ->whereIn('listing_type', $listingTypes)
-            ->get()
-            ->groupBy('listing_type');
-
-        return view('theme.index', compact('settings', 'parent_id', 'user', 'allAmenities', 'listingTypes', 'propertiesByType'));
+        return redirect()->to($customUrl);
     }
+
+    // Your existing theme page code continues here...
+    $settings = settingsById($user->id);
+    $parent_id = $user->id;
+    $allAmenities = Amenity::where('parent_id', $user->id)->get();
+
+    $listingTypes = Property::where('parent_id', $user->id)
+        ->whereIn('listing_type', ['sell', 'rent'])
+        ->select('listing_type')
+        ->distinct()
+        ->pluck('listing_type')
+        ->toArray();
+
+    $propertiesByType = Property::where('parent_id', $user->id)
+        ->whereIn('listing_type', $listingTypes)
+        ->get()
+        ->groupBy('listing_type');
+
+    return view('theme.index', compact('settings', 'parent_id', 'user', 'allAmenities', 'listingTypes', 'propertiesByType'))->with('is_custom_domain', $isCustomDomain);
+}
 
     // ============================================
     // OTHER METHODS
