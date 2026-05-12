@@ -1,3 +1,7 @@
+@php
+    $isCustomDomain = isset($is_custom_domain) ? $is_custom_domain : (request()->getHost() !== '13.61.10.174' && request()->getHost() !== 'localhost' && request()->getHost() !== '127.0.0.1');
+@endphp
+
 <div class="row">
     @forelse ($properties as $property)
         <div class="col-sm-6 col-xl-3">
@@ -10,19 +14,26 @@
                         @php $thumbnail= 'default.jpg'; @endphp
                     @endif
 
+                    @php
+                        // Use different route for custom domain vs preview URL
+                        if ($isCustomDomain) {
+                            $detailUrl = route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]);
+                        } else {
+                            $detailUrl = route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]);
+                        }
+                    @endphp
 
-                    <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">
+                    <a href="{{ $detailUrl }}">
                         <img class="location-img"
                             src="{{ asset(Storage::url('upload/property/thumbnail/' . $thumbnail)) }}" alt="image">
                     </a>
                 </div>
 
-
                 <div class="list-content">
                     <p class="list-text body-color fz16 mb-1"><span class="badge bg-light-secondary">
                             {{ \App\Models\Property::types()[$property->type] }}</span></p>
                     <h5 class="list-title"><a
-                            href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">{{ ucfirst($property->name) }}</a>
+                            href="{{ $detailUrl }}">{{ ucfirst($property->name) }}</a>
                     </h5>
                     <p class="mb-0 body-color">
                         <span class="fz12 ms-1">
