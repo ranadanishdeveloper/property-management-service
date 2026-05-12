@@ -40,6 +40,14 @@ public function customDomainSearchLocation(Request $request)
     }
     return $this->searchLocation($request, $owner->code);
 }
+public function customDomainSearchPackage(Request $request)
+{
+    $owner = $request->attributes->get('owner');
+    if (!$owner) {
+        abort(404);
+    }
+    return $this->searchpackage($request, $owner->code);
+}
     public function customDomainProperties(Request $request)
     {
         $owner = $request->attributes->get('owner');

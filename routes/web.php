@@ -44,33 +44,31 @@ use App\Http\Controllers\ReportController;
 |--------------------------------------------------------------------------
 */
 
+// ============================================
+// CUSTOM DOMAIN ROUTES (for owner's custom domain like xpertlogics.com)
+// ============================================
+
 $host = request()->getHost();
-
-// Remove www
 $host = str_replace('www.', '', $host);
-
-// Custom domains (like xpertlogics.com) - ONLY FRONTEND ROUTES
 $isCustomDomain = !in_array($host, ['13.61.10.174', 'localhost', '127.0.0.1']);
 
 if ($isCustomDomain) {
     Route::group(['middleware' => ['check.custom.domain']], function () {
-        // ONLY frontend routes
+        // Frontend routes
         Route::get('/', [FrontendController::class, 'customDomainIndex'])->name('custom.domain.home');
         Route::get('/properties', [FrontendController::class, 'customDomainProperties'])->name('custom.domain.properties');
         Route::get('/property/{id}', [FrontendController::class, 'customDomainPropertyDetail'])->name('custom.domain.property.detail');
         Route::get('/blog', [FrontendController::class, 'customDomainBlog'])->name('custom.domain.blog');
         Route::get('/blog/{slug}', [FrontendController::class, 'customDomainBlogDetail'])->name('custom.domain.blog.detail');
         Route::get('/contact', [FrontendController::class, 'customDomainContact'])->name('custom.domain.contact');
-        Route::post('/contact-us', [ContactController::class, 'customDomainContactStore'])->name('custom.domain.contact.store');
+        Route::post('/contact-us', [ContactController::class, 'customDomainContactStore'])->name('contact-us');
         Route::get('/page/{slug}', [PageController::class, 'customDomainPage'])->name('custom.domain.page');
+        Route::get('/search/location', [FrontendController::class, 'customDomainSearchLocation'])->name('search.location');
+        Route::get('/search/filter', [FrontendController::class, 'customDomainSearch'])->name('search.filter');
+        Route::get('/search/package', [FrontendController::class, 'customDomainSearchPackage'])->name('search.package');
+    });
 
-         Route::get('/search/location', [FrontendController::class, 'customDomainSearchLocation'])->name('search.location');
-         });
-
-
-
-
-    // For ANY other route on custom domain - return 404
+    // Block all admin routes on custom domain
     Route::any('/{any}', function () {
         abort(404);
     })->where('any', '.*');
