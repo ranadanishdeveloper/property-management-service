@@ -44,25 +44,35 @@ use App\Http\Controllers\ReportController;
 |--------------------------------------------------------------------------
 */
 
-// ============================================
-// CUSTOM DOMAIN ROUTES - MUST BE AT THE VERY TOP
-// ============================================
-Route::group(['middleware' => ['check.custom.domain']], function () {
-    Route::get('/', [FrontendController::class, 'customDomainIndex'])->name('custom.domain.home');
-    Route::get('/properties', [FrontendController::class, 'customDomainProperties'])->name('custom.domain.properties');
-    Route::get('/property/{id}', [FrontendController::class, 'customDomainPropertyDetail'])->name('custom.domain.property.detail');
-    Route::get('/blog', [FrontendController::class, 'customDomainBlog'])->name('custom.domain.blog');
-    Route::get('/blog/{slug}', [FrontendController::class, 'customDomainBlogDetail'])->name('custom.domain.blog.detail');
-    Route::get('/contact', [FrontendController::class, 'customDomainContact'])->name('custom.domain.contact');
-    Route::post('/contact-us', [ContactController::class, 'customDomainContactStore'])->name('custom.domain.contact.store');
-    Route::get('/page/{slug}', [PageController::class, 'customDomainPage'])->name('custom.domain.page');
-});
+$host = request()->getHost();
 
-// ============================================
-// MAIN APPLICATION ROUTES
-// ============================================
-Route::group(['middleware' => ['web']], function () {
+// Remove www
+$host = str_replace('www.', '', $host);
 
+// Custom domains (like xpertlogics.com) - ONLY FRONTEND ROUTES
+$isCustomDomain = !in_array($host, ['13.61.10.174', 'localhost', '127.0.0.1']);
+
+if ($isCustomDomain) {
+    Route::group(['middleware' => ['check.custom.domain']], function () {
+        // ONLY frontend routes - NO admin, NO dashboard, NO login
+        Route::get('/', [FrontendController::class, 'customDomainIndex'])->name('custom.domain.home');
+        Route::get('/properties', [FrontendController::class, 'customDomainProperties'])->name('custom.domain.properties');
+        Route::get('/property/{id}', [FrontendController::class, 'customDomainPropertyDetail'])->name('custom.domain.property.detail');
+        Route::get('/blog', [FrontendController::class, 'customDomainBlog'])->name('custom.domain.blog');
+        Route::get('/blog/{slug}', [FrontendController::class, 'customDomainBlogDetail'])->name('custom.domain.blog.detail');
+        Route::get('/contact', [FrontendController::class, 'customDomainContact'])->name('custom.domain.contact');
+        Route::post('/contact-us', [ContactController::class, 'customDomainContactStore'])->name('custom.domain.contact.store');
+        Route::get('/page/{slug}', [PageController::class, 'customDomainPage'])->name('custom.domain.page');
+    });
+
+    // For ANY other route on custom domain - return 404
+    Route::any('/{any}', function () {
+        abort(404);
+    })->where('any', '.*');
+}
+
+// MAIN DOMAIN (13.61.10.174) - ALL ADMIN ROUTES
+else {
     require __DIR__ . '/auth.php';
 
     Route::get('/', [HomeController::class, 'index'])->middleware(['XSS']);
@@ -270,5 +280,4 @@ Route::group(['middleware' => ['web']], function () {
 
     // Impersonate
     Route::impersonate();
-});
-
+}

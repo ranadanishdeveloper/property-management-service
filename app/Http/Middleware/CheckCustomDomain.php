@@ -3,47 +3,38 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use App\Models\User;
 
 class CheckCustomDomain
 {
-    public function handle(Request $request, Closure $next)
+    public function handle($request, Closure $next)
     {
         $host = $request->getHost();
 
         // Remove www
         $host = str_replace('www.', '', $host);
 
-        // Main system domains
-        $mainDomains = [
-            '13.61.10.174',
-            'localhost',
-            '127.0.0.1',
+        // Main system IP admin domain
+        $mainDomains = ['13.61.10.174', 'localhost', '127.0.0.1'];
 
-        ];
-
-        // If main system domain
+        // If main IP, skip custom domain handling
         if (in_array($host, $mainDomains)) {
             return $next($request);
         }
 
-        // Find owner
-        $user = User::where('custom_domain', $host)
-            ->where('custom_domain_enabled', 1)
-            ->where('custom_domain_verified', 1)
-            ->first();
+        // Find owner by custom domain
+        $owner = User::where('custom_domain', $host)
+                     ->where('custom_domain_enabled', 1)
+                     ->where('custom_domain_verified', 1)
+                     ->first();
 
-        // Domain not found
-        if (!$user) {
-            abort(404, 'Domain not connected');
+        if ($owner) {
+            $request->attributes->set('owner', $owner);
+            $request->attributes->set('owner_code', $owner->code);
+            return $next($request);
         }
 
-        // Store tenant globally
-        app()->instance('tenant', $user);
-
-        view()->share('tenant', $user);
-
-        return $next($request);
+        // No owner found
+        abort(404, 'Website not found for: ' . $host);
     }
 }
