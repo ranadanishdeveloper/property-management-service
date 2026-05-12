@@ -14,17 +14,19 @@
             ? json_decode($Section_3->content_value, true)
             : [];
 
-        $isCustomDomain = isset($is_custom_domain) ? $is_custom_domain : (request()->getHost() !== '13.61.10.174' && request()->getHost() !== 'localhost' && request()->getHost() !== '127.0.0.1');
+        $isCustomDomain = isset($is_custom_domain)
+            ? $is_custom_domain
+            : request()->getHost() !== '13.61.10.174' &&
+                request()->getHost() !== 'localhost' &&
+                request()->getHost() !== '127.0.0.1';
 
-        if ($isCustomDomain) {
-            $searchRoute = route('search.filter');
-            $getStatesRoute = route('get-states');
-            $getCitiesRoute = route('get-cities');
-        } else {
-            $searchRoute = route('search.filter', ['code' => $user->code]);
-            $getStatesRoute = route('get-states', $user->code);
-            $getCitiesRoute = route('get-cities', $user->code);
-        }
+       if ($isCustomDomain) {
+    $getStatesRoute = route('get-states');
+    $getCitiesRoute = route('get-cities');
+} else {
+    $getStatesRoute = route('get-states', $user->code);
+    $getCitiesRoute = route('get-cities', $user->code);
+}
     @endphp
     @if (empty($Section_3_content_value['section_enabled']) || $Section_3_content_value['section_enabled'] == 'active')
         <section class="breadcumb-section pt-0">
@@ -42,7 +44,11 @@
                                 <h2 class="text-dark">{{ $Section_3_content_value['sec3_title'] }}</h2>
                                 <p class="text mb30 text-dark">{{ $Section_3_content_value['sec3_sub_title'] }}</p>
 
-                                {{ Form::open(['route' => [$searchRoute], 'method' => 'GET', 'id' => 'package_filter']) }}
+                                @if ($isCustomDomain)
+                                    {{ Form::open(['route' => 'search.filter', 'method' => 'GET', 'id' => 'package_filter']) }}
+                                @else
+                                    {{ Form::open(['route' => ['search.filter', 'code' => $user->code], 'method' => 'GET', 'id' => 'package_filter']) }}
+                                @endif
                                 <div class="advance-search-tab bgc-white p10 bdrs4">
                                     <div class="row g-2 align-items-end">
                                         {{-- Country Dropdown --}}
@@ -88,8 +94,9 @@
 
                                         <div class="col-md-1">
                                             <label class="form-label d-block">&nbsp;</label>
-                                            <a href="{{ $searchRoute }}"
-                                                class="ud-btn btn-thm3 w-100 d-flex align-items-center justify-content-center" id="reset_button">
+                                            <a href="{{ $isCustomDomain ? route('search.filter') : route('search.filter', ['code' => $user->code]) }}"
+                                                class="ud-btn btn-thm3 w-100 d-flex align-items-center justify-content-center"
+                                                id="reset_button">
                                                 <i class="fas fa-rotate-left me-1"></i> {{ __('Reset') }}
                                             </a>
                                         </div>
@@ -157,11 +164,14 @@
                 $.ajax({
                     url: "{{ $getStatesRoute }}",
                     type: 'GET',
-                    data: { country: country },
+                    data: {
+                        country: country
+                    },
                     success: function(res) {
                         $('#state').empty().append('<option value="">Select State</option>');
                         $.each(res, function(index, value) {
-                            $('#state').append('<option value="' + value + '">' + value + '</option>');
+                            $('#state').append('<option value="' + value + '">' +
+                                value + '</option>');
                         });
                     },
                     error: function() {
@@ -178,11 +188,14 @@
                 $.ajax({
                     url: "{{ $getCitiesRoute }}",
                     type: 'GET',
-                    data: { state: state },
+                    data: {
+                        state: state
+                    },
                     success: function(res) {
                         $('#city').empty().append('<option value="">Select City</option>');
                         $.each(res, function(index, value) {
-                            $('#city').append('<option value="' + value + '">' + value + '</option>');
+                            $('#city').append('<option value="' + value + '">' + value +
+                                '</option>');
                         });
                     },
                     error: function() {
@@ -198,7 +211,8 @@
                     url: url,
                     type: 'GET',
                     beforeSend: function() {
-                        $('#package-wrapper').html('<div class="text-center py-5">Loading...</div>');
+                        $('#package-wrapper').html(
+                            '<div class="text-center py-5">Loading...</div>');
                     },
                     success: function(data) {
                         $('#package-wrapper').html(data);
