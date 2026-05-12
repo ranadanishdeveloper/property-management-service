@@ -78,14 +78,14 @@ public function customDomainGetCities(Request $request)
 
     return response()->json($cities);
 }
-    public function customDomainProperties(Request $request)
-    {
-        $owner = $request->attributes->get('owner');
-        if (!$owner) {
-            abort(404);
-        }
-        return $this->propertyPage($request, $owner->code);
+   public function customDomainProperties(Request $request)
+{
+    $owner = $request->attributes->get('owner');
+    if (!$owner) {
+        abort(404);
     }
+    return $this->propertyPage($request, $owner->code);
+}
 
     public function customDomainPropertyDetail(Request $request, $id)
     {
@@ -419,55 +419,58 @@ public function customDomainGetCities(Request $request)
         return view('theme.blog-detail', compact('blog', 'settings', 'user'));
     }
 
-    public function propertyPage(Request $request, $code)
-    {
-        $user = User::where('code', $code)->firstOrFail();
-        $settings = settingsById($user->id);
+   public function propertyPage(Request $request, $code)
+{
+    $user = User::where('code', $code)->firstOrFail();
+    $settings = settingsById($user->id);
 
-        $listingTypes = Property::where('parent_id', $user->id)
-            ->whereIn('listing_type', ['sell', 'rent'])
-            ->select('listing_type')
-            ->distinct()
-            ->pluck('listing_type')
-            ->toArray();
+    // Check if this is a custom domain request
+    $isCustomDomain = !in_array(request()->getHost(), ['13.61.10.174', 'localhost', '127.0.0.1']);
 
-        $propertyType = Property::where('parent_id', $user->id)
-            ->whereIn('listing_type', $listingTypes)
-            ->get()
-            ->groupBy('listing_type');
+    $listingTypes = Property::where('parent_id', $user->id)
+        ->whereIn('listing_type', ['sell', 'rent'])
+        ->select('listing_type')
+        ->distinct()
+        ->pluck('listing_type')
+        ->toArray();
 
-        $properties = Property::where('parent_id', $user->id)
-            ->latest()
-            ->paginate(12);
+    $propertyType = Property::where('parent_id', $user->id)
+        ->whereIn('listing_type', $listingTypes)
+        ->get()
+        ->groupBy('listing_type');
 
-        $noPropertiesMessage = $properties->isEmpty()
-            ? 'No properties available with the selected filters.'
-            : '';
+    $properties = Property::where('parent_id', $user->id)
+        ->latest()
+        ->paginate(12);
 
-        $countries = Property::where('parent_id', $user->id)
-            ->select('country')
-            ->distinct()
-            ->orderBy('country')
-            ->pluck('country');
+    $noPropertiesMessage = $properties->isEmpty()
+        ? 'No properties available with the selected filters.'
+        : '';
 
-        $states = Property::where('parent_id', $user->id)
-            ->select('state')
-            ->distinct()
-            ->orderBy('state')
-            ->pluck('state');
+    $countries = Property::where('parent_id', $user->id)
+        ->select('country')
+        ->distinct()
+        ->orderBy('country')
+        ->pluck('country');
 
-        $cities = Property::where('parent_id', $user->id)
-            ->select('city')
-            ->distinct()
-            ->orderBy('city')
-            ->pluck('city');
+    $states = Property::where('parent_id', $user->id)
+        ->select('state')
+        ->distinct()
+        ->orderBy('state')
+        ->pluck('state');
 
-        if ($request->ajax()) {
-            return view('theme.propertybox', compact('properties', 'user', 'noPropertiesMessage', 'settings', 'propertyType', 'countries', 'states', 'cities'))->render();
-        }
+    $cities = Property::where('parent_id', $user->id)
+        ->select('city')
+        ->distinct()
+        ->orderBy('city')
+        ->pluck('city');
 
-        return view('theme.property', compact('properties', 'settings', 'user', 'propertyType', 'noPropertiesMessage', 'countries', 'states', 'cities'));
+    if ($request->ajax()) {
+        return view('theme.propertybox', compact('properties', 'user', 'noPropertiesMessage', 'settings', 'propertyType', 'countries', 'states', 'cities'))->with('is_custom_domain', $isCustomDomain);
     }
+
+    return view('theme.property', compact('properties', 'settings', 'user', 'propertyType', 'noPropertiesMessage', 'countries', 'states', 'cities'))->with('is_custom_domain', $isCustomDomain);
+}
 
     public function detailPage($code, $id)
     {
