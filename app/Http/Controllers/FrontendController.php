@@ -48,7 +48,72 @@ public function customDomainSearchPackage(Request $request)
     }
     return $this->searchpackage($request, $owner->code);
 }
+public function searchpackage(Request $request, $code)
+{
+    $user = User::where('code', $code)->firstOrFail();
+    $settings = settingsById($user->id);
 
+    $query = Property::where('parent_id', $user->id);
+
+    // Filter by search query if provided
+    if ($request->filled('query')) {
+        $query->where('name', 'LIKE', '%' . $request->query . '%')
+              ->orWhere('address', 'LIKE', '%' . $request->query . '%')
+              ->orWhere('description', 'LIKE', '%' . $request->query . '%');
+    }
+
+    // Filter by listing type (sell/rent)
+    if ($request->filled('listing_type')) {
+        $query->where('listing_type', $request->listing_type);
+    }
+
+    // Filter by property type
+    if ($request->filled('type')) {
+        $query->where('type', $request->type);
+    }
+
+    // Filter by price range
+    if ($request->filled('min_price')) {
+        $query->where('price', '>=', $request->min_price);
+    }
+    if ($request->filled('max_price')) {
+        $query->where('price', '<=', $request->max_price);
+    }
+
+    // Filter by bedrooms
+    if ($request->filled('bedrooms')) {
+        $query->whereHas('units', function($q) use ($request) {
+            $q->where('bedroom', '>=', $request->bedrooms);
+        });
+    }
+
+    // Filter by bathrooms
+    if ($request->filled('bathrooms')) {
+        $query->whereHas('units', function($q) use ($request) {
+            $q->where('baths', '>=', $request->bathrooms);
+        });
+    }
+
+    $properties = $query->paginate(12);
+
+    $noPropertiesMessage = $properties->isEmpty()
+        ? 'No properties available with the selected filters.'
+        : '';
+
+    if ($request->ajax()) {
+        return view('theme.propertybox', compact('properties', 'user', 'settings', 'noPropertiesMessage'))->render();
+    }
+
+    return view('theme.property', compact('properties', 'user', 'settings', 'noPropertiesMessage'));
+}
+public function customDomainSearch(Request $request)
+{
+    $owner = $request->attributes->get('owner');
+    if (!$owner) {
+        abort(404);
+    }
+    return $this->search($request, $owner->code);
+}
 public function customDomainGetStates(Request $request)
 {
     $owner = $request->attributes->get('owner');
