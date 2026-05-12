@@ -20,52 +20,67 @@ use Illuminate\Support\Facades\Crypt;
 class FrontendController extends Controller
 {
 
-    private function getTenant()
-    {
-        return app('tenant');
-    }
+    // ============================================
+    // CUSTOM DOMAIN METHODS (for custom domain like xpertlogics.com)
+    // ============================================
 
-    public function customDomainIndex()
+    public function customDomainIndex(Request $request)
     {
-        $tenant = $this->getTenant();
-
-        return $this->themePage($tenant->code);
+        $owner = $request->attributes->get('owner');
+        if (!$owner) {
+            abort(404);
+        }
+        return $this->themePage($owner->code);
     }
 
     public function customDomainProperties(Request $request)
     {
-        $tenant = $this->getTenant();
-
-        return $this->propertyPage($request, $tenant->code);
+        $owner = $request->attributes->get('owner');
+        if (!$owner) {
+            abort(404);
+        }
+        return $this->propertyPage($request, $owner->code);
     }
 
-    public function customDomainPropertyDetail($id)
+    public function customDomainPropertyDetail(Request $request, $id)
     {
-        $tenant = $this->getTenant();
-
-        return $this->detailPage($tenant->code, $id);
+        $owner = $request->attributes->get('owner');
+        if (!$owner) {
+            abort(404);
+        }
+        return $this->detailPage($owner->code, $id);
     }
 
     public function customDomainBlog(Request $request)
     {
-        $tenant = $this->getTenant();
-
-        return $this->blogPage($request, $tenant->code);
+        $owner = $request->attributes->get('owner');
+        if (!$owner) {
+            abort(404);
+        }
+        return $this->blogPage($request, $owner->code);
     }
 
-    public function customDomainBlogDetail($slug)
+    public function customDomainBlogDetail(Request $request, $slug)
     {
-        $tenant = $this->getTenant();
-
-        return $this->blogDetailPage($tenant->code, $slug);
+        $owner = $request->attributes->get('owner');
+        if (!$owner) {
+            abort(404);
+        }
+        return $this->blogDetailPage($owner->code, $slug);
     }
 
     public function customDomainContact(Request $request)
     {
-        $tenant = $this->getTenant();
-
-        return $this->contactPage($request, $tenant->code);
+        $owner = $request->attributes->get('owner');
+        if (!$owner) {
+            abort(404);
+        }
+        return $this->contactPage($request, $owner->code);
     }
+
+    // ============================================
+    // SUBDOMAIN METHODS (keep for compatibility)
+    // ============================================
 
     public function subdomainIndex(Request $request)
     {
@@ -142,50 +157,59 @@ class FrontendController extends Controller
 
         return view('frontend.contact', compact('owner'));
     }
-public function themePage($code = null, Request $request = null)
-{
-    $user = User::where('code', $code)->firstOrFail();
 
-    // Check if owner has custom domain enabled and verified
-    $hasCustomDomain = $user->custom_domain_enabled &&
-                       $user->custom_domain_verified &&
-                       $user->custom_domain;
+    // ============================================
+    // MAIN THEME PAGE (with redirect logic)
+    // ============================================
 
-    $currentHost = request()->getHost();
-    // $serverIp = '13.61.10.174';
-    $serverIp = '127.0.0.1';
+    public function themePage($code = null, Request $request = null)
+    {
+        $user = User::where('code', $code)->firstOrFail();
 
-    // If owner has custom domain AND visitor is on preview URL → Redirect to custom domain
-    if ($hasCustomDomain && ($currentHost === $serverIp || $currentHost === '127.0.0.1' || $currentHost === 'localhost' || filter_var($currentHost, FILTER_VALIDATE_IP))) {
-        $protocol = request()->secure() ? 'https' : 'http';
-        $customUrl = $protocol . '://' . $user->custom_domain;
+        // Check if owner has custom domain enabled and verified
+        $hasCustomDomain = $user->custom_domain_enabled &&
+                           $user->custom_domain_verified &&
+                           $user->custom_domain;
 
-        if (request()->getQueryString()) {
-            $customUrl .= '?' . request()->getQueryString();
+        $currentHost = request()->getHost();
+        $serverIp = '13.61.10.174';
+
+        // If owner has custom domain AND visitor is on preview URL → Redirect to custom domain
+        if ($hasCustomDomain && ($currentHost === $serverIp || $currentHost === '127.0.0.1' || $currentHost === 'localhost' || filter_var($currentHost, FILTER_VALIDATE_IP))) {
+            $protocol = request()->secure() ? 'https' : 'http';
+            $customUrl = $protocol . '://' . $user->custom_domain;
+
+            if (request()->getQueryString()) {
+                $customUrl .= '?' . request()->getQueryString();
+            }
+
+            return redirect()->to($customUrl);
         }
 
-        return redirect()->to($customUrl);
+        // Your existing theme page code continues here...
+        $settings = settingsById($user->id);
+        $parent_id = $user->id;
+        $allAmenities = Amenity::where('parent_id', $user->id)->get();
+
+        $listingTypes = Property::where('parent_id', $user->id)
+            ->whereIn('listing_type', ['sell', 'rent'])
+            ->select('listing_type')
+            ->distinct()
+            ->pluck('listing_type')
+            ->toArray();
+
+        $propertiesByType = Property::where('parent_id', $user->id)
+            ->whereIn('listing_type', $listingTypes)
+            ->get()
+            ->groupBy('listing_type');
+
+        return view('theme.index', compact('settings', 'parent_id', 'user', 'allAmenities', 'listingTypes', 'propertiesByType'));
     }
 
-    // Your existing theme page code continues here...
-    $settings = settingsById($user->id);
-    $parent_id = $user->id;
-    $allAmenities = Amenity::where('parent_id', $user->id)->get();
+    // ============================================
+    // OTHER METHODS
+    // ============================================
 
-    $listingTypes = Property::where('parent_id', $user->id)
-        ->whereIn('listing_type', ['sell', 'rent'])
-        ->select('listing_type')
-        ->distinct()
-        ->pluck('listing_type')
-        ->toArray();
-
-    $propertiesByType = Property::where('parent_id', $user->id)
-        ->whereIn('listing_type', $listingTypes)
-        ->get()
-        ->groupBy('listing_type');
-
-    return view('theme.index', compact('settings', 'parent_id', 'user', 'allAmenities', 'listingTypes', 'propertiesByType'));
-}
     public function searchLocation(Request $request, $code)
     {
         $locationSlug = $request->input('location');
@@ -196,7 +220,6 @@ public function themePage($code = null, Request $request = null)
 
         return redirect()->route('location.home', ['code' => $code]) . '?location=' . $locationSlug;
     }
-
 
     public function index()
     {
@@ -261,30 +284,6 @@ public function themePage($code = null, Request $request = null)
             }
         }
 
-        /* section 2 */
-        // if ($request->tab == 'profile_tab_3') {
-        //     for ($i = 1; $i <= 4; $i++) {
-        //         if (!empty($request->content_value['box' . $i . '_number_image'])) {
-        //             $box_image_path = $request->content_value['box' . $i . '_number_image'];
-        //             $filenameWithExt = $box_image_path->getClientOriginalName();
-        //             $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-        //             $extension = $box_image_path->getClientOriginalExtension();
-        //             $fileNameToStore = $filename . '_box_image_path_' . $i . date('Ymdhisa') . '.' . $extension;
-
-        //             $dir = storage_path('upload/fronthomepage/');
-        //             if (!file_exists($dir)) {
-        //                 mkdir($dir, 0777, true);
-        //             }
-
-        //             $box_image_path->storeAs('upload/fronthomepage/', $fileNameToStore);
-        //             $content_value['box_image_' . $i . '_path'] = 'upload/fronthomepage/' . $fileNameToStore;
-        //         } else {
-        //             $content_value['box_image_' . $i . '_path'] = !empty($old_content_value['box_image_' . $i . '_path']) ? $old_content_value['box_image_' . $i . '_path'] : '';
-        //         }
-        //     }
-        // }
-
-
         /* section 4 */
         if (!empty($request->content_value['about_image'])) {
             $about_image = $request->content_value['about_image'];
@@ -303,7 +302,6 @@ public function themePage($code = null, Request $request = null)
         } else {
             $content_value['about_image_path'] = !empty($old_content_value['about_image_path']) ? $old_content_value['about_image_path'] : '';
         }
-
 
         /* section 6 */
         if (!empty($request->content_value['banner_image2'])) {
@@ -345,12 +343,10 @@ public function themePage($code = null, Request $request = null)
             }
         }
 
-
         $homePage->content_value = $content_value;
         $homePage->save();
         return redirect()->back()->with('tab', $request->tab)->with('success', __('Home Page Content Updated Successfully.'));
     }
-
 
     public function blogPage(Request $request, $code)
     {
@@ -364,27 +360,16 @@ public function themePage($code = null, Request $request = null)
         return view('theme.blog', compact('blogs', 'settings', 'user'));
     }
 
-    // public function blogDetailPage($code, $blog)
-    // {
-    //     $user = User::where('code', $code)->first();
-    //     $settings = settingsById($user->id);
-    //     $blog = Blog::find($blog);
-    //     return view('theme.blog-detail', compact('blog', 'settings', 'user'));
-    // }
-
     public function blogDetailPage($code, $slug)
     {
         $user = User::where('code', $code)->firstOrFail();
         $settings = settingsById($user->id);
         $blog = Blog::where('slug', $slug)
-        ->where('parent_id', $user->id)
-        ->firstOrFail();
+            ->where('parent_id', $user->id)
+            ->firstOrFail();
 
         return view('theme.blog-detail', compact('blog', 'settings', 'user'));
     }
-
-
-
 
     public function propertyPage(Request $request, $code)
     {
@@ -404,14 +389,12 @@ public function themePage($code = null, Request $request = null)
             ->groupBy('listing_type');
 
         $properties = Property::where('parent_id', $user->id)
-            // ->whereIn('listing_type', $listingTypes)
             ->latest()
             ->paginate(12);
 
         $noPropertiesMessage = $properties->isEmpty()
             ? 'No properties available with the selected filters.'
             : '';
-
 
         $countries = Property::where('parent_id', $user->id)
             ->select('country')
@@ -431,7 +414,6 @@ public function themePage($code = null, Request $request = null)
             ->orderBy('city')
             ->pluck('city');
 
-
         if ($request->ajax()) {
             return view('theme.propertybox', compact('properties', 'user', 'noPropertiesMessage', 'settings', 'propertyType', 'countries', 'states', 'cities'))->render();
         }
@@ -439,40 +421,32 @@ public function themePage($code = null, Request $request = null)
         return view('theme.property', compact('properties', 'settings', 'user', 'propertyType', 'noPropertiesMessage', 'countries', 'states', 'cities'));
     }
 
-
-
-
     public function detailPage($code, $id)
     {
-
         $ids = Crypt::decrypt($id);
         $user = User::where('code', $code)->firstOrFail();
-
-        $ids = Crypt::decrypt($id);
 
         $property = Property::where('id', $ids)
             ->where('parent_id', $user->id)
             ->firstOrFail();
+
         $units = PropertyUnit::where('property_id', $property->id)->orderBy('id', 'desc')->get();
         $settings = settingsById($user->id);
 
-
         $selectedAmenities = collect();
         if (!empty($property->amenities_id)) {
-            $ids = array_filter(explode(',', $property->amenities_id));
-            $selectedAmenities = Amenity::whereIn('id', $ids)->get();
+            $amenityIds = array_filter(explode(',', $property->amenities_id));
+            $selectedAmenities = Amenity::whereIn('id', $amenityIds)->get();
         }
 
         $selectedAdvantages = collect();
         if (!empty($property->advantage_id)) {
-            $ids = array_filter(explode(',', $property->advantage_id));
-            $selectedAdvantages = Advantage::whereIn('id', $ids)->get();
+            $advantageIds = array_filter(explode(',', $property->advantage_id));
+            $selectedAdvantages = Advantage::whereIn('id', $advantageIds)->get();
         }
-
 
         return view('theme.detail', compact('code', 'property', 'user', 'settings', 'selectedAmenities', 'selectedAdvantages', 'units'));
     }
-
 
     public function contactPage(Request $request, $code)
     {
@@ -483,9 +457,18 @@ public function themePage($code = null, Request $request = null)
 
     public function getStates(Request $request)
     {
-        $tenant = app('tenant');
+        // For AJAX requests, we need to get the owner from the request
+        $host = $request->getHost();
+        $owner = User::where('custom_domain', $host)
+                     ->where('custom_domain_enabled', 1)
+                     ->where('custom_domain_verified', 1)
+                     ->first();
 
-        $states = Property::where('parent_id', $tenant->id)
+        if (!$owner) {
+            return response()->json([]);
+        }
+
+        $states = Property::where('parent_id', $owner->id)
             ->where('country', $request->country)
             ->distinct()
             ->pluck('state');
@@ -495,9 +478,17 @@ public function themePage($code = null, Request $request = null)
 
     public function getCities(Request $request)
     {
-        $tenant = app('tenant');
+        $host = $request->getHost();
+        $owner = User::where('custom_domain', $host)
+                     ->where('custom_domain_enabled', 1)
+                     ->where('custom_domain_verified', 1)
+                     ->first();
 
-        $cities = Property::where('parent_id', $tenant->id)
+        if (!$owner) {
+            return response()->json([]);
+        }
+
+        $cities = Property::where('parent_id', $owner->id)
             ->where('state', $request->state)
             ->distinct()
             ->pluck('city');
@@ -536,7 +527,6 @@ public function themePage($code = null, Request $request = null)
                 'settings' => $settings,
                 'user' => $user,
                 'noPropertiesMessage' => $noPropertiesMessage,
-
             ])->render();
         }
 
