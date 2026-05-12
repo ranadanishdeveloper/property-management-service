@@ -32,7 +32,14 @@ class FrontendController extends Controller
         }
         return $this->themePage($owner->code);
     }
-
+public function customDomainSearchLocation(Request $request)
+{
+    $owner = $request->attributes->get('owner');
+    if (!$owner) {
+        abort(404);
+    }
+    return $this->searchLocation($request, $owner->code);
+}
     public function customDomainProperties(Request $request)
     {
         $owner = $request->attributes->get('owner');

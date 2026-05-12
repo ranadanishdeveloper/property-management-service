@@ -54,7 +54,7 @@ $isCustomDomain = !in_array($host, ['13.61.10.174', 'localhost', '127.0.0.1']);
 
 if ($isCustomDomain) {
     Route::group(['middleware' => ['check.custom.domain']], function () {
-        // ONLY frontend routes - NO admin, NO dashboard, NO login
+        // ONLY frontend routes
         Route::get('/', [FrontendController::class, 'customDomainIndex'])->name('custom.domain.home');
         Route::get('/properties', [FrontendController::class, 'customDomainProperties'])->name('custom.domain.properties');
         Route::get('/property/{id}', [FrontendController::class, 'customDomainPropertyDetail'])->name('custom.domain.property.detail');
@@ -63,7 +63,11 @@ if ($isCustomDomain) {
         Route::get('/contact', [FrontendController::class, 'customDomainContact'])->name('custom.domain.contact');
         Route::post('/contact-us', [ContactController::class, 'customDomainContactStore'])->name('custom.domain.contact.store');
         Route::get('/page/{slug}', [PageController::class, 'customDomainPage'])->name('custom.domain.page');
+
+        // ADD THIS MISSING ROUTE
+        Route::get('/search/location', [FrontendController::class, 'customDomainSearchLocation'])->name('search.location');
     });
+}
 
     // For ANY other route on custom domain - return 404
     Route::any('/{any}', function () {
