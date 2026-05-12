@@ -19,7 +19,7 @@ class BlockTenantFromBackend
     {
         $host = str_replace('www.', '', $request->getHost());
 
-        $adminDomains = ['127.0.0.1', 'localhost'];
+       $adminDomains = ['127.0.0.1', 'localhost', '13.61.10.174'];
 
         if (!in_array($host, $adminDomains)) {
             if (in_array($request->path(), [
