@@ -590,33 +590,39 @@ if (!function_exists('settingsById')) {
 if (!function_exists('defaultTenantCreate')) {
     function defaultTenantCreate($id)
     {
-        // Default Tenant role
+        // Default Tenant role - Use firstOrCreate to avoid duplicate
         $tenantRoleData = [
             'name' => 'tenant',
             'parent_id' => $id,
         ];
-        $systemTenantRole = Role::create($tenantRoleData);
-        // Default Tenant permissions
-        $systemTenantPermissions = [
-            ['name' => 'manage invoice'],
-            ['name' => 'show invoice'],
-            ['name' => 'manage contact'],
-            ['name' => 'create contact'],
-            ['name' => 'edit contact'],
-            ['name' => 'delete contact'],
-            ['name' => 'manage note'],
-            ['name' => 'create invoice payment'],
-            ['name' => 'manage maintenance request'],
-            ['name' => 'create maintenance request'],
-            ['name' => 'edit maintenance request'],
-            ['name' => 'delete maintenance request'],
-            ['name' => 'show maintenance request'],
-            ['name' => 'manage account settings'],
-            ['name' => 'manage password settings'],
-            ['name' => 'manage 2FA settings'],
+        $systemTenantRole = Role::firstOrCreate(
+            ['name' => 'tenant', 'parent_id' => $id],
+            $tenantRoleData
+        );
 
-        ];
-        $systemTenantRole->givePermissionTo($systemTenantPermissions);
+        // Only assign permissions if role was just created
+        if ($systemTenantRole->wasRecentlyCreated) {
+            $systemTenantPermissions = [
+                ['name' => 'manage invoice'],
+                ['name' => 'show invoice'],
+                ['name' => 'manage contact'],
+                ['name' => 'create contact'],
+                ['name' => 'edit contact'],
+                ['name' => 'delete contact'],
+                ['name' => 'manage note'],
+                ['name' => 'create invoice payment'],
+                ['name' => 'manage maintenance request'],
+                ['name' => 'create maintenance request'],
+                ['name' => 'edit maintenance request'],
+                ['name' => 'delete maintenance request'],
+                ['name' => 'show maintenance request'],
+                ['name' => 'manage account settings'],
+                ['name' => 'manage password settings'],
+                ['name' => 'manage 2FA settings'],
+            ];
+            $systemTenantRole->givePermissionTo($systemTenantPermissions);
+        }
+
         return $systemTenantRole;
     }
 }
@@ -628,21 +634,27 @@ if (!function_exists('defaultMaintainerCreate')) {
             'name' => 'maintainer',
             'parent_id' => $id,
         ];
-        $systemMaintainerRole = Role::create($maintainerRoleData);
-        // Default admin permissions
-        $systemMaintainerPermissions = [
-            ['name' => 'manage maintenance request'],
-            ['name' => 'show maintenance request'],
-            ['name' => 'manage contact'],
-            ['name' => 'create contact'],
-            ['name' => 'edit contact'],
-            ['name' => 'delete contact'],
-            ['name' => 'manage note'],
-            ['name' => 'manage account settings'],
-            ['name' => 'manage password settings'],
-            ['name' => 'manage 2FA settings'],
-        ];
-        $systemMaintainerRole->givePermissionTo($systemMaintainerPermissions);
+        $systemMaintainerRole = Role::firstOrCreate(
+            ['name' => 'maintainer', 'parent_id' => $id],
+            $maintainerRoleData
+        );
+
+        if ($systemMaintainerRole->wasRecentlyCreated) {
+            $systemMaintainerPermissions = [
+                ['name' => 'manage maintenance request'],
+                ['name' => 'show maintenance request'],
+                ['name' => 'manage contact'],
+                ['name' => 'create contact'],
+                ['name' => 'edit contact'],
+                ['name' => 'delete contact'],
+                ['name' => 'manage note'],
+                ['name' => 'manage account settings'],
+                ['name' => 'manage password settings'],
+                ['name' => 'manage 2FA settings'],
+            ];
+            $systemMaintainerRole->givePermissionTo($systemMaintainerPermissions);
+        }
+
         return $systemMaintainerRole;
     }
 }
