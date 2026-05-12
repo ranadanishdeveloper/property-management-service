@@ -1,6 +1,7 @@
 <?php
 
-
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\AdditionalController;
 use App\Http\Controllers\AdvantageController;
 use App\Http\Controllers\AgreementController;
@@ -45,33 +46,46 @@ use App\Http\Controllers\ReportController;
 |--------------------------------------------------------------------------
 */
 
+// ============================================
+// AUTH ROUTES - MUST BE FIRST (WORKS ON ALL DOMAINS)
+// ============================================
+Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+Route::post('/register', [RegisteredUserController::class, 'store']);
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+// ============================================
+// CUSTOM DOMAIN DETECTION
+// ============================================
 $host = request()->getHost();
 
 $adminDomains = [
     '127.0.0.1',
     'localhost',
     '127.0.0.1:8000',
-    '13.61.10.174',  // ← ADD THIS LINE
+    '13.61.10.174',
 ];
 
+// ============================================
+// CUSTOM DOMAIN ROUTES (FRONTEND ONLY)
+// ============================================
 if (!in_array($host, $adminDomains)) {
     Route::middleware(['check.custom.domain'])->group(function () {
-
         Route::get('/', [FrontendController::class, 'customDomainIndex']);
-
         Route::get('/properties', [FrontendController::class, 'customDomainProperties']);
-
         Route::get('/property/{id}', [FrontendController::class, 'customDomainPropertyDetail']);
-
         Route::get('/blog', [FrontendController::class, 'customDomainBlog']);
-
         Route::get('/blog/{slug}', [FrontendController::class, 'customDomainBlogDetail']);
-
         Route::get('/contact', [FrontendController::class, 'customDomainContact']);
-
+        Route::post('/contact-us', [ContactController::class, 'customDomainContactStore']);
+        Route::get('/page/{slug}', [PageController::class, 'customDomainPage']);
     });
 }
 
+// ============================================
+// MAIN ADMIN ROUTES (BACKEND)
+// ============================================
 if (in_array($host, $adminDomains)) {
 
     require __DIR__ . '/auth.php';
