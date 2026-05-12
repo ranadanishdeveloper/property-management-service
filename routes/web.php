@@ -46,18 +46,6 @@ use App\Http\Controllers\ReportController;
 |--------------------------------------------------------------------------
 */
 
-// ============================================
-// AUTH ROUTES - MUST BE FIRST (WORKS ON ALL DOMAINS)
-// ============================================
-Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
-Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-Route::post('/register', [RegisteredUserController::class, 'store']);
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-
-// ============================================
-// CUSTOM DOMAIN DETECTION
-// ============================================
 $host = request()->getHost();
 
 $adminDomains = [
@@ -81,14 +69,24 @@ if (!in_array($host, $adminDomains)) {
         Route::post('/contact-us', [ContactController::class, 'customDomainContactStore']);
         Route::get('/page/{slug}', [PageController::class, 'customDomainPage']);
     });
+
+    // For any other route on custom domain - 404
+    Route::any('/{any}', function () {
+        abort(404);
+    })->where('any', '.*');
 }
 
 // ============================================
-// MAIN ADMIN ROUTES (BACKEND)
+// MAIN ADMIN ROUTES (BACKEND) - IP access only
 // ============================================
 if (in_array($host, $adminDomains)) {
 
-    require __DIR__ . '/auth.php';
+    // AUTH ROUTES
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register', [RegisteredUserController::class, 'store']);
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     Route::get('/', [HomeController::class, 'index'])->middleware(['XSS']);
     Route::get('home', [HomeController::class, 'index'])->name('home')->middleware(['XSS']);
