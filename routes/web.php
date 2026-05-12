@@ -49,6 +49,7 @@ $adminDomains = [
     '127.0.0.1',
     'localhost',
     '127.0.0.1:8000',
+    '13.61.10.174',  // ← ADD THIS LINE
 ];
 
 if (!in_array($host, $adminDomains)) {
