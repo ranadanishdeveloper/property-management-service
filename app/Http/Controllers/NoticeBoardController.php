@@ -26,41 +26,41 @@ class NoticeBoardController extends Controller
     }
 
 
-    public function store(Request $request)
-    {
-        if (\Auth::user()->can('create note')) {
-            $validator = \Validator::make(
-                $request->all(),
-                [
-                    'title' => 'required',
-                    'description' => 'required',
-                ]
-            );
-            if ($validator->fails()) {
-                $messages = $validator->getMessageBag();
-                return redirect()->back()->with('error', $messages->first());
-            }
-
-
-            $note = new NoticeBoard();
-            $note->title = $request->title;
-            $note->description = $request->description;
-            if ($request->hasFile('attachment')) {
-                $uploadResult = handleFileUpload($request->file('attachment'), 'upload/note');
-
-                if ($uploadResult['flag'] == 0) {
-                    return redirect()->back()->with('error', $uploadResult['msg']);
-                }
-                $note->attachment = $uploadResult['filename'];
-            }
-            $note->parent_id = \Auth::user()->id;
-            $note->save();
-
-            return redirect()->back()->with('success', __('Note successfully created.'));
-        } else {
-            return redirect()->back()->with('error', __('Permission denied.'));
+  public function store(Request $request)
+{
+    if (\Auth::user()->can('create note')) {
+        $validator = \Validator::make(
+            $request->all(),
+            [
+                'title' => 'required',
+                'description' => 'nullable|string',
+            ]
+        );
+        if ($validator->fails()) {
+            $messages = $validator->getMessageBag();
+            return redirect()->back()->with('error', $messages->first())->withInput();
         }
+
+        $note = new NoticeBoard();
+        $note->title = $request->title;
+        // FIX: Check both field names
+        $note->description = $request->description ?? $request->note_description ?? '';
+
+        if ($request->hasFile('attachment')) {
+            $uploadResult = handleFileUpload($request->file('attachment'), 'upload/note');
+            if ($uploadResult['flag'] == 0) {
+                return redirect()->back()->with('error', $uploadResult['msg'])->withInput();
+            }
+            $note->attachment = $uploadResult['filename'];
+        }
+        $note->parent_id = \Auth::user()->id;
+        $note->save();
+
+        return redirect()->back()->with('success', __('Note successfully created.'));
+    } else {
+        return redirect()->back()->with('error', __('Permission denied.'));
     }
+}
 
 
     public function show(NoticeBoard $noticeBoard)

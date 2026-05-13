@@ -8,23 +8,25 @@
                 $subscriptionData['subscription']->enabled_openai == 1))
         <div class="text-start">
             <a href="javascript:void(0)" class="btn btn-primary mb-2 aiModal" data-size="lg"
-                data-url="{{ route('generate.template', ['noticeboard']) }}" data-title="{{ __('AI Content Generator') }}">
+                data-url="{{ route('generate.template', ['noticeboard']) }}"
+                data-title="{{ __('AI Content Generator') }}">
                 <span>{{ __('AI Content Generator') }}</span>
             </a>
         </div>
     @endif
     <div class="row">
-        <div class="form-group  col-md-12">
+        <div class="form-group col-md-12">
             {{ Form::label('title', __('Title'), ['class' => 'form-label']) }}
-            {{ Form::text('title', null, ['class' => 'form-control', 'placeholder' => __('Enter note title')]) }}
+            {{ Form::text('title', null, ['class' => 'form-control', 'placeholder' => __('Enter note title'), 'required' => 'required']) }}
         </div>
-        <div class="form-group  col-md-12">
+        <div class="form-group col-md-12">
+            {{ Form::label('description', __('Description'), ['class' => 'form-label']) }}
+            {{ Form::textarea('description', null, ['class' => 'form-control', 'rows' => 5, 'placeholder' => __('Enter description (optional)')]) }}
+        </div>
+        <div class="form-group col-md-12">
             {{ Form::label('attachment', __('Attachment'), ['class' => 'form-label']) }}
             {{ Form::file('attachment', ['class' => 'form-control']) }}
-        </div>
-        <div class="form-group  col-md-12">
-            {{ Form::label('description', __('Description'), ['class' => 'form-label']) }}
-            {{ Form::textarea('note_description', null, ['class' => 'form-control', 'rows' => 5]) }}
+            <small class="text-muted">{{ __('Allowed: jpg, jpeg, png, pdf, doc, docx (Max: 2MB)') }}</small>
         </div>
     </div>
 </div>

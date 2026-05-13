@@ -1456,12 +1456,15 @@ if (!function_exists('fetch_file')) {
                 return \Storage::disk('s3')->url($path . $filename);
             }
             else {
-                // For local storage, use the public URL
-                return asset('storage/' . $path . $filename);
+                // FIX: Remove duplicate 'upload/' from path if present
+                $cleanPath = ltrim($path, '/');
+
+                // Ensure 'storage/' prefix for local files
+                return asset('storage/' . $cleanPath . $filename);
             }
         } catch (\Throwable $th) {
             \Log::error('Fetch file error: ' . $th->getMessage());
-            return asset($path . 'default.png');
+            return asset('storage/upload/default.png');
         }
     }
 }
@@ -1472,12 +1475,11 @@ if (!function_exists('handleFileUpload')) {
         try {
             $uploadPath = trim($uploadPath, '/');
 
+            // FIX: Keep original filename without timestamp
             $originalName = $file->getClientOriginalName();
-            $fileNameOnly = pathinfo($originalName, PATHINFO_FILENAME);
-            $extension = $file->getClientOriginalExtension();
-            $fileName = $fileNameOnly . '_' . time() . '_' . rand(1, 100) . '.' . $extension;
+            $fileName = $originalName; // Use original name directly
 
-            // IMPORTANT: Use 'public' disk to save to storage/app/public/
+            // Save to public disk (storage/app/public/)
             $path = $file->storeAs($uploadPath, $fileName, 'public');
 
             if (!$path) {
@@ -1491,7 +1493,7 @@ if (!function_exists('handleFileUpload')) {
                 'flag' => 1,
                 'msg' => 'Upload successful',
                 'filename' => $fileName,
-                'path' => $path
+                'path' => $uploadPath . '/' . $fileName  // Return simple path for DB
             ];
         } catch (\Exception $e) {
             return [
