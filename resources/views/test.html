@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mochi Heritage | Handmade Leather Chapal - Ladies & Gents</title>
+    <!-- Google Fonts: Rustic & Elegant -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #1a1612;
+            color: #f3ede8;
+            overflow-x: hidden;
+        }
+
+        /* leather texture overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/leather-pattern.png');
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .main-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(20, 17, 14, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(205, 157, 86, 0.3);
+        }
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            font-size: 1.9rem;
+            background: linear-gradient(135deg, #e7bd7c, #c99246);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .nav-link {
+            font-weight: 500;
+            color: #e7ddd2 !important;
+            margin: 0 10px;
+            transition: 0.3s;
+        }
+        .nav-link:hover {
+            color: #e0aa6e !important;
+            transform: translateY(-2px);
+        }
+        .btn-order-nav {
+            background: #b87c3a;
+            border-radius: 40px;
+            padding: 6px 20px;
+            color: #1f1b17;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .btn-order-nav:hover {
+            background: #d89f58;
+            transform: scale(1.02);
+            color: #0a0806;
+        }
+
+        /* Hero Section with Mochi Vibe */
+        .hero {
+            min-height: 100vh;
+            background: radial-gradient(circle at 30% 20%, rgba(30, 24, 20, 0.9), #0f0d0b), url('https://images.pexels.com/photos/5614310/pexels-photo-5614310.jpeg?auto=compress&cs=tinysrgb&w=1600');
+            background-size: cover;
+            background-blend-mode: overlay;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+        .hero-badge {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 4.2rem;
+            font-weight: 900;
+            text-shadow: 4px 4px 12px rgba(0,0,0,0.5);
+            background: linear-gradient(to right, #f7e5cf, #e0a667);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero-sub {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 1.5rem auto;
+            color: #ddd0c0;
+        }
+        .btn-mochi {
+            background: #c68b3c;
+            border: none;
+            padding: 12px 38px;
+            font-weight: 700;
+            border-radius: 50px;
+            transition: 0.3s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        .btn-mochi-outline {
+            border: 1.5px solid #d4a373;
+            background: transparent;
+            padding: 10px 32px;
+            border-radius: 50px;
+            color: #d4a373;
+            font-weight: 600;
+            margin-left: 12px;
+        }
+        .btn-mochi-outline:hover {
+            background: #d4a373;
+            color: #1f1b17;
+        }
+
+        /* Section Heading */
+        .section-head {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.6rem;
+            font-weight: 800;
+            position: relative;
+            display: inline-block;
+        }
+        .section-head:after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(90deg, #c68b3c, #e8bc8a);
+            border-radius: 4px;
+        }
+
+        /* Product Card - Handmade Chapal Original Look */
+        .chapal-card {
+            background: #231f1b;
+            border-radius: 28px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.2,0.9,0.4,1.1);
+            border: 1px solid rgba(200, 140, 70, 0.3);
+            height: 100%;
+        }
+        .chapal-card:hover {
+            transform: translateY(-10px);
+            border-color: #c68946;
+            box-shadow: 0 25px 30px -12px rgba(0,0,0,0.6);
+            background: #2c2621;
+        }
+        .card-img {
+            height: 270px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        .chapal-card:hover .card-img {
+            transform: scale(1.02);
+        }
+        .price-tag {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #e7b46b;
+        }
+        .mochi-badge {
+            background: #3d2c1d;
+            border-radius: 30px;
+            padding: 5px 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        /* Artisan (Mochi) Section */
+        .artisan-section {
+            background: #15110e;
+            border-top: 1px solid #2f271f;
+            border-bottom: 1px solid #2f271f;
+        }
+        .quote-text {
+            font-size: 1.3rem;
+            font-style: italic;
+            border-left: 4px solid #cb8b42;
+            padding-left: 1.5rem;
+        }
+        .icon-feature {
+            font-size: 2.2rem;
+            color: #e0a15c;
+            margin-bottom: 1rem;
+        }
+        /* Testimonial */
+        .testi-card {
+            background: rgba(35, 30, 26, 0.7);
+            backdrop-filter: blur(4px);
+            border-radius: 28px;
+            padding: 1.8rem;
+            transition: 0.3s;
+            border: 1px solid rgba(212, 160, 100, 0.2);
+        }
+        .footer {
+            background: #0e0c09;
+            border-top: 1px solid #332a22;
+        }
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .section-head { font-size: 2rem; }
+            .btn-mochi-outline { margin-left: 0; margin-top: 12px; }
+        }
+    </style>
+</head>
+<body>
+<div class="main-content">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg py-3 px-4 fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-hands" style="color: #d89a4a; margin-right: 8px;"></i>MochiGhar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="background: #9e6f3e33;">
+                <span class="navbar-toggler-icon" style="filter: invert(0.7);"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#chapal-collection">Chapals</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#mochi-story">Mochi's Art</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#testimonials">Stories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                    <li class="nav-item ms-lg-3"><a class="btn-order-nav btn" href="#"><i class="fas fa-cart-shopping me-1"></i> Order Now</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section - Honoring Mochi Craft -->
+    <section id="home" class="hero" style="padding-top: 90px;">
+        <div class="container">
+            <div data-aos="fade-up">
+                <span class="hero-badge mb-3"><i class="fas fa-gem me-2"></i>Hand-stitched by Master Mochi</span>
+                <h1 class="hero-title mt-3">Authentic Leather Chapal<br><span style="font-size: 3rem;">for Ladies & Gentlemen</span></h1>
+                <p class="hero-sub">Every pair is a masterpiece — shaped, dyed, and stitched by traditional mochi artisans using 100% full-grain leather. No machines, only soul.</p>
+                <div>
+                    <a href="#chapal-collection" class="btn btn-mochi btn"><i class="fas fa-moon me-2"></i>Explore Collection</a>
+                    <a href="#mochi-story" class="btn btn-mochi-outline"><i class="fas fa-play-circle me-2"></i>Watch Mochi at Work</a>
+                </div>
+                <div class="row mt-5 justify-content-center gap-3">
+                    <div class="col-auto"><i class="fas fa-check-circle text-warning"></i> Hand-cut & Stitched</div>
+                    <div class="col-auto"><i class="fas fa-check-circle text-warning"></i> Traditional 'Mochi' Lasting</div>
+                    <div class="col-auto"><i class="fas fa-check-circle text-warning"></i> Natural Dyes</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Original Chapal Collection: Ladies & Gents (handmade mochi style) -->
+    <section id="chapal-collection" class="py-5 mt-2" style="background: #120f0c;">
+        <div class="container py-5">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="section-head">Handcrafted Chapal Collection</h2>
+                <p class="mt-4" style="color: #cfbcab;">Each piece carries the fingerprint of the artisan — unique, rustic, timeless.</p>
+            </div>
+            <div class="row g-5">
+                <!-- Lady's chapal 1: Original mochi design -->
+                <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="chapal-card">
+                        <img src="https://images.pexels.com/photos/5472576/pexels-photo-5472576.jpeg?auto=compress&cs=tinysrgb&w=600" class="card-img w-100" alt="Lady's handcrafted leather chapal by mochi">
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between"><h5 class="fw-bold">Heer Ranjha <i class="fas fa-female"></i></h5><span class="mochi-badge"><i class="fas fa-hand-sparkles"></i> Handmade</span></div>
+                            <p class="mt-2 small">Intricate threadwork, soft cushioned footbed, traditional mochi stitching — perfect for festive elegance.</p>
+                            <div class="d-flex justify-content-between mt-3"><span class="price-tag">$79</span><a href="#" class="btn btn-sm" style="background:#c68946; border-radius:40px; color:white;"><i class="fas fa-bag-shopping"></i> Order</a></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Gent's chapal: rugged mochi craft -->
+                <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="chapal-card">
+                        <img src="https://images.pexels.com/photos/5560585/pexels-photo-5560585.jpeg?auto=compress&cs=tinysrgb&w=600" class="card-img w-100" alt="Gents leather chapal handmade mochi">
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between"><h5 class="fw-bold">Veer Sandal <i class="fas fa-male"></i></h5><span class="mochi-badge"><i class="fas fa-hammer"></i> Rawhide</span></div>
+                            <p class="mt-2 small">Double leather strap, chunky sole & hand-burnished edges. Crafted by veteran mochi of Jaipur.</p>
+                            <div class="d-flex justify-content-between mt-3"><span class="price-tag">$94</span><a href="#" class="btn btn-sm" style="background:#c68946; border-radius:40px; color:white;"><i class="fas fa-bag-shopping"></i> Order</a></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Lady's floral chapal -->
+                <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="chapal-card">
+                        <img src="https://images.pexels.com/photos/5756619/pexels-photo-5756619.jpeg?auto=compress&cs=tinysrgb&w=600" class="card-img w-100" alt="Women's leather chapal floral artisan">
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between"><h5 class="fw-bold">Prakriti <i class="fas fa-leaf"></i></h5><span class="mochi-badge"><i class="fas fa-feather-alt"></i> Eco-dyed</span></div>
+                            <p class="mt-2 small">Floral embossed leather, flexible sole for everyday grace, mochi signature stitching.</p>
+                            <div class="d-flex justify-content-between mt-3"><span class="price-tag">$89</span><a href="#" class="btn btn-sm" style="background:#c68946; border-radius:40px; color:white;"><i class="fas fa-bag-shopping"></i> Order</a></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Gents classic chapal -->
+                <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="chapal-card">
+                        <img src="https://images.pexels.com/photos/5213654/pexels-photo-5213654.jpeg?auto=compress&cs=tinysrgb&w=600" class="card-img w-100" alt="Men's mochi handmade chapal leather sandal">
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between"><h5 class="fw-bold">Rustic Nomad</h5><span class="mochi-badge"><i class="fas fa-star-of-life"></i> Premium</span></div>
+                            <p class="mt-2 small">Strong braided leather, orthopedic memory foam, handmade by 4th generation mochi.</p>
+                            <div class="d-flex justify-content-between mt-3"><span class="price-tag">$109</span><a href="#" class="btn btn-sm" style="background:#c68946; border-radius:40px; color:white;"><i class="fas fa-bag-shopping"></i> Order</a></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Unisex couple chapal -->
+                <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="500">
+                    <div class="chapal-card">
+                        <img src="https://images.pexels.com/photos/5614314/pexels-photo-5614314.jpeg?auto=compress&cs=tinysrgb&w=600" class="card-img w-100" alt="Couple leather chapal handmade">
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between"><h5 class="fw-bold">Milan Unisex</h5><span class="mochi-badge"><i class="fas fa-heart"></i> His & Hers</span></div>
+                            <p class="mt-2 small">Matching design for couples — pure leather, handwoven texture, mochi heritage.</p>
+                            <div class="d-flex justify-content-between mt-3"><span class="price-tag">$159 (Pair)</span><a href="#" class="btn btn-sm" style="background:#c68946; border-radius:40px; color:white;"><i class="fas fa-bag-shopping"></i> Order</a></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Premium gents chapal dark brown -->
+                <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="600">
+                    <div class="chapal-card">
+                        <img src="https://images.pexels.com/photos/4824571/pexels-photo-4824571.jpeg?auto=compress&cs=tinysrgb&w=600" class="card-img w-100" alt="Dark brown gents chapal mochi style">
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between"><h5 class="fw-bold">Old Bombay <i class="fas fa-crown"></i></h5><span class="mochi-badge"><i class="fas fa-tools"></i> Hand-lasted</span></div>
+                            <p class="mt-2 small">Classic British-Indian chapal, sturdy sole & brass buckle, mochi hand-stitched.</p>
+                            <div class="d-flex justify-content-between mt-3"><span class="price-tag">$124</span><a href="#" class="btn btn-sm" style="background:#c68946; border-radius:40px; color:white;"><i class="fas fa-bag-shopping"></i> Order</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-5" data-aos="fade-up">
+                <a href="#" class="btn btn-mochi-outline">View All Chapals <i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Mochi Artisan Story - Real Handmade Craftsmanship -->
+    <section id="mochi-story" class="artisan-section py-5">
+        <div class="container py-4">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <img src="https://images.pexels.com/photos/4748941/pexels-photo-4748941.jpeg?auto=compress&cs=tinysrgb&w=800" class="img-fluid rounded-4 shadow-lg" alt="Mochi artisan stitching leather chapal by hand" style="border-radius: 2rem;">
+                    <div class="mt-3 d-flex gap-2 justify-content-start">
+                        <span class="badge bg-dark p-2"><i class="fas fa-thread"></i> Hand-stitching</span>
+                        <span class="badge bg-dark p-2"><i class="fas fa-cut"></i> Rawhide cutting</span>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <span class="badge bg-warning text-dark mb-3 py-2 px-3"><i class="fas fa-hands-helping"></i> The Mochi Parampara (Tradition)</span>
+                    <h2 class="display-6 fw-bold" style="font-family: 'Playfair Display';">Beyond Machines: <span style="color:#e7aa6b;">The Mochi's Touch</span></h2>
+                    <p class="mt-3" style="line-height:1.7;">“Our mochi (cobbler) community has been handcrafting chapals for over 5 generations. From selecting the finest goat and buffalo leather to hammering each sole — every step is done with bare hands, traditional awl, and a lifetime of passed-down knowledge.”</p>
+                    <div class="quote-text mt-4">
+                        <i class="fas fa-quote-left me-2" style="color:#d49c4a;"></i> No two chapals are identical, that's the beauty of pure handmade. We pour soul into every pair for ladies and gentlemen.
+                    </div>
+                    <div class="row mt-4 text-center">
+                        <div class="col-4"><i class="fas fa-palette icon-feature"></i><p class="fw-bold">Natural Dye</p></div>
+                        <div class="col-4"><i class="fas fa-stitch icon-feature"></i><p class="fw-bold">Hand-lasted</p></div>
+                        <div class="col-4"><i class="fas fa-clock icon-feature"></i><p class="fw-bold">3 Days / Pair</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Handmade? Features -->
+    <section class="py-5" style="background: #1a1612;">
+        <div class="container text-center">
+            <h3 class="section-head mb-5" style="font-size:2rem;">Why MochiGhar Chapals?</h3>
+            <div class="row g-4">
+                <div class="col-md-3" data-aos="flip-up"><i class="fas fa-dharmachakra fa-3x" style="color:#e7ad6b;"></i><h5 class="mt-3">100% Handmade</h5><p class="small">No assembly line — each chapal tells a story</p></div>
+                <div class="col-md-3" data-aos="flip-up" data-aos-delay="100"><i class="fas fa-leaf fa-3x" style="color:#e7ad6b;"></i><h5 class="mt-3">Vegetable Tanned</h5><p class="small">Eco-friendly, ages beautifully</p></div>
+                <div class="col-md-3" data-aos="flip-up" data-aos-delay="200"><i class="fas fa-hand-fist fa-3x" style="color:#e7ad6b;"></i><h5 class="mt-3">Mochi Stitch</h5><p class="small">Traditional lock-stitch ensures durability</p></div>
+                <div class="col-md-3" data-aos="flip-up" data-aos-delay="300"><i class="fas fa-shoe-prints fa-3x" style="color:#e7ad6b;"></i><h5 class="mt-3">Unisex Comfort</h5><p class="small">Anatomical last for both genders</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials from chapal lovers -->
+    <section id="testimonials" class="py-5" style="background: #120f0c;">
+        <div class="container py-4">
+            <div class="text-center mb-5" data-aos="fade-up"><h2 class="section-head">Words from Chapal Wearers</h2></div>
+            <div class="row g-4">
+                <div class="col-md-4" data-aos="fade-right"><div class="testi-card"><i class="fas fa-star-of-life mb-2" style="color:#dd9f54;"></i><p class="fst-italic">“I bought the ladies chapal 'Heer Ranjha' and it feels like heritage on my feet. The mochi craftsmanship is visible in every stitch.”</p><h6 class="mt-2">— Radhika S.</h6><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i></div></div>
+                <div class="col-md-4" data-aos="fade-up"><div class="testi-card"><i class="fas fa-quote-right mb-2" style="color:#dd9f54;"></i><p class="fst-italic">“The gents sandal is the most comfortable leather chapal I own. And knowing that a real mochi made it by hand makes it special.”</p><h6 class="mt-2">— Karan Thakur</h6><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star-half-alt text-warning"></i></div></div>
+                <div class="col-md-4" data-aos="fade-left"><div class="testi-card"><i class="fas fa-heart mb-2" style="color:#dd9f54;"></i><p class="fst-italic">“The couple set is perfect for my wife and me. The raw leather smell and handmade look - authentic mochi style.”</p><h6 class="mt-2">— Aakash & Neha</h6><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact / Custom Order for mochi chapal -->
+    <section id="contact" class="py-5" style="background: #19130f;">
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="col-md-5" data-aos="fade-right">
+                    <h3><i class="fas fa-phone-alt me-2" style="color:#e0aa6e;"></i> Connect with Master Mochi</h3>
+                    <p class="mt-3">Need custom size, special leather, or bulk orders for wedding? Our mochi family will handcraft exclusively for you.</p>
+                    <div class="mt-4"><i class="fab fa-whatsapp fa-2x me-3" style="color:#25D366;"></i><i class="fab fa-instagram fa-2x me-3" style="color:#E4405F;"></i><i class="fab fa-facebook fa-2x" style="color:#4267B2;"></i></div>
+                    <div class="mt-4"><i class="fas fa-envelope me-2"></i> chapal@mochighar.com &nbsp;&nbsp; <i class="fas fa-map-marker-alt me-2"></i> Jaipur, India</div>
+                </div>
+                <div class="col-md-6" data-aos="fade-left">
+                    <div class="bg-dark p-4 rounded-4" style="background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);">
+                        <input type="text" class="form-control mb-3 bg-transparent text-light border-secondary" placeholder="Your name">
+                        <input type="email" class="form-control mb-3 bg-transparent text-light border-secondary" placeholder="Email">
+                        <select class="form-select mb-3 bg-transparent text-light border-secondary"><option>I need chapal for : Ladies</option><option>Gents</option><option>Couple set</option></select>
+                        <textarea rows="2" class="form-control bg-transparent text-light border-secondary" placeholder="Custom request..."></textarea>
+                        <button class="btn btn-mochi w-100 mt-3">Request Handmade Quote</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer py-4 text-center">
+        <div class="container">
+            <p class="mb-2"><i class="fas fa-hands"></i> Honoring the Mochi tradition — every chapal is a labor of love.</p>
+            <p class="small opacity-75">© 2025 MochiGhar — Handmade Leather Chapal for Ladies & Gentlemen | Rooted in India's Craft Heritage</p>
+        </div>
+    </footer>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 800, once: true, offset: 80 });
+    document.querySelectorAll('.nav-link, .btn-mochi[href^="#"], .btn-mochi-outline[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+            if(targetId && targetId !== '#' && targetId.startsWith('#')) {
+                e.preventDefault();
+                const targetElem = document.querySelector(targetId);
+                if(targetElem) targetElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+</script>
+</body>
+</html>

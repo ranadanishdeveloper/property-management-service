@@ -21,6 +21,46 @@ class FrontendController extends Controller
 {
 
     // ============================================
+    // THEME HELPER METHODS
+    // ============================================
+
+    /**
+     * Get the current theme for the user from database
+     */
+    protected function getTheme($user)
+    {
+        // Get theme from user's frontend_theme field (1, 2, or 3)
+        $themeNumber = $user->frontend_theme ?? 1;
+
+        // Map theme number to folder name
+        $themeMap = [
+            1 => 'theme',      // Your existing corporate theme
+            2 => 'theme2',     // Glassmorphism theme
+            3 => 'theme3'      // Brutalist theme
+        ];
+
+        return $themeMap[$themeNumber] ?? 'theme';
+    }
+
+    /**
+     * Render view with correct theme based on user's database setting
+     */
+    protected function renderThemeView($user, $view, $data = [])
+    {
+        $theme = $this->getTheme($user);
+        $data['current_theme'] = $theme;
+        $data['theme_number'] = $user->frontend_theme ?? 1;
+
+        // Check if view exists in current theme
+        if (view()->exists($theme . '.' . $view)) {
+            return view($theme . '.' . $view, $data);
+        }
+
+        // Fallback to default theme
+        return view('theme.' . $view, $data);
+    }
+
+    // ============================================
     // CUSTOM DOMAIN METHODS (for custom domain like xpertlogics.com)
     // ============================================
 
@@ -52,6 +92,7 @@ public function searchpackage(Request $request, $code)
 {
     $user = User::where('code', $code)->firstOrFail();
     $settings = settingsById($user->id);
+    $theme = $this->getTheme($user);
 
     $query = Property::where('parent_id', $user->id);
 
@@ -101,10 +142,14 @@ public function searchpackage(Request $request, $code)
         : '';
 
     if ($request->ajax()) {
+        // Check if themed propertybox exists
+        if (view()->exists($theme . '.propertybox')) {
+            return view($theme . '.propertybox', compact('properties', 'user', 'settings', 'noPropertiesMessage'))->render();
+        }
         return view('theme.propertybox', compact('properties', 'user', 'settings', 'noPropertiesMessage'))->render();
     }
 
-    return view('theme.property', compact('properties', 'user', 'settings', 'noPropertiesMessage'));
+    return $this->renderThemeView($user, 'property', compact('properties', 'user', 'settings', 'noPropertiesMessage'));
 }
 public function customDomainSearch(Request $request)
 {
@@ -316,7 +361,7 @@ public function customDomainGetCities(Request $request)
         ->get()
         ->groupBy('listing_type');
 
-    return view('theme.index', compact('settings', 'parent_id', 'user', 'allAmenities', 'listingTypes', 'propertiesByType'))->with('is_custom_domain', $isCustomDomain);
+    return $this->renderThemeView($user, 'index', compact('settings', 'parent_id', 'user', 'allAmenities', 'listingTypes', 'propertiesByType'))->with('is_custom_domain', $isCustomDomain);
 }
 
     // ============================================
@@ -472,10 +517,14 @@ public function customDomainGetCities(Request $request)
         $settings = settingsById($user->id);
         $blogs = Blog::where('parent_id', $user->id)->latest()->paginate(4);
         if ($request->ajax()) {
+            $theme = $this->getTheme($user);
+            if (view()->exists($theme . '.blogbox')) {
+                return view($theme . '.blogbox', compact('blogs', 'settings', 'user'))->render();
+            }
             return view('theme.blogbox', compact('blogs', 'settings', 'user'))->render();
         }
 
-        return view('theme.blog', compact('blogs', 'settings', 'user'));
+        return $this->renderThemeView($user, 'blog', compact('blogs', 'settings', 'user'));
     }
 
     public function blogDetailPage($code, $slug)
@@ -486,13 +535,14 @@ public function customDomainGetCities(Request $request)
             ->where('parent_id', $user->id)
             ->firstOrFail();
 
-        return view('theme.blog-detail', compact('blog', 'settings', 'user'));
+        return $this->renderThemeView($user, 'blog-detail', compact('blog', 'settings', 'user'));
     }
 
    public function propertyPage(Request $request, $code)
 {
     $user = User::where('code', $code)->firstOrFail();
     $settings = settingsById($user->id);
+    $theme = $this->getTheme($user);
 
     // Check if this is a custom domain request
     $isCustomDomain = !in_array(request()->getHost(), ['13.61.10.174', 'localhost', '127.0.0.1']);
@@ -536,10 +586,13 @@ public function customDomainGetCities(Request $request)
         ->pluck('city');
 
     if ($request->ajax()) {
+        if (view()->exists($theme . '.propertybox')) {
+            return view($theme . '.propertybox', compact('properties', 'user', 'noPropertiesMessage', 'settings', 'propertyType', 'countries', 'states', 'cities'))->with('is_custom_domain', $isCustomDomain);
+        }
         return view('theme.propertybox', compact('properties', 'user', 'noPropertiesMessage', 'settings', 'propertyType', 'countries', 'states', 'cities'))->with('is_custom_domain', $isCustomDomain);
     }
 
-    return view('theme.property', compact('properties', 'settings', 'user', 'propertyType', 'noPropertiesMessage', 'countries', 'states', 'cities'))->with('is_custom_domain', $isCustomDomain);
+    return $this->renderThemeView($user, 'property', compact('properties', 'settings', 'user', 'propertyType', 'noPropertiesMessage', 'countries', 'states', 'cities'))->with('is_custom_domain', $isCustomDomain);
 }
 
     public function detailPage($code, $id)
@@ -566,14 +619,14 @@ public function customDomainGetCities(Request $request)
             $selectedAdvantages = Advantage::whereIn('id', $advantageIds)->get();
         }
 
-        return view('theme.detail', compact('code', 'property', 'user', 'settings', 'selectedAmenities', 'selectedAdvantages', 'units'));
+        return $this->renderThemeView($user, 'detail', compact('code', 'property', 'user', 'settings', 'selectedAmenities', 'selectedAdvantages', 'units'));
     }
 
     public function contactPage(Request $request, $code)
     {
         $user = User::where('code', $code)->first();
         $settings = settingsById($user->id);
-        return view('theme.contact', compact('settings', 'user'));
+        return $this->renderThemeView($user, 'contact', compact('settings', 'user'));
     }
 
     public function getStates(Request $request)
@@ -621,6 +674,7 @@ public function customDomainGetCities(Request $request)
     {
         $user = User::where('code', $code)->firstOrFail();
         $settings = settingsById($user->id);
+        $theme = $this->getTheme($user);
 
         $query = Property::where('parent_id', $user->id);
 
@@ -643,6 +697,14 @@ public function customDomainGetCities(Request $request)
             : '';
 
         if ($request->ajax()) {
+            if (view()->exists($theme . '.propertybox')) {
+                return view($theme . '.propertybox', [
+                    'properties' => $properties,
+                    'settings' => $settings,
+                    'user' => $user,
+                    'noPropertiesMessage' => $noPropertiesMessage,
+                ])->render();
+            }
             return view('theme.propertybox', [
                 'properties' => $properties,
                 'settings' => $settings,
@@ -651,6 +713,6 @@ public function customDomainGetCities(Request $request)
             ])->render();
         }
 
-        return view('theme.property', compact('user', 'properties', 'settings'));
+        return $this->renderThemeView($user, 'property', compact('user', 'properties', 'settings'));
     }
 }

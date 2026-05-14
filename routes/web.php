@@ -279,7 +279,8 @@ else {
         Route::post('generate-prompt-response', [AiTemplateController::class, 'AiPromptGenerate'])->name('generate.prompt.response');
         Route::resource('n8n', N8nController::class);
     });
-
+Route::get('/theme', [App\Http\Controllers\ThemeController::class, 'index'])->name('theme.index');
+Route::put('/theme/update', [App\Http\Controllers\ThemeController::class, 'update'])->name('theme.update');
     // Public Pages
     Route::get('page/{slug}', [PageController::class, 'page'])->name('page');
 

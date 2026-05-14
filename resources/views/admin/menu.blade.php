@@ -360,36 +360,39 @@
                             </a>
                         </li>
                     @endif
-                    @if (Gate::check('manage front home page') || Gate::check('manage blog'))
-                        <li
-                            class="pc-item pc-hasmenu {{ in_array($routeName, ['front-home.index', 'blog.index']) ? 'active' : '' }}">
-                            <a href="#!" class="pc-link">
-                                <span class="pc-micon">
-                                    <i class="ti ti-layout-rows"></i>
-                                </span>
-                                <span class="pc-mtext">{{ __('Frontend Manager') }}</span>
-                                <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
-                            </a>
-                            <ul class="pc-submenu"
-                                style="display: {{ in_array($routeName, ['front-home.index', 'blog.index']) ? 'block' : 'none' }}">
-                                @if (Gate::check('manage front home page'))
-                                    <li
-                                        class="pc-item {{ in_array($routeName, ['front-home.index']) ? 'active' : '' }} ">
-                                        <a href="{{ route('front-home.index') }}"
-                                            class="pc-link">{{ __('Home Page') }}</a>
-                                    </li>
-                                @endif
-                                @if (Gate::check('manage additional'))
-                                    <li
-                                        class="pc-item {{ in_array($routeName, ['additional.index']) ? 'active' : '' }} ">
-                                        <a href="{{ route('additional.index') }}"
-                                            class="pc-link">{{ __('Additional') }}</a>
-                                    </li>
-                                @endif
-
-                            </ul>
-                        </li>
-                    @endif
+                   @if (Gate::check('manage front home page') || Gate::check('manage blog') || Gate::check('manage theme'))
+    <li class="pc-item pc-hasmenu {{ in_array($routeName, ['front-home.index', 'blog.index', 'theme.index']) ? 'pc-trigger active' : '' }}">
+        <a href="#!" class="pc-link">
+            <span class="pc-micon">
+                <i class="ti ti-layout-rows"></i>
+            </span>
+            <span class="pc-mtext">{{ __('Frontend Manager') }}</span>
+            <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
+        </a>
+        <ul class="pc-submenu" style="display: {{ in_array($routeName, ['front-home.index', 'blog.index', 'theme.index']) ? 'block' : 'none' }}">
+            @if (Gate::check('manage front home page'))
+                <li class="pc-item {{ in_array($routeName, ['front-home.index']) ? 'active' : '' }}">
+                    <a href="{{ route('front-home.index') }}" class="pc-link">{{ __('Home Page') }}</a>
+                </li>
+            @endif
+            @if (Gate::check('manage additional'))
+                <li class="pc-item {{ in_array($routeName, ['additional.index']) ? 'active' : '' }}">
+                    <a href="{{ route('additional.index') }}" class="pc-link">{{ __('Additional') }}</a>
+                </li>
+            @endif
+            {{-- @if (Gate::check('manage blog'))
+                <li class="pc-item {{ in_array($routeName, ['blog.index']) ? 'active' : '' }}">
+                    <a href="{{ route('blog.index') }}" class="pc-link">{{ __('Blog') }}</a>
+                </li>
+            @endif --}}
+            @if (Gate::check('manage theme'))
+                <li class="pc-item {{ in_array($routeName, ['theme.index']) ? 'active' : '' }}">
+                    <a href="{{ route('theme.index') }}" class="pc-link">{{ __('Frontend Theme') }}</a>
+                </li>
+            @endif
+        </ul>
+    </li>
+@endif
                 @endif
 
 
