@@ -75,6 +75,22 @@
             color: #1A2A4F;
         }
 
+        h6,
+        .h6,
+        h5,
+        .h5,
+        h4,
+        .h4,
+        h3,
+        .h3,
+        h2,
+        .h2,
+        h1,
+        .h1 {
+            color: #fefefe;
+            important;
+        }
+
         .theme3-wrapper {
             min-height: 100vh;
         }
@@ -1610,7 +1626,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* ========== CONTACT PAGE STYLES ========== */
@@ -1802,6 +1820,7 @@
             .theme3-detail-row {
                 grid-template-columns: 1fr;
             }
+
             .theme3-blog-grid {
                 grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             }
@@ -1811,24 +1830,31 @@
             .theme3-property-row {
                 grid-template-columns: 1fr;
             }
+
             .theme3-search-row {
                 grid-template-columns: 1fr;
             }
+
             .theme3-banner-title {
                 font-size: 1.5rem;
             }
+
             .theme3-blog-grid {
                 grid-template-columns: 1fr;
             }
+
             .theme3-contact-card {
                 padding: 25px;
             }
+
             .theme3-info-grid {
                 grid-template-columns: 1fr;
             }
+
             .theme3-submit-btn {
                 width: 100%;
             }
+
             .theme3-detail-card {
                 padding: 20px;
             }
