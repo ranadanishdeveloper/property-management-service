@@ -68,7 +68,7 @@
 
         <!-- Back to Blog Button -->
         <div class="theme3-back-to-blog">
-            <a href="{{ route('custom.domain.blog.home', ['code' => $user->code]) }}" class="theme3-back-btn">
+            <a href="{{ route('custom.domain.blog', ['code' => $user->code]) }}" class="theme3-back-btn">
                 <i class="fas fa-arrow-left"></i> {{ __('Back to Blog') }}
             </a>
         </div>
