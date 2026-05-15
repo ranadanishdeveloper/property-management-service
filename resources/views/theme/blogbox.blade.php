@@ -4,7 +4,7 @@
             <div class="blog-style1">
                 <div class="blog-img" >
                     <a href="{{ route('blog.detail', ['code' => $user->code, 'slug' => $blog->slug]) }}">
-                        <img class="location-img" src="{{ Storage::url('upload/blog/image/' . $blog->image) }}" alt="{{ $blog->title }}">
+                       <img class="location-img" src="{{ Storage::url($blog->image) }}" alt="{{ $blog->title }}">
                     </a>
                 </div>
                 <div class="blog-content">

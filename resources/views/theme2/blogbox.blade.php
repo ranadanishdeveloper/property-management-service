@@ -7,7 +7,7 @@
             <div class="theme2-blog-card">
                 <div class="theme2-blog-image">
                     <a href="{{ route('blog.detail', ['code' => $user->code, 'slug' => $blog->slug]) }}">
-                        <img src="{{ asset(Storage::url('upload/blog/image/' . $blogImage)) }}" alt="{{ $blog->title }}">
+                        <img src="{{ Storage::url($blog->image) }}" alt="{{ $blog->title }}">
                     </a>
                     <div class="theme2-blog-date">
                         <span class="date-day">{{ date('d', strtotime($blog->created_at)) }}</span>

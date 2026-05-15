@@ -6,21 +6,10 @@ use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
-    // public function index()
-    // {
-    //     if (!Auth::user()->can('manage blog')) {
-    //         return redirect()->back()->with('error', __('Permission Denied.'));
-    //     }
-    //     $loginUser = Auth::user();
-    //     $blogs = Blog::get();
-
-    //     return view('blog.index', compact('loginUser', 'blogs'));
-    // }
-
     public function create()
     {
         if (\Auth::user()->can('create blog')) {
@@ -34,33 +23,32 @@ class BlogController extends Controller
 
     public function store(Request $request)
     {
-
-        // dd($request->all());
         if (\Auth::user()->can('create blog')) {
             $validator = \Validator::make(
                 $request->all(),
                 [
                     'title' => 'required',
-                    'image' => 'required|image|mimes:jpeg,png,jpg',
+                    'image' => 'required|image|mimes:jpeg,png,jpg,webp',
                     'content' => 'required',
                 ]
             );
             if ($validator->fails()) {
                 $messages = $validator->getMessageBag();
-
                 return redirect()->back()->with('error', $messages->first());
             }
 
-            if ($request->image != '') {
-                $imageFilenameWithExt = $request->file('image')->getClientOriginalName();
-                $imageFilename = pathinfo($imageFilenameWithExt, PATHINFO_FILENAME);
-                $imageExtension = $request->file('image')->getClientOriginalExtension();
-                $imageFileName = $imageFilename . '_' . time() . '.' . $imageExtension;
-                $dir = storage_path('upload/blog/image');
-                if (!file_exists($dir)) {
-                    mkdir($dir, 0777, true);
-                }
-                $request->file('image')->storeAs('upload/blog/image/', $imageFileName);
+            $imageFileName = '';
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $filenameWithExt = $image->getClientOriginalName();
+                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+                $extension = $image->getClientOriginalExtension();
+                // Clean filename and add timestamp
+                $cleanFilename = preg_replace('/[^A-Za-z0-9\-]/', '_', $filename);
+                $imageFileName = $cleanFilename . '_' . time() . '.' . $extension;
+
+                // Store in public disk (storage/app/public/blog/)
+                $path = $image->storeAs('blog', $imageFileName, 'public');
             }
 
             $baseSlug = Str::slug($request->title);
@@ -71,13 +59,12 @@ class BlogController extends Controller
                 $slug = $baseSlug . '-' . $counter++;
             }
 
-
             $blog = new Blog();
             $blog->title = $request->title;
             $blog->slug = $slug;
             $blog->content = $request->content;
             $blog->enabled = $request->enabled;
-            $blog->image = !empty($imageFileName) ? $imageFileName : '';
+            $blog->image = 'blog/' . $imageFileName; // Store full path for Storage::url()
             $blog->parent_id = \Auth::user()->id;
             $blog->save();
 
@@ -97,6 +84,7 @@ class BlogController extends Controller
             return response()->json($return);
         }
     }
+
     public function update(Request $request, Blog $blog)
     {
         if (\Auth::user()->can('edit blog')) {
@@ -110,7 +98,7 @@ class BlogController extends Controller
             }
 
             if ($request->hasFile('image')) {
-                $rules['image'] = 'image|mimes:jpeg,png,jpg';
+                $rules['image'] = 'image|mimes:jpeg,png,jpg,webp';
             }
 
             $validator = \Validator::make($request->all(), $rules);
@@ -119,16 +107,22 @@ class BlogController extends Controller
             }
 
             if ($request->hasFile('image')) {
-                $imageFilenameWithExt = $request->file('image')->getClientOriginalName();
-                $imageFilename = pathinfo($imageFilenameWithExt, PATHINFO_FILENAME);
-                $imageExtension = $request->file('image')->getClientOriginalExtension();
-                $imageFileName = $imageFilename . '_' . time() . '.' . $imageExtension;
-                $dir = storage_path('upload/blog/image');
-                if (!file_exists($dir)) {
-                    mkdir($dir, 0777, true);
+                // Delete old image if exists
+                if ($blog->image && Storage::disk('public')->exists($blog->image)) {
+                    Storage::disk('public')->delete($blog->image);
                 }
-                $request->file('image')->storeAs('upload/blog/image/', $imageFileName);
-                $blog->image = $imageFileName;
+
+                $image = $request->file('image');
+                $filenameWithExt = $image->getClientOriginalName();
+                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+                $extension = $image->getClientOriginalExtension();
+                // Clean filename and add timestamp
+                $cleanFilename = preg_replace('/[^A-Za-z0-9\-]/', '_', $filename);
+                $imageFileName = $cleanFilename . '_' . time() . '.' . $extension;
+
+                // Store in public disk
+                $path = $image->storeAs('blog', $imageFileName, 'public');
+                $blog->image = 'blog/' . $imageFileName;
             }
 
             if ($request->title !== $blog->title) {
@@ -141,7 +135,6 @@ class BlogController extends Controller
                 }
                 $blog->slug = $slug;
             }
-
 
             $blog->title = $request->title;
             $blog->content = $request->content;
@@ -157,11 +150,9 @@ class BlogController extends Controller
     public function destroy(Blog $blog)
     {
         if (\Auth::user()->can('delete blog')) {
-
-            // Delete Image
-            $imagePath = storage_path('upload/blog/image/' . $blog->image);
-            if (file_exists($imagePath)) {
-                unlink($imagePath);
+            // Delete Image from public disk
+            if ($blog->image && Storage::disk('public')->exists($blog->image)) {
+                Storage::disk('public')->delete($blog->image);
             }
             $blog->delete();
 

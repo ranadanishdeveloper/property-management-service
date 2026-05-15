@@ -790,14 +790,14 @@
         }
 
         .theme3-breadcrumb .current {
-            color: #C6A43F;
+            color: #20303f;
             font-weight: bold;
         }
 
         .theme3-blog-detail-title {
             font-size: 2.5rem;
             font-weight: 800;
-            color: #C6A43F;
+            color: #ffffff;
             margin-bottom: 20px;
             line-height: 1.3;
         }
@@ -1650,7 +1650,7 @@
         .theme3-contact-title {
             font-size: 2.5rem;
             font-weight: 800;
-            color: #C6A43F;
+            color: #ffffff;
             margin-bottom: 15px;
             text-transform: uppercase;
             letter-spacing: -1px;

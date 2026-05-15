@@ -49,7 +49,7 @@
 
     @if (empty($Section_3_content_value['section_enabled']) || $Section_3_content_value['section_enabled'] == 'active')
         <section class="theme2-detail-hero">
-            <div class="theme2-detail-banner" style="background-image: url('{{ asset(Storage::url($Section_3_content_value['sec3_banner_image_path'])) }}');">
+            <div class="theme2-detail-banner" style="background-image: url('{{ asset(Storage::url('upload/additional/' . $Section_3_content_value['sec3_banner_image_path'])) }}');">
                 <div class="theme2-detail-overlay"></div>
                 <div class="theme2-container">
                     <div class="theme2-detail-banner-content">
@@ -84,7 +84,7 @@
                                     @foreach ($property->propertyImages as $key => $image)
                                         @php $img = !empty($image->image) ? $image->image : 'default.jpg'; @endphp
                                         <div class="theme2-carousel-item {{ $key === 0 ? 'active' : '' }}" data-slide="{{ $key }}">
-                                            <img src="{{ asset(Storage::url('upload/property/image/') . $img) }}" alt="Property image">
+                                            <img src="{{ asset(Storage::url('upload/property/image/' . $img)) }}" alt="Property image">
                                         </div>
                                     @endforeach
                                 </div>
@@ -93,7 +93,7 @@
                                 @foreach ($property->propertyImages as $key => $image)
                                     @php $img = !empty($image->image) ? $image->image : 'default.jpg'; @endphp
                                     <div class="theme2-thumbnail {{ $key === 0 ? 'active' : '' }}" data-slide="{{ $key }}">
-                                        <img src="{{ asset(Storage::url('upload/property/image/') . $img) }}" alt="Thumbnail">
+                                        <img src="{{ asset(Storage::url('upload/property/image/' . $img)) }}" alt="Thumbnail">
                                     </div>
                                 @endforeach
                             </div>
@@ -132,7 +132,7 @@
                                 <div class="theme2-amenity-item">
                                     <i class="fas fa-check-circle theme2-check-icon"></i>
                                     @if ($amenity->image)
-                                        <img src="{{ fetch_file('upload/amenity/' . $amenity->image) }}" alt="{{ $amenity->name }}" class="theme2-amenity-img">
+                                        <img src="{{ asset(Storage::url('upload/amenity/' . $amenity->image)) }}" alt="{{ $amenity->name }}" class="theme2-amenity-img">
                                     @endif
                                     <h6 class="theme2-amenity-name">{{ $amenity->name }}</h6>
                                 </div>

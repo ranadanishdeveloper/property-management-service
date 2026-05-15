@@ -389,7 +389,7 @@ public function customDomainGetCities(Request $request)
         return view('front-home.index', compact('loginUser', 'frontHomePage'));
     }
 
-   public function update(Request $request, FrontHomePage $homePage, $id)
+  public function update(Request $request, FrontHomePage $homePage, $id)
 {
     if (!Auth::user()->can('edit front home page')) {
         return redirect()->back()->with('error', __('Permission Denied.'));
@@ -397,7 +397,7 @@ public function customDomainGetCities(Request $request)
 
     $homePage = FrontHomePage::find($id);
     $old_content_value = '';
-    if (!empty($request->content_value)) {
+    if (!empty($homePage->content_value)) {
         $old_content_value = json_decode($homePage->content_value, true);
     }
     $content_value = $request->content_value;
@@ -408,39 +408,31 @@ public function customDomainGetCities(Request $request)
         $filenameWithExt = $banner_image1->getClientOriginalName();
         $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
         $extension = $banner_image1->getClientOriginalExtension();
-        // FIXED: No timestamp, keep original name
         $fileNameToStore = $filename . '.' . $extension;
 
-        $dir = storage_path('upload/fronthomepage/');
-        if (!file_exists($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        $banner_image1->storeAs('upload/fronthomepage/', $fileNameToStore);
-        $content_value['banner_image1_path'] = 'upload/fronthomepage/' . $fileNameToStore;
+        // Store in public disk for web access
+        $path = $banner_image1->storeAs('fronthomepage', $fileNameToStore, 'public');
+        $content_value['banner_image1_path'] = $path;
     } else {
         $content_value['banner_image1_path'] = !empty($old_content_value['banner_image1_path']) ? $old_content_value['banner_image1_path'] : '';
     }
 
-    /* section 1 - Sec1_box images */
+    /* section 1 - Sec1_box images (4 boxes) */
     for ($is4 = 1; $is4 <= 4; $is4++) {
-        if (!empty($request->content_value['Sec1_box' . $is4 . '_image'])) {
-            $box_image_path = $request->content_value['Sec1_box' . $is4 . '_image'];
-            $filenameWithExt = $box_image_path->getClientOriginalName();
+        $imageKey = 'Sec1_box' . $is4 . '_image';
+        $pathKey = 'Sec1_box' . $is4 . '_image_path';
+
+        if (!empty($request->content_value[$imageKey])) {
+            $box_image = $request->content_value[$imageKey];
+            $filenameWithExt = $box_image->getClientOriginalName();
             $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-            $extension = $box_image_path->getClientOriginalExtension();
-            // FIXED: No timestamp, keep original name
+            $extension = $box_image->getClientOriginalExtension();
             $fileNameToStore = $filename . '.' . $extension;
 
-            $dir = storage_path('upload/fronthomepage/');
-            if (!file_exists($dir)) {
-                mkdir($dir, 0777, true);
-            }
-
-            $box_image_path->storeAs('upload/fronthomepage/', $fileNameToStore);
-            $content_value['Sec1_box' . $is4 . '_image_path'] = 'upload/fronthomepage/' . $fileNameToStore;
+            $path = $box_image->storeAs('fronthomepage', $fileNameToStore, 'public');
+            $content_value[$pathKey] = $path;
         } else {
-            $content_value['Sec1_box' . $is4 . '_image_path'] = !empty($old_content_value['Sec1_box' . $is4 . '_image_path']) ? $old_content_value['Sec1_box' . $is4 . '_image_path'] : '';
+            $content_value[$pathKey] = !empty($old_content_value[$pathKey]) ? $old_content_value[$pathKey] : '';
         }
     }
 
@@ -450,16 +442,10 @@ public function customDomainGetCities(Request $request)
         $filenameWithExt = $about_image->getClientOriginalName();
         $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
         $extension = $about_image->getClientOriginalExtension();
-        // FIXED: No timestamp, keep original name
         $fileNameToStore = $filename . '.' . $extension;
 
-        $dir = storage_path('upload/fronthomepage/');
-        if (!file_exists($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        $about_image->storeAs('upload/fronthomepage/', $fileNameToStore);
-        $content_value['about_image_path'] = 'upload/fronthomepage/' . $fileNameToStore;
+        $path = $about_image->storeAs('fronthomepage', $fileNameToStore, 'public');
+        $content_value['about_image_path'] = $path;
     } else {
         $content_value['about_image_path'] = !empty($old_content_value['about_image_path']) ? $old_content_value['about_image_path'] : '';
     }
@@ -470,44 +456,77 @@ public function customDomainGetCities(Request $request)
         $filenameWithExt = $banner_image2->getClientOriginalName();
         $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
         $extension = $banner_image2->getClientOriginalExtension();
-        // FIXED: No timestamp, keep original name
         $fileNameToStore = $filename . '.' . $extension;
 
-        $dir = storage_path('upload/fronthomepage/');
-        if (!file_exists($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        $banner_image2->storeAs('upload/fronthomepage/', $fileNameToStore);
-        $content_value['banner_image2_path'] = 'upload/fronthomepage/' . $fileNameToStore;
+        $path = $banner_image2->storeAs('fronthomepage', $fileNameToStore, 'public');
+        $content_value['banner_image2_path'] = $path;
     } else {
         $content_value['banner_image2_path'] = !empty($old_content_value['banner_image2_path']) ? $old_content_value['banner_image2_path'] : '';
     }
 
-    /* section 7 - Sec7_box images */
+    /* section 7 - Sec7_box images (8 boxes) */
     for ($is7 = 1; $is7 <= 8; $is7++) {
-        if (!empty($request->content_value['Sec7_box' . $is7 . '_image'])) {
-            $box_image_path = $request->content_value['Sec7_box' . $is7 . '_image'];
-            $filenameWithExt = $box_image_path->getClientOriginalName();
+        $imageKey = 'Sec7_box' . $is7 . '_image';
+        $pathKey = 'Sec7_box' . $is7 . '_image_path';
+
+        if (!empty($request->content_value[$imageKey])) {
+            $box_image = $request->content_value[$imageKey];
+            $filenameWithExt = $box_image->getClientOriginalName();
             $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-            $extension = $box_image_path->getClientOriginalExtension();
-            // FIXED: No timestamp, keep original name
+            $extension = $box_image->getClientOriginalExtension();
             $fileNameToStore = $filename . '.' . $extension;
 
-            $dir = storage_path('upload/fronthomepage/');
-            if (!file_exists($dir)) {
-                mkdir($dir, 0777, true);
-            }
-
-            $box_image_path->storeAs('upload/fronthomepage/', $fileNameToStore);
-            $content_value['Sec7_box' . $is7 . '_image_path'] = 'upload/fronthomepage/' . $fileNameToStore;
+            $path = $box_image->storeAs('fronthomepage', $fileNameToStore, 'public');
+            $content_value[$pathKey] = $path;
         } else {
-            $content_value['Sec7_box' . $is7 . '_image_path'] = !empty($old_content_value['Sec7_box' . $is7 . '_image_path']) ? $old_content_value['Sec7_box' . $is7 . '_image_path'] : '';
+            $content_value[$pathKey] = !empty($old_content_value[$pathKey]) ? $old_content_value[$pathKey] : '';
         }
     }
 
-    $homePage->content_value = $content_value;
+    /* Additional: Handle Section 2 box images if needed */
+    if (!empty($request->content_value['box1_number_image'])) {
+        $box1_image = $request->content_value['box1_number_image'];
+        $filenameWithExt = $box1_image->getClientOriginalName();
+        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+        $extension = $box1_image->getClientOriginalExtension();
+        $fileNameToStore = $filename . '.' . $extension;
+
+        $path = $box1_image->storeAs('fronthomepage', $fileNameToStore, 'public');
+        $content_value['box_image_1_path'] = $path;
+    } else {
+        $content_value['box_image_1_path'] = !empty($old_content_value['box_image_1_path']) ? $old_content_value['box_image_1_path'] : '';
+    }
+
+    if (!empty($request->content_value['box2_number_image'])) {
+        $box2_image = $request->content_value['box2_number_image'];
+        $filenameWithExt = $box2_image->getClientOriginalName();
+        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+        $extension = $box2_image->getClientOriginalExtension();
+        $fileNameToStore = $filename . '.' . $extension;
+
+        $path = $box2_image->storeAs('fronthomepage', $fileNameToStore, 'public');
+        $content_value['box_image_2_path'] = $path;
+    } else {
+        $content_value['box_image_2_path'] = !empty($old_content_value['box_image_2_path']) ? $old_content_value['box_image_2_path'] : '';
+    }
+
+    if (!empty($request->content_value['box3_number_image'])) {
+        $box3_image = $request->content_value['box3_number_image'];
+        $filenameWithExt = $box3_image->getClientOriginalName();
+        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+        $extension = $box3_image->getClientOriginalExtension();
+        $fileNameToStore = $filename . '.' . $extension;
+
+        $path = $box3_image->storeAs('fronthomepage', $fileNameToStore, 'public');
+        $content_value['box_image_3_path'] = $path;
+    } else {
+        $content_value['box_image_3_path'] = !empty($old_content_value['box_image_3_path']) ? $old_content_value['box_image_3_path'] : '';
+    }
+
+    // Save the updated content
+    $homePage->content_value = json_encode($content_value);
     $homePage->save();
+
     return redirect()->back()->with('tab', $request->tab)->with('success', __('Home Page Content Updated Successfully.'));
 }
 

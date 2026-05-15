@@ -35,7 +35,7 @@
 
         <!-- Blog Featured Image -->
         <div class="theme3-blog-detail-image">
-            <img src="{{ asset(Storage::url('upload/blog/image/' . $blogImage)) }}" alt="{{ $blog->title }}">
+            <img src="{{ Storage::url($blog->image) }}" alt="{{ $blog->title }}">
         </div>
 
         <!-- Blog Content -->
