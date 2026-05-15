@@ -10,7 +10,7 @@
         <!-- Blog Header -->
         <div class="theme3-blog-detail-header">
             <div class="theme3-breadcrumb">
-                <a href="{{ route('custom.domain.blog.home', ['code' => $user->code]) }}">{{ __('Blog') }}</a>
+                <a href="{{ route('custom.domain.blog', ['code' => $user->code]) }}">{{ __('Blog') }}</a>
                 <span class="separator">/</span>
                 <span class="current">{{ ucfirst($blog->title) }}</span>
             </div>
