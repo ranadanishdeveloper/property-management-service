@@ -6,7 +6,7 @@
             @endphp
             <div class="theme2-blog-card">
                 <div class="theme2-blog-image">
-                    <a href="{{ route('blog.detail', ['code' => $user->code, 'slug' => $blog->slug]) }}">
+                    <a href="{{ route('custom.domain.blog.detail', ['code' => $user->code, 'slug' => $blog->slug]) }}">
                         <img src="{{ Storage::url($blog->image) }}" alt="{{ $blog->title }}">
                     </a>
                     <div class="theme2-blog-date">
@@ -20,14 +20,14 @@
                         <span><i class="fas fa-user"></i> Admin</span>
                     </div>
                     <h3 class="theme2-blog-card-title">
-                        <a href="{{ route('blog.detail', ['code' => $user->code, 'slug' => $blog->slug]) }}">
+                        <a href="{{ route('custom.domain.blog.detail', ['code' => $user->code, 'slug' => $blog->slug]) }}">
                             {{ $blog->title }}
                         </a>
                     </h3>
                     <p class="theme2-blog-excerpt">
                         {{ \Illuminate\Support\Str::limit(strip_tags($blog->content), 80, '...') }}
                     </p>
-                    <a href="{{ route('blog.detail', ['code' => $user->code, 'slug' => $blog->slug]) }}" class="theme2-blog-readmore">
+                    <a href="{{ route('custom.domain.blog.detail', ['code' => $user->code, 'slug' => $blog->slug]) }}" class="theme2-blog-readmore">
                         {{ __('Read More') }} <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>

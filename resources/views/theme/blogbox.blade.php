@@ -3,14 +3,14 @@
         <div class="col-sm-6 col-xl-3">
             <div class="blog-style1">
                 <div class="blog-img" >
-                    <a href="{{ route('blog.detail', ['code' => $user->code, 'slug' => $blog->slug]) }}">
+                    <a href="{{ route('custom.domain.blog.detail', ['code' => $user->code, 'slug' => $blog->slug]) }}">
                        <img class="location-img" src="{{ Storage::url($blog->image) }}" alt="{{ $blog->title }}">
                     </a>
                 </div>
                 <div class="blog-content">
                     <a class="date" href="">{{ dateformat($blog->created_at) }}</a>
                     <h4 class="title mt-1">
-                        <a href="{{ route('blog.detail', ['code' => $user->code, 'slug' => $blog->slug]) }}">{{ $blog->title }}</a>
+                        <a href="{{ route('custom.domain.blog.detail', ['code' => $user->code, 'slug' => $blog->slug]) }}">{{ $blog->title }}</a>
                     </h4>
                     <p class="text mb-0">{{ \Illuminate\Support\Str::limit(strip_tags($blog->content), 50, '...') }}</p>
                 </div>

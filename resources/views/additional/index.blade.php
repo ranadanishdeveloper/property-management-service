@@ -230,8 +230,7 @@
                                         @php $image= 'default.png'; @endphp
                                     @endif
                                     <tr>
-                                        <td class="w-20"> <img src="{{ asset(Storage::url('upload/blog/image')) . '/' . $image }}"
-                                                alt="{{ $blog->name }}" style="width:60px; height:60px;" /></td>
+                                        <td class="w-20"> <img src="{{ Storage::url($blog->image) }}" style="width:60px; height:60px;" /></td>
                                         <td> {{ ucfirst($blog->title) }} </td>
                                         <td>{{ \Illuminate\Support\Str::limit(strip_tags($blog->content), 50, '...') }}
                                         </td>
