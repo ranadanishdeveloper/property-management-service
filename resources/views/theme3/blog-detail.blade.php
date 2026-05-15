@@ -10,7 +10,7 @@
         <!-- Blog Header -->
         <div class="theme3-blog-detail-header">
             <div class="theme3-breadcrumb">
-                <a href="{{ route('blog.home', ['code' => $user->code]) }}">{{ __('Blog') }}</a>
+                <a href="{{ route('custom.domain.blog.home', ['code' => $user->code]) }}">{{ __('Blog') }}</a>
                 <span class="separator">/</span>
                 <span class="current">{{ ucfirst($blog->title) }}</span>
             </div>
@@ -68,7 +68,7 @@
 
         <!-- Back to Blog Button -->
         <div class="theme3-back-to-blog">
-            <a href="{{ route('blog.home', ['code' => $user->code]) }}" class="theme3-back-btn">
+            <a href="{{ route('custom.domain.blog.home', ['code' => $user->code]) }}" class="theme3-back-btn">
                 <i class="fas fa-arrow-left"></i> {{ __('Back to Blog') }}
             </a>
         </div>
