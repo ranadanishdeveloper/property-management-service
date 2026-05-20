@@ -228,8 +228,8 @@
             <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
             <li><a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
         @else
-            <li><a href="{{ route('login') }}">Login</a></li>
-            <li><a href="{{ route('register') }}">Sign Up</a></li>
+            <li><a href="">Login</a></li>
+            <li><a href="">Sign Up</a></li>
         @endif
     </ul>
 </div>

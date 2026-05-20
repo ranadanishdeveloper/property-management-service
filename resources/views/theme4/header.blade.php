@@ -86,11 +86,11 @@
                         <i class="fas fa-tachometer-alt"></i> Dashboard
                     </a>
                 @else
-                    <a href="{{ route('login') }}"
+                    <a href=""
                         style="padding: 10px 24px; border-radius: 50px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; border: 1px solid rgba(255, 255, 255, 0.3); color: white; background: transparent; transition: all 0.3s ease;">
                         <i class="fas fa-sign-in-alt"></i> Login
                     </a>
-                    <a href="{{ route('register') }}"
+                    <a href=""
                         style="padding: 10px 24px; border-radius: 50px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);">
                         <i class="fas fa-user-plus"></i> Sign Up
                     </a>
