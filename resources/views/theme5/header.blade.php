@@ -40,7 +40,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ $propertiesUrl }}" style="text-decoration: none; color: #1e293b; font-weight: 500; font-size: 15px; transition: all 0.3s; display: flex; align-items: center; gap: 8px; position: relative;" class="{{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active' : '' }}">
+                        <a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}" style="text-decoration: none; color: #1e293b; font-weight: 500; font-size: 15px; transition: all 0.3s; display: flex; align-items: center; gap: 8px; position: relative;" class="{{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active' : '' }}">
                             <i class="fas fa-building" style="font-size: 14px;"></i> <span>{{ __('Properties') }}</span>
                             <span style="position: absolute; bottom: -8px; left: 0; width: 0; height: 2px; background: #3b82f6; transition: width 0.3s;"></span>
                         </a>
@@ -98,7 +98,7 @@
         </div>
         <ul style="list-style: none; padding: 20px; margin: 0;">
             <li style="margin-bottom: 12px;"><a href="{{ $homeUrl }}" style="text-decoration: none; color: #1e293b; font-size: 16px; display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; transition: all 0.3s;"><i class="fas fa-home" style="width: 20px;"></i> {{ __('Home') }}</a></li>
-            <li style="margin-bottom: 12px;"><a href="{{ $propertiesUrl }}" style="text-decoration: none; color: #1e293b; font-size: 16px; display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; transition: all 0.3s;"><i class="fas fa-building" style="width: 20px;"></i> {{ __('Properties') }}</a></li>
+            <li style="margin-bottom: 12px;"><a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}" style="text-decoration: none; color: #1e293b; font-size: 16px; display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; transition: all 0.3s;"><i class="fas fa-building" style="width: 20px;"></i> {{ __('Properties') }}</a></li>
             <li style="margin-bottom: 12px;"><a href="{{ $blogUrl }}" style="text-decoration: none; color: #1e293b; font-size: 16px; display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; transition: all 0.3s;"><i class="fas fa-newspaper" style="width: 20px;"></i> {{ __('Blog') }}</a></li>
             <li style="margin-bottom: 12px;"><a href="{{ $contactUrl }}" style="text-decoration: none; color: #1e293b; font-size: 16px; display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; transition: all 0.3s;"><i class="fas fa-envelope" style="width: 20px;"></i> {{ __('Contact') }}</a></li>
             <div style="height: 1px; background: #e2e8f0; margin: 16px 0;"></div>

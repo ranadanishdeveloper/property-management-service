@@ -193,7 +193,7 @@
 
             <ul class="nav">
                 <li><a href="{{ $homeUrl }}" class="{{ in_array($routeName, ['web.page', 'custom.domain.home']) ? 'active' : '' }}">HOME</a></li>
-                <li><a href="{{ $propertiesUrl }}" class="{{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active' : '' }}">PROPERTIES</a></li>
+                <li><a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}" class="{{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active' : '' }}">PROPERTIES</a></li>
                 <li><a href="{{ $blogUrl }}" class="{{ in_array($routeName, ['blog.home', 'blog.detail', 'custom.domain.blog', 'custom.domain.blog.detail']) ? 'active' : '' }}">BLOG</a></li>
                 <li><a href="{{ $contactUrl }}" class="{{ in_array($routeName, ['contact.home', 'custom.domain.contact']) ? 'active' : '' }}">CONTACT</a></li>
             </ul>
@@ -221,7 +221,7 @@
     <button class="mobile-close" id="mobileClose"><i class="fas fa-times"></i></button>
     <ul>
         <li><a href="{{ $homeUrl }}">Home</a></li>
-        <li><a href="{{ $propertiesUrl }}">Properties</a></li>
+        <li><a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}">Properties</a></li>
         <li><a href="{{ $blogUrl }}">Blog</a></li>
         <li><a href="{{ $contactUrl }}">Contact</a></li>
         @if(Auth::check())

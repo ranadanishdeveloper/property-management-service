@@ -627,7 +627,7 @@
         <div class="cyber-banner-badge">// EXCLUSIVE OFFER</div>
         <h1>{{ $Section_0_content_value['title'] ?? 'FIND YOUR' }} <span>{{ __('DREAM PROPERTY') }}</span></h1>
         <p>{{ $Section_0_content_value['sub_title'] ?? 'Discover exceptional properties with our curated collection. Limited time offers available.' }}</p>
-        <a href="{{ route('property.home', $user->code) }}" class="cyber-banner-btn">
+        <a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}" class="cyber-banner-btn">
             EXPLORE NOW <i class="fas fa-arrow-right"></i>
         </a>
     </div>
@@ -670,7 +670,7 @@
                                         ${{ number_format($property->price ?? 0, 0, '.', ',') }}
                                     @endif
                                 </div>
-                                <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" style="color: var(--neon-cyan); text-decoration: none;">VIEW →</a>
+                                <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" style="color: var(--neon-cyan); text-decoration: none;">VIEW →</a>
                             </div>
                         </div>
                     @endforeach
@@ -691,7 +691,7 @@
         <div class="cyber-section-tag">// EST. 2024</div>
         <h1>{{ $Section_0_content_value['title'] ?? 'FIND YOUR' }} <span>{{ __('EDGE') }}</span></h1>
         <div class="cyber-typewriter">{{ $Section_0_content_value['sub_title'] ?? 'DISCOVER EXCEPTIONAL PROPERTIES' }}</div>
-        <a href="{{ route('property.home', $user->code) }}" class="cyber-btn" style="margin-top: 20px">EXPLORE →</a>
+        <a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}" class="cyber-btn" style="margin-top: 20px">EXPLORE →</a>
     </div>
     <div class="cyber-hero-right">
         <div class="cyber-3d-card">

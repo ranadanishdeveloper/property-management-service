@@ -49,7 +49,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ $propertiesUrl }}"
+                        <a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}"
                             style="text-decoration: none; color: #e2e8f0; font-weight: 500; font-size: 15px; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; position: relative;"
                             class="{{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active' : '' }}">
                             <i class="fas fa-building"></i> {{ __('Properties') }}
@@ -129,7 +129,7 @@
                         class="fas fa-home"></i> {{ __('Home') }}</a></li>
             <li
                 style="margin-bottom: 16px; opacity: 0; transform: translateX(-20px); animation: slideIn 0.3s ease forwards; animation-delay: 0.1s;">
-                <a href="{{ $propertiesUrl }}"
+                <a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}"
                     style="text-decoration: none; color: #e2e8f0; font-size: 16px; display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 12px; transition: all 0.3s ease;"><i
                         class="fas fa-building"></i> {{ __('Properties') }}</a></li>
             <li

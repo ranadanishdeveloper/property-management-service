@@ -111,7 +111,7 @@
     $Section_5_content_value = !empty($Section_5->content_value)
         ? json_decode($Section_5->content_value, true)
         : [];
-    
+
     // Get latest 8 properties directly
     $latestProperties = \App\Models\Property::where('parent_id', $user->id)
         ->latest()
@@ -123,12 +123,12 @@
         <div class="theme3-container">
             <h2 class="theme3-section-title">{{ $Section_5_content_value['Sec5_title'] ?? 'Featured Properties' }}</h2>
             <p class="theme3-section-subtitle">{{ $Section_5_content_value['Sec5_info'] ?? 'Discover our exclusive collection' }}</p>
-            
+
             @if($latestProperties->count() > 0)
                 <div class="theme3-properties-grid">
                     @foreach ($latestProperties as $property)
-                        @php 
-                            $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg'; 
+                        @php
+                            $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg';
                         @endphp
                         <div class="theme3-property-card">
                             <div class="theme3-property-image">
@@ -142,7 +142,7 @@
                                     <span>{{ \App\Models\Property::types()[$property->type] ?? ucfirst($property->type) }}</span>
                                     <span class="theme3-property-price">{{ priceFormat($property->price) }}</span>
                                 </div>
-                                <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="theme3-property-link">VIEW DETAILS →</a>
+                                <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="theme3-property-link">VIEW DETAILS →</a>
                             </div>
                         </div>
                     @endforeach

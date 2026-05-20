@@ -26,7 +26,7 @@
         </div>
         <ul class="theme3-nav-menu">
             <li><a href="{{ $homeUrl }}" class="{{ in_array($routeName, ['web.page', 'custom.domain.home']) ? 'active' : '' }}">HOME</a></li>
-            <li><a href="{{ $propertiesUrl }}" class="{{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active' : '' }}">PROPERTIES</a></li>
+            <li><a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}" class="{{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active' : '' }}">PROPERTIES</a></li>
             <li><a href="{{ $blogUrl }}" class="{{ in_array($routeName, ['blog.home', 'blog.detail', 'custom.domain.blog', 'custom.domain.blog.detail']) ? 'active' : '' }}">BLOG</a></li>
             <li><a href="{{ $contactUrl }}" class="{{ in_array($routeName, ['contact.home', 'custom.domain.contact']) ? 'active' : '' }}">CONTACT</a></li>
         </ul>

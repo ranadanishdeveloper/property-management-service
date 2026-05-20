@@ -987,7 +987,7 @@ body {
             <h1 class="hero-luxury-title">{{ $Section_0_content_value['title'] ?? 'Where' }} <span class="gradient-text">{{ __('Dreams Find Home') }}</span></h1>
             <p class="hero-luxury-text">{{ $Section_0_content_value['sub_title'] ?? 'Discover exceptional properties curated for discerning buyers. Experience luxury living at its finest.' }}</p>
             <div class="hero-luxury-buttons">
-                <a href="{{ route('property.home', $user->code) }}" class="btn-luxury btn-luxury-primary">Explore Collection <i class="fas fa-arrow-right"></i></a>
+                <a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}" class="btn-luxury btn-luxury-primary">Explore Collection <i class="fas fa-arrow-right"></i></a>
                 <a href="{{ route('contact.home', $user->code) }}" class="btn-luxury btn-luxury-outline"><i class="fas fa-play-circle"></i> Virtual Tour</a>
             </div>
             <div class="hero-luxury-stats">
@@ -1122,7 +1122,7 @@ body {
 @php
     $Section_5 = App\Models\FrontHomePage::where('section', 'Section 5')->first();
     $Section_5_content_value = !empty($Section_5->content_value) ? json_decode($Section_5->content_value, true) : [];
-    
+
     // Get latest 8 properties directly
     $latestProperties = \App\Models\Property::where('parent_id', $user->id)
         ->latest()
@@ -1141,15 +1141,15 @@ body {
         @if($latestProperties->count() > 0)
             <div class="properties-premium-grid">
                 @foreach ($latestProperties as $property)
-                    @php 
-                        $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg'; 
+                    @php
+                        $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg';
                     @endphp
                     <div class="property-premium-card">
                         <div class="property-premium-image">
                             <img src="{{ asset(Storage::url('upload/property/thumbnail/' . $thumbnail)) }}" alt="{{ $property->name }}">
                             <span class="property-premium-badge">{{ ucfirst($property->listing_type ?? 'Property') }}</span>
                             <div class="property-premium-overlay">
-                                <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="property-premium-view"><i class="fas fa-eye"></i></a>
+                                <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="property-premium-view"><i class="fas fa-eye"></i></a>
                             </div>
                         </div>
                         <div class="property-premium-info">
@@ -1161,7 +1161,7 @@ body {
                             </div>
                             <div class="property-premium-footer">
                                 <span class="property-premium-price">{{ priceFormat($property->price) }}</span>
-                                <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="property-premium-link"><i class="fas fa-arrow-right"></i></a>
+                                <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="property-premium-link"><i class="fas fa-arrow-right"></i></a>
                             </div>
                         </div>
                     </div>

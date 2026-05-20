@@ -33,7 +33,7 @@
         <ul class="theme2-nav-menu">
             <li><a href="{{ $homeUrl }}"
                     class="{{ in_array($routeName, ['web.page', 'custom.domain.home']) ? 'active' : '' }}">Home</a></li>
-            <li><a href="{{ $propertiesUrl }}"
+            <li><a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}"
                     class="{{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active' : '' }}">Properties</a>
             </li>
             <li><a href="{{ $blogUrl }}"

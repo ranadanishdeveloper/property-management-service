@@ -155,7 +155,7 @@
     $Section_5_content_value = !empty($Section_5->content_value)
         ? json_decode($Section_5->content_value, true)
         : [];
-    
+
     // Get latest 8 properties directly
     $latestProperties = \App\Models\Property::where('parent_id', $user->id)
         ->latest()
@@ -173,8 +173,8 @@
             @if($latestProperties->count() > 0)
                 <div class="theme2-property-grid">
                     @foreach ($latestProperties as $property)
-                        @php 
-                            $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg'; 
+                        @php
+                            $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg';
                         @endphp
                         <div class="theme2-property-card">
                             <div class="theme2-property-image">
@@ -188,7 +188,7 @@
                                     <span class="theme2-property-type">{{ \App\Models\Property::types()[$property->type] ?? ucfirst($property->type) }}</span>
                                     <span class="theme2-property-price">{{ priceFormat($property->price) }}</span>
                                 </div>
-                                <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="theme2-btn-link">View Details →</a>
+                                <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="theme2-btn-link">View Details →</a>
                             </div>
                         </div>
                     @endforeach

@@ -457,11 +457,11 @@
     </div>
     <div class="container-aether">
         <div class="hero-content-new">
-          
+
             <h1 class="animate-morph delay-1">{{ $Section_0_content_value['title'] ?? 'Find Your' }} <span>{{ __('Dream Horizon') }}</span></h1>
             <p class="animate-drift delay-2" style="color: #e2e8f0; font-size: 1.2rem;">{{ $Section_0_content_value['sub_title'] ?? 'Discover exceptional properties with our curated collection' }}</p>
             <div class="animate-pop delay-3" style="margin: 1.8rem 0 2rem;">
-                <a href="{{ route('property.home', $user->code) }}" class="btn-aether">Explore Collection <i class="fas fa-arrow-right"></i></a>
+                <a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}" class="btn-aether">Explore Collection <i class="fas fa-arrow-right"></i></a>
             </div>
             <div class="hero-stats-row animate-morph delay-4">
                 <div><span class="stat-num">500+</span><p style="color:#cbd5e1;">Properties</p></div>
@@ -609,7 +609,7 @@
 @php
     $Section_5 = App\Models\FrontHomePage::where('section', 'Section 5')->first();
     $Section_5_content_value = !empty($Section_5->content_value) ? json_decode($Section_5->content_value, true) : [];
-    
+
     // Get latest 8 properties directly
     $latestProperties = \App\Models\Property::where('parent_id', $user->id)
         ->latest()
@@ -623,12 +623,12 @@
             <span class="tag-line">FEATURED LISTINGS</span>
             <h2>{{ $Section_5_content_value['Sec5_title'] ?? 'Popular Properties' }}</h2>
         </div>
-        
+
         @if($latestProperties->count() > 0)
             <div class="cinema-grid">
                 @foreach ($latestProperties as $index => $property)
-                    @php 
-                        $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg'; 
+                    @php
+                        $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg';
                     @endphp
                     <div class="cinema-property-card animate-pop delay-{{ ($index % 3) + 1 }}">
                         <div class="cinema-image">
@@ -645,7 +645,7 @@
                                     ${{ number_format($property->price ?? 0, 0, '.', ',') }}
                                 @endif
                             </div>
-                            <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" style="color: var(--primary); text-decoration: none; font-weight: 500;">View Details →</a>
+                            <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" style="color: var(--primary); text-decoration: none; font-weight: 500;">View Details →</a>
                         </div>
                     </div>
                 @endforeach
@@ -741,20 +741,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const amenitiesTrack = document.getElementById('amenitiesTrack');
     const amenitiesPrev = document.getElementById('amenitiesPrev');
     const amenitiesNext = document.getElementById('amenitiesNext');
-    
+
     if (amenitiesTrack && amenitiesPrev && amenitiesNext) {
         let position = 0;
         const firstCard = amenitiesTrack.children[0];
         const cardWidth = firstCard ? firstCard.offsetWidth + 28 : 298;
         const maxScroll = Math.max(0, amenitiesTrack.scrollWidth - amenitiesTrack.parentElement.offsetWidth);
-        
+
         amenitiesNext.addEventListener('click', () => {
             if (position < maxScroll) {
                 position = Math.min(position + cardWidth, maxScroll);
                 amenitiesTrack.style.transform = `translateX(-${position}px)`;
             }
         });
-        
+
         amenitiesPrev.addEventListener('click', () => {
             if (position > 0) {
                 position = Math.max(position - cardWidth, 0);
@@ -762,25 +762,25 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     // Testimonials Carousel
     const testimonialsTrack = document.getElementById('testimonialsTrack');
     const testimonialsPrev = document.getElementById('testimonialsPrev');
     const testimonialsNext = document.getElementById('testimonialsNext');
-    
+
     if (testimonialsTrack && testimonialsPrev && testimonialsNext) {
         let position = 0;
         const firstCard = testimonialsTrack.children[0];
         const cardWidth = firstCard ? firstCard.offsetWidth + 28 : 368;
         const maxScroll = Math.max(0, testimonialsTrack.scrollWidth - testimonialsTrack.parentElement.offsetWidth);
-        
+
         testimonialsNext.addEventListener('click', () => {
             if (position < maxScroll) {
                 position = Math.min(position + cardWidth, maxScroll);
                 testimonialsTrack.style.transform = `translateX(-${position}px)`;
             }
         });
-        
+
         testimonialsPrev.addEventListener('click', () => {
             if (position > 0) {
                 position = Math.max(position - cardWidth, 0);
@@ -788,7 +788,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     // Scroll reveal animation
     const revealElements = document.querySelectorAll('.triptych-item, .cinema-property-card, .asym-info-card, .stat-glass-item');
     const observer = new IntersectionObserver((entries) => {
@@ -800,7 +800,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }, { threshold: 0.1 });
-    
+
     revealElements.forEach(el => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(25px)';

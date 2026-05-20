@@ -272,7 +272,7 @@
     $Section_5_content_value = !empty($Section_5->content_value)
         ? json_decode($Section_5->content_value, true)
         : [];
-    
+
     // Get latest 8 properties directly
     $latestProperties = \App\Models\Property::where('parent_id', $user->id)
         ->latest()
@@ -290,19 +290,19 @@
                     </div>
                 </div>
             </div>
-            
+
             @if($latestProperties->count() > 0)
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="row">
                             @foreach ($latestProperties as $property)
-                                @php 
-                                    $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg'; 
+                                @php
+                                    $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg';
                                 @endphp
                                 <div class="col-md-6 col-lg-3 mb30">
                                     <div class="listing-style1 list-style d-block">
                                         <div class="list-thumb flex-shrink-0 position-relative">
-                                            <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">
+                                            <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">
                                                 <img class="package-front-img w-100" style="height: 200px; object-fit: cover;"
                                                     src="{{ asset(Storage::url('upload/property/thumbnail/' . $thumbnail)) }}"
                                                     alt="{{ $property->name }}">
@@ -313,7 +313,7 @@
                                         </div>
                                         <div class="list-content flex-grow-1 ms-0 p-3">
                                             <p class="list-text body-color fz14 mb-1">
-                                                <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">
+                                                <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">
                                                     {{ ucfirst($property->name) }}
                                                 </a>
                                             </p>
@@ -338,7 +338,7 @@
                                                 </ul>
                                             </div>
                                             <div class="mt-3">
-                                                <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="ud-btn btn-thm w-100">
+                                                <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="ud-btn btn-thm w-100">
                                                     View Details <i class="fal fa-arrow-right-long"></i>
                                                 </a>
                                             </div>

@@ -21,7 +21,7 @@
         <div class="theme2-property-col">
             <div class="theme2-listing-card">
                 <div class="theme2-list-thumb">
-                    <a href="{{ $detailUrl }}">
+                    <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">
                         <img src="{{ asset(Storage::url('upload/property/thumbnail/' . $thumbnail)) }}" alt="{{ $property->name }}">
                     </a>
                     <div class="theme2-property-badge {{ $property->listing_type }}">
@@ -34,7 +34,7 @@
                         <span class="theme2-type-badge">{{ \App\Models\Property::types()[$property->type] }}</span>
                     </p>
                     <h5 class="theme2-list-title">
-                        <a href="{{ $detailUrl }}">{{ ucfirst($property->name) }}</a>
+                        <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">{{ ucfirst($property->name) }}</a>
                     </h5>
                     <p class="theme2-list-desc">
                         {{ \Illuminate\Support\Str::limit(strip_tags($property->description), 50, '...') }}
@@ -43,7 +43,7 @@
                         <p class="theme2-list-address">
                             <i class="fas fa-map-marker-alt"></i> {{ $property->address }}
                         </p>
-                        <a href="{{ $detailUrl }}" class="theme2-view-link">
+                        <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="theme2-view-link">
                             View Details <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>

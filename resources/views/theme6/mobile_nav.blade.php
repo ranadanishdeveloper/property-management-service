@@ -34,7 +34,7 @@
     </div>
     <ul class="theme6-mobile-nav-menu">
         <li><a href="{{ $homeUrl }}"><i class="fas fa-home"></i> {{ __('Home') }}</a></li>
-        <li><a href="{{ $propertiesUrl }}"><i class="fas fa-building"></i> {{ __('Properties') }}</a></li>
+        <li><a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}"><i class="fas fa-building"></i> {{ __('Properties') }}</a></li>
         <li><a href="{{ $blogUrl }}"><i class="fas fa-newspaper"></i> {{ __('Blog') }}</a></li>
         <li><a href="{{ $contactUrl }}"><i class="fas fa-envelope"></i> {{ __('Contact') }}</a></li>
         @if(!Auth::check())

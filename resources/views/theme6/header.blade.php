@@ -47,7 +47,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ $propertiesUrl }}" class="nav-link {{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active' : '' }}">
+                        <a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}" class="nav-link {{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active' : '' }}">
                             <span class="nav-icon"><i class="fas fa-building"></i></span>
                             <span class="nav-text">{{ __('Properties') }}</span>
                             <span class="nav-indicator"></span>
@@ -106,7 +106,7 @@
                         <span>Sign Up</span>
                     </a>
                 @endif
-                
+
                 <!-- Mobile Menu Toggle -->
                 <button class="mobile-toggle" id="mobileToggle">
                     <span class="toggle-line"></span>
@@ -116,7 +116,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Mobile Navigation -->
     <div class="mobile-nav" id="mobileNav">
         <div class="mobile-nav-container">
@@ -134,7 +134,7 @@
             </div>
             <ul class="mobile-nav-menu">
                 <li><a href="{{ $homeUrl }}" class="mobile-nav-link {{ in_array($routeName, ['web.page', 'custom.domain.home']) ? 'active' : '' }}"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="{{ $propertiesUrl }}" class="mobile-nav-link {{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active' : '' }}"><i class="fas fa-building"></i> Properties</a></li>
+                <li><a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}" class="mobile-nav-link {{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active' : '' }}"><i class="fas fa-building"></i> Properties</a></li>
                 <li><a href="{{ $blogUrl }}" class="mobile-nav-link {{ in_array($routeName, ['blog.home', 'blog.detail', 'custom.domain.blog', 'custom.domain.blog.detail']) ? 'active' : '' }}"><i class="fas fa-newspaper"></i> Blog</a></li>
                 <li><a href="{{ $contactUrl }}" class="mobile-nav-link {{ in_array($routeName, ['contact.home', 'custom.domain.contact']) ? 'active' : '' }}"><i class="fas fa-envelope"></i> Contact</a></li>
             </ul>
@@ -632,28 +632,28 @@
     .aether-nav {
         display: none;
     }
-    
+
     .mobile-toggle {
         display: block;
     }
-    
+
     .aether-actions {
         gap: 8px;
     }
-    
+
     .aether-btn span {
         display: none;
     }
-    
+
     .aether-btn i {
         margin: 0;
         font-size: 18px;
     }
-    
+
     .aether-btn {
         padding: 10px 14px;
     }
-    
+
     .user-name {
         display: none;
     }
@@ -663,11 +663,11 @@
     .container-aether {
         padding: 0 20px;
     }
-    
+
     .aether-header {
         padding: 14px 0;
     }
-    
+
     .logo-img {
         height: 35px;
     }
@@ -693,39 +693,39 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     // Mobile menu toggle
     const mobileToggle = document.getElementById('mobileToggle');
     const mobileNav = document.getElementById('mobileNav');
     const mobileClose = document.getElementById('mobileClose');
-    
+
     // Create overlay
     const overlay = document.createElement('div');
     overlay.className = 'mobile-nav-overlay';
     document.body.appendChild(overlay);
-    
+
     function openMobileNav() {
         mobileNav.classList.add('active');
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
-    
+
     function closeMobileNav() {
         mobileNav.classList.remove('active');
         overlay.classList.remove('active');
         document.body.style.overflow = '';
     }
-    
+
     if (mobileToggle) {
         mobileToggle.addEventListener('click', openMobileNav);
     }
-    
+
     if (mobileClose) {
         mobileClose.addEventListener('click', closeMobileNav);
     }
-    
+
     overlay.addEventListener('click', closeMobileNav);
-    
+
     // Nav link hover animation
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
@@ -741,7 +741,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
+
     // Add pulse animation style
     const style = document.createElement('style');
     style.textContent = `
@@ -752,7 +752,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     `;
     document.head.appendChild(style);
-    
+
     // Close mobile nav on link click
     const mobileLinks = document.querySelectorAll('.mobile-nav-link');
     mobileLinks.forEach(link => {

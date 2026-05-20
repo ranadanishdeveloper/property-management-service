@@ -23,7 +23,7 @@
                         }
                     @endphp
 
-                    <a href="{{ $detailUrl }}">
+                    <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">
                         <img class="location-img"
                             src="{{ asset(Storage::url('upload/property/thumbnail/' . $thumbnail)) }}" alt="image">
                     </a>
@@ -33,7 +33,7 @@
                     <p class="list-text body-color fz16 mb-1"><span class="badge bg-light-secondary">
                             {{ \App\Models\Property::types()[$property->type] }}</span></p>
                     <h5 class="list-title"><a
-                            href="{{ $detailUrl }}">{{ ucfirst($property->name) }}</a>
+                            href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">{{ ucfirst($property->name) }}</a>
                     </h5>
                     <p class="mb-0 body-color">
                         <span class="fz12 ms-1">

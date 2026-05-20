@@ -952,7 +952,7 @@
                                         @endif
                                     </div>
                                 </div>
-                                <h3><a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">{{ ucfirst($property->name) }}</a></h3>
+                                <h3><a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">{{ ucfirst($property->name) }}</a></h3>
                                 <div class="glass-property-address">
                                     <i class="fas fa-map-marker-alt"></i>
                                     <span>{{ $property->address ?? '' }}{{ $property->city ? ', ' . $property->city : '' }}{{ $property->state ? ', ' . $property->state : '' }}</span>
@@ -967,7 +967,7 @@
                                     <span><i class="fas fa-bath"></i> {{ $totalBathrooms ?: 'N/A' }} Baths</span>
                                     <span><i class="fas fa-vector-square"></i> {{ $property->area ?? 'N/A' }} sq ft</span>
                                 </div>
-                                <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="glass-view-link">
+                                <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="glass-view-link">
                                     View Details <i class="fas fa-arrow-right"></i>
                                 </a>
                             </div>
@@ -976,7 +976,7 @@
                 @endforeach
             </div>
             <div class="glass-view-all">
-                <a href="{{ route('property.home', $user->code) }}">View All Properties <i class="fas fa-arrow-right"></i></a>
+                <a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}">View All Properties <i class="fas fa-arrow-right"></i></a>
             </div>
         @else
             <div style="text-align: center; padding: 60px; background: rgba(255,255,255,0.5); border-radius: 24px;">

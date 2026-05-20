@@ -44,14 +44,14 @@
                 <img src="{{ asset(Storage::url('upload/property/thumbnail/' . $thumbnail)) }}" alt="{{ $property->name }}">
                 <span class="property-badge">{{ strtoupper($property->listing_type ?? 'For Sale') }}</span>
                 <div class="property-overlay">
-                    <a href="{{ $detailUrl }}" class="property-view">
+                    <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="property-view">
                         <i class="fas fa-eye"></i>
                     </a>
                 </div>
             </div>
             <div class="property-info">
                 <span class="property-type">{{ $propertyTypeName }}</span>
-                <h3><a href="{{ $detailUrl }}">{{ ucfirst($property->name) }}</a></h3>
+                <h3><a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">{{ ucfirst($property->name) }}</a></h3>
                 <div class="property-address">
                     <i class="fas fa-map-marker-alt"></i>
                     <span>{{ $property->city ?? 'Location' }}{{ $property->state ? ', ' . $property->state : '' }}</span>
@@ -62,7 +62,7 @@
                         <span><i class="fas fa-bed"></i> {{ $totalBedrooms ?: 'N/A' }}</span>
                         <span><i class="fas fa-bath"></i> {{ $totalBathrooms ?: 'N/A' }}</span>
                     </div>
-                    <a href="{{ $detailUrl }}" style="color: #d4af37; font-size: 13px;">View →</a>
+                    <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" style="color: #d4af37; font-size: 13px;">View →</a>
                 </div>
             </div>
         </div>

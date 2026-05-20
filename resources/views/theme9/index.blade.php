@@ -434,7 +434,7 @@
         <div class="banner-badge">✦ PREMIUM REAL ESTATE</div>
         <h1>{{ $Section_0_content_value['title'] ?? 'Find Your' }} <span>{{ __('Dream Property') }}</span></h1>
         <p>{{ $Section_0_content_value['sub_title'] ?? 'Discover exceptional properties with our curated collection.' }}</p>
-        <a href="{{ route('property.home', $user->code) }}" class="btn-banner">Explore Now →</a>
+        <a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}" class="btn-banner">Explore Now →</a>
         <div class="banner-stats">
             <div class="stat"><h3>500+</h3><span>Properties</span></div>
             <div class="stat"><h3>98%</h3><span>Satisfaction</span></div>

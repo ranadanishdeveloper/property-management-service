@@ -30,7 +30,7 @@
 
     <ul class="cyber-nav">
         <li><a href="{{ $homeUrl }}" class="{{ in_array($routeName, ['web.page', 'custom.domain.home']) ? 'active' : '' }}"><i class="fas fa-home"></i> HOME</a></li>
-        <li><a href="{{ $propertiesUrl }}" class="{{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active' : '' }}"><i class="fas fa-building"></i> PROPERTIES</a></li>
+        <li><a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}" class="{{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active' : '' }}"><i class="fas fa-building"></i> PROPERTIES</a></li>
         <li><a href="{{ $blogUrl }}" class="{{ in_array($routeName, ['blog.home', 'blog.detail', 'custom.domain.blog', 'custom.domain.blog.detail']) ? 'active' : '' }}"><i class="fas fa-newspaper"></i> BLOG</a></li>
         <li><a href="{{ $contactUrl }}" class="{{ in_array($routeName, ['contact.home', 'custom.domain.contact']) ? 'active' : '' }}"><i class="fas fa-envelope"></i> CONTACT</a></li>
         @if(Auth::check())

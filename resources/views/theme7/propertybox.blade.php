@@ -45,14 +45,14 @@
                 <img src="{{ asset(Storage::url('upload/property/thumbnail/' . $thumbnail)) }}" alt="{{ $property->name }}">
                 <span class="cyber-property-badge">{{ strtoupper($property->listing_type ?? 'FOR SALE') }}</span>
                 <div class="cyber-property-overlay">
-                    <a href="{{ $detailUrl }}" class="cyber-property-view">
+                    <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="cyber-property-view">
                         <i class="fas fa-eye"></i>
                     </a>
                 </div>
             </div>
             <div class="cyber-property-info">
                 <span class="cyber-property-type">{{ $propertyTypeName }}</span>
-                <h3><a href="{{ $detailUrl }}">{{ ucfirst($property->name) }}</a></h3>
+                <h3><a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">{{ ucfirst($property->name) }}</a></h3>
                 <div class="cyber-property-address">
                     <i class="fas fa-map-marker-alt"></i>
                     <span>{{ $property->address ?? '' }}{{ $property->city ? ', ' . $property->city : '' }}</span>
@@ -63,7 +63,7 @@
                         <span><i class="fas fa-bed"></i> {{ $totalBedrooms ?: 'N/A' }}</span>
                         <span><i class="fas fa-bath"></i> {{ $totalBathrooms ?: 'N/A' }}</span>
                     </div>
-                    <a href="{{ $detailUrl }}" class="cyber-property-view" style="width: 35px; height: 35px;">
+                    <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="cyber-property-view" style="width: 35px; height: 35px;">
                         <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>

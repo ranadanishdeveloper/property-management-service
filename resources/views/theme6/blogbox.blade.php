@@ -18,9 +18,9 @@
                     <span><i class="fas fa-calendar-alt"></i> {{ dateformat($blog->created_at) }}</span>
                     <span><i class="fas fa-user"></i> Admin</span>
                 </div>
-                <h3><a href="{{ $detailUrl }}">{{ $blog->title }}</a></h3>
+                <h3><a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">{{ $blog->title }}</a></h3>
                 <p class="blog-excerpt">{{ \Illuminate\Support\Str::limit(strip_tags($blog->content), 80) }}</p>
-                <a href="{{ $detailUrl }}" class="blog-readmore">Read More →</a>
+                <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="blog-readmore">Read More →</a>
             </div>
         </div>
     @empty

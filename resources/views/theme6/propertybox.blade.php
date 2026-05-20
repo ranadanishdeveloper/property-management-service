@@ -408,14 +408,14 @@ if (!function_exists('priceformat')) {
                     alt="{{ $property->name }}">
                 <span class="property-badge">{{ ucfirst($property->listing_type ?? 'For Sale') }}</span>
                 <div class="property-overlay">
-                    <a href="{{ $detailUrl }}" class="property-view">
+                    <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="property-view">
                         <i class="fas fa-eye"></i>
                     </a>
                 </div>
             </div>
             <div class="property-info">
                 <span class="property-type">{{ $propertyTypeName }}</span>
-                <h3><a href="{{ $detailUrl }}">{{ ucfirst($property->name) }}</a></h3>
+                <h3><a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">{{ ucfirst($property->name) }}</a></h3>
                 <div class="property-address">
                     <i class="fas fa-map-marker-alt"></i>
                     <span>{{ $property->address ?? '' }}{{ $property->city ? ', ' . $property->city : '' }}</span>
@@ -426,7 +426,7 @@ if (!function_exists('priceformat')) {
                 <div class="property-divider"></div>
                 <div class="property-footer">
                     <span class="property-price">{{ priceFormat($property->price) }}</span>
-                    <a href="{{ $detailUrl }}" class="property-link">
+                    <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="property-link">
                         View Details <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>

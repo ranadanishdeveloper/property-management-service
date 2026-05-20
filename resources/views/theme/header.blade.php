@@ -48,7 +48,7 @@
                             </li>
                             <li>
                                 <a class="list-item mr5 {{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active custom-active-style' : '' }}"
-                                    href="{{ $propertiesUrl }}">{{ __('Properties') }}</a>
+                                    href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}">{{ __('Properties') }}</a>
                             </li>
                             <li>
                                 <a class="list-item mr5 {{ in_array($routeName, ['blog.home', 'blog.detail', 'custom.domain.blog', 'custom.domain.blog.detail']) ? 'active custom-active-style' : '' }}"

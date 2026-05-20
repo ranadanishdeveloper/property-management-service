@@ -43,7 +43,7 @@
     <nav id="menu" class="">
         <ul>
             <li><a href="{{ $homeUrl }}">{{ __('Home') }}</a></li>
-            <li><a href="{{ $propertiesUrl }}">{{ __('Properties') }}</a></li>
+            <li><a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}">{{ __('Properties') }}</a></li>
             <li><a href="{{ $blogUrl }}">{{ __('Blog') }}</a></li>
             <li><a href="{{ $contactUrl }}">{{ __('Contact') }}</a></li>
         </ul>

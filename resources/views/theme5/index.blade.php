@@ -644,7 +644,7 @@ body {
             <h1>{{ $Section_0_content_value['title'] ?? 'Find Your' }} <span>{{ __('Dream Home') }}</span></h1>
             <p>{{ $Section_0_content_value['sub_title'] ?? 'Discover exceptional properties with our curated collection of luxury homes and investment opportunities.' }}</p>
             <div class="hero-buttons">
-                <a href="{{ route('property.home', $user->code) }}" class="btn btn-primary">Explore Properties →</a>
+                <a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}" class="btn btn-primary">Explore Properties →</a>
                 <a href="{{ route('contact.home', $user->code) }}" class="btn btn-outline">Contact Us</a>
             </div>
             <div class="hero-image">
@@ -770,7 +770,7 @@ body {
 @php
     $Section_5 = App\Models\FrontHomePage::where('section', 'Section 5')->first();
     $Section_5_content_value = !empty($Section_5->content_value) ? json_decode($Section_5->content_value, true) : [];
-    
+
     // Get latest 8 properties directly
     $latestProperties = \App\Models\Property::where('parent_id', $user->id)
         ->latest()
@@ -788,8 +788,8 @@ body {
         @if($latestProperties->count() > 0)
             <div class="properties-grid">
                 @foreach ($latestProperties as $property)
-                    @php 
-                        $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg'; 
+                    @php
+                        $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg';
                     @endphp
                     <div class="property-card">
                         <div class="property-image">
@@ -800,7 +800,7 @@ body {
                             <h3 style="margin: 8px 0;">{{ ucfirst($property->name) }}</h3>
                             <p style="font-size: 13px; color: #64748b;">{{ \Illuminate\Support\Str::limit(strip_tags($property->description ?? ''), 60) }}</p>
                             <div class="property-price">{{ priceFormat($property->price) }}</div>
-                            <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" style="color: #3b82f6; text-decoration: none; font-weight: 500;">View Details →</a>
+                            <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" style="color: #3b82f6; text-decoration: none; font-weight: 500;">View Details →</a>
                         </div>
                     </div>
                 @endforeach

@@ -389,13 +389,13 @@
                 <img src="{{ asset(Storage::url('upload/property/thumbnail/' . $thumbnail)) }}" alt="{{ $property->name }}">
                 <span class="property-type-badge">{{ \App\Models\Property::types()[$property->type] }}</span>
                 <div class="property-overlay-premium">
-                    <a href="{{ $detailUrl }}" class="property-view-btn">
+                    <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="property-view-btn">
                         <i class="fas fa-eye"></i>
                     </a>
                 </div>
             </div>
             <div class="property-info-premium">
-                <h3><a href="{{ $detailUrl }}">{{ ucfirst($property->name) }}</a></h3>
+                <h3><a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">{{ ucfirst($property->name) }}</a></h3>
                 <div class="property-address">
                     <i class="fas fa-map-marker-alt"></i>
                     <span>{{ $property->address }}, {{ $property->city ?? '' }}</span>
@@ -406,7 +406,7 @@
                 <hr class="property-divider">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span class="property-price">{{ priceformat($property->price) }}</span>
-                    <a href="{{ $detailUrl }}" class="property-details-link">
+                    <a href="{{ $isCustomDomain ? route('custom.domain.property.detail', ['id' => \Crypt::encrypt($property->id)]) : route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="property-details-link">
                         Details <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
