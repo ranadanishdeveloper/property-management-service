@@ -75,7 +75,152 @@
             min-height: 100vh;
             color: #fff;
         }
+/* ========== PROPERTIES GRID - THEME 2 FOREST GREEN & GOLD ========== */
+.theme2-properties {
+    padding: 80px 0;
+}
 
+.theme2-properties-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.theme2-properties-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.theme2-properties-header p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.theme2-property-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.theme2-property-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme2-property-card:hover {
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.theme2-property-image {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+}
+
+.theme2-property-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.theme2-property-card:hover .theme2-property-image img {
+    transform: scale(1.05);
+}
+
+.theme2-property-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #D4AF37;
+    color: #1B4D3E;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.theme2-property-info {
+    padding: 20px;
+}
+
+.theme2-property-info h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.theme2-property-info p {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.theme2-property-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme2-property-type {
+    font-size: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 15px;
+    color: #fff;
+}
+
+.theme2-property-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #D4AF37;
+}
+
+.theme2-btn-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #D4AF37;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    transition: gap 0.3s ease;
+}
+
+.theme2-btn-link:hover {
+    gap: 12px;
+    color: #fff;
+}
+
+@media (max-width: 1024px) {
+    .theme2-property-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .theme2-property-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .theme2-properties-header h2 {
+        font-size: 1.8rem;
+    }
+}
         /* ========== DETAIL PAGE STYLES ========== */
 
         /* Hero Banner */

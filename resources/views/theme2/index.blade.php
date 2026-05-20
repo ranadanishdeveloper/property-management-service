@@ -149,62 +149,56 @@
         </section>
     @endif
 
-    <!-- Popular Services / Properties - Theme 2 -->
-    @php
-        $Section_5 = App\Models\FrontHomePage::where('section', 'Section 5')->first();
-        $Section_5_content_value = !empty($Section_5->content_value)
-            ? json_decode($Section_5->content_value, true)
-            : [];
-    @endphp
-    @if (empty($Section_5_content_value['section_enabled']) || $Section_5_content_value['section_enabled'] == 'active')
-        <section class="theme2-properties">
-            <div class="theme2-container">
-                <div class="theme2-properties-header">
-                    <h2>{{ $Section_5_content_value['Sec5_title'] }}</h2>
-                    <p>{{ $Section_5_content_value['Sec5_info'] }}</p>
-                </div>
-
-                @if (!empty($propertiesByType))
-                    <div class="theme2-property-tabs">
-                        @foreach ($listingTypes as $key => $type)
-                            <div class="theme2-property-panel" id="panel-{{ $type }}" style="{{ $key == 0 ? 'display: block;' : 'display: none;' }}">
-                                <div class="theme2-property-grid">
-                                    @forelse ($propertiesByType[$type] as $property)
-                                        @php $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg'; @endphp
-                                        <div class="theme2-property-card">
-                                            <div class="theme2-property-image">
-                                                <img src="{{ asset(Storage::url('upload/property/thumbnail/' . $thumbnail)) }}" alt="{{ $property->name }}">
-                                            </div>
-                                            <div class="theme2-property-info">
-                                                <h3>{{ ucfirst($property->name) }}</h3>
-                                                <p>{{ \Illuminate\Support\Str::limit(strip_tags($property->description), 50, '...') }}</p>
-                                                <div class="theme2-property-meta">
-                                                    <span class="theme2-property-type">{{ \App\Models\Property::types()[$property->type] }}</span>
-                                                    <span class="theme2-property-price">{{ priceformat($property->price) }}</span>
-                                                </div>
-                                                <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="theme2-btn-link">View Details →</a>
-                                            </div>
-                                        </div>
-                                    @empty
-                                        <p>{{ __('No Properties Available') }}</p>
-                                    @endforelse
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-
-                    <!-- Tab Buttons -->
-                    <div class="theme2-tab-buttons">
-                        @foreach ($listingTypes as $key => $type)
-                            <button class="theme2-tab-btn {{ $key == 0 ? 'active' : '' }}" onclick="showTheme2Tab('{{ $type }}')">{{ ucfirst($type) }}</button>
-                        @endforeach
-                    </div>
-                @else
-                    <p class="text-center">{{ __('No Properties Available') }}</p>
-                @endif
+   <!-- Popular Services / Properties - Theme 2 (Latest 8 Properties) -->
+@php
+    $Section_5 = App\Models\FrontHomePage::where('section', 'Section 5')->first();
+    $Section_5_content_value = !empty($Section_5->content_value)
+        ? json_decode($Section_5->content_value, true)
+        : [];
+    
+    // Get latest 8 properties directly
+    $latestProperties = \App\Models\Property::where('parent_id', $user->id)
+        ->latest()
+        ->take(8)
+        ->get();
+@endphp
+@if (empty($Section_5_content_value['section_enabled']) || $Section_5_content_value['section_enabled'] == 'active')
+    <section class="theme2-properties">
+        <div class="theme2-container">
+            <div class="theme2-properties-header">
+                <h2>{{ $Section_5_content_value['Sec5_title'] ?? 'Featured Properties' }}</h2>
+                <p>{{ $Section_5_content_value['Sec5_info'] ?? 'Discover our exclusive collection of premium properties' }}</p>
             </div>
-        </section>
-    @endif
+
+            @if($latestProperties->count() > 0)
+                <div class="theme2-property-grid">
+                    @foreach ($latestProperties as $property)
+                        @php 
+                            $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg'; 
+                        @endphp
+                        <div class="theme2-property-card">
+                            <div class="theme2-property-image">
+                                <img src="{{ asset(Storage::url('upload/property/thumbnail/' . $thumbnail)) }}" alt="{{ $property->name }}">
+                                <span class="theme2-property-badge">{{ ucfirst($property->listing_type ?? 'Property') }}</span>
+                            </div>
+                            <div class="theme2-property-info">
+                                <h3>{{ ucfirst($property->name) }}</h3>
+                                <p>{{ \Illuminate\Support\Str::limit(strip_tags($property->description ?? ''), 50, '...') }}</p>
+                                <div class="theme2-property-meta">
+                                    <span class="theme2-property-type">{{ \App\Models\Property::types()[$property->type] ?? ucfirst($property->type) }}</span>
+                                    <span class="theme2-property-price">{{ priceFormat($property->price) }}</span>
+                                </div>
+                                <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="theme2-btn-link">View Details →</a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <p class="text-center">{{ __('No Properties Available') }}</p>
+            @endif
+        </div>
+    </section>
+@endif
 
     <!-- Banner 2 - Theme 2 -->
     @php

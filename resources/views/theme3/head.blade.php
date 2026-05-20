@@ -74,7 +74,102 @@
             background: #C6A43F;
             color: #1A2A4F;
         }
+/* Add to Theme 3 CSS file */
+.theme3-properties-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 40px;
+}
 
+.theme3-property-card {
+    background: #fff;
+    border: 2px solid #000;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.theme3-property-card:hover {
+    transform: translateY(-8px);
+}
+
+.theme3-property-image {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+}
+
+.theme3-property-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.theme3-property-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #000;
+    color: #fff;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.theme3-property-info {
+    padding: 20px;
+}
+
+.theme3-property-info h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.theme3-property-info p {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+.theme3-property-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.theme3-property-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #000;
+}
+
+.theme3-property-link {
+    color: #000;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    transition: color 0.3s;
+}
+
+.theme3-property-link:hover {
+    color: #666;
+}
+
+@media (max-width: 1024px) {
+    .theme3-properties-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .theme3-properties-grid {
+        grid-template-columns: 1fr;
+    }
+}
         h6,
         .h6,
         h5,

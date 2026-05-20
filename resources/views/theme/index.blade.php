@@ -260,126 +260,105 @@
 
                 </div>
             </div>
-            <img class="home10-cta-img bdrs24 d-sm-none d-lg-inline-block"
-                src="{{ asset(Storage::url($Section_4_content_value['about_image_path'])) }}" alt="">
+            {{-- <img style="width: fit-content  height: 100px;" class="home10-cta-img bdrs24 d-sm-none d-lg-inline-block"
+                src="{{ asset(Storage::url($Section_4_content_value['about_image_path'])) }}" alt=""> --}}
         </section>
     @endif
 
     <!-- Popular Services -->
-    @php
-        $Section_5 = App\Models\FrontHomePage::where('section', 'Section 5')->first();
-        $Section_5_content_value = !empty($Section_5->content_value)
-            ? json_decode($Section_5->content_value, true)
-            : [];
-    @endphp
-    @if (empty($Section_5_content_value['section_enabled']) || $Section_5_content_value['section_enabled'] == 'active')
-        <section class="pb90 pb20-md">
-            <div class="container">
-                <div class="row align-items-center wow fadeInUp">
-                    <div class="col-xl-3">
-                        <div class="main-title mb30-lg">
-                            <h2 class="title">{{ $Section_5_content_value['Sec5_title'] }}</h2>
-                            <p class="paragraph">{{ $Section_5_content_value['Sec5_info'] }}</p>
-                        </div>
+   <!-- Popular Services - Theme 1 (Latest 8 Properties) -->
+@php
+    $Section_5 = App\Models\FrontHomePage::where('section', 'Section 5')->first();
+    $Section_5_content_value = !empty($Section_5->content_value)
+        ? json_decode($Section_5->content_value, true)
+        : [];
+    
+    // Get latest 8 properties directly
+    $latestProperties = \App\Models\Property::where('parent_id', $user->id)
+        ->latest()
+        ->take(8)
+        ->get();
+@endphp
+@if (empty($Section_5_content_value['section_enabled']) || $Section_5_content_value['section_enabled'] == 'active')
+    <section class="pb90 pb20-md">
+        <div class="container">
+            <div class="row align-items-center wow fadeInUp">
+                <div class="col-xl-12">
+                    <div class="main-title text-center mb30-lg">
+                        <h2 class="title">{{ $Section_5_content_value['Sec5_title'] ?? 'Featured Properties' }}</h2>
+                        <p class="paragraph">{{ $Section_5_content_value['Sec5_info'] ?? 'Discover our exclusive collection of premium properties' }}</p>
                     </div>
-                    <div class="col-xl-9">
-                        <div class="navpill-style2 at-home6 mb50-lg">
-                            <ul class="nav nav-pills mb20 justify-content-xl-end" id="pills-tab" role="tablist">
-                                @foreach ($listingTypes as $key => $type)
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link {{ $key == 0 ? 'active' : '' }} fw500 dark-color"
-                                            id="pills-{{ $type }}-tab" data-bs-toggle="pill"
-                                            data-bs-target="#pills-{{ $type }}" type="button" role="tab"
-                                            aria-controls="pills-{{ $type }}"
-                                            aria-selected="{{ $key == 0 ? 'true' : 'false' }}">
-                                            {{ ucfirst($type) }}
-                                        </button>
-                                    </li>
-                                @endforeach
-                            </ul>
+                </div>
+            </div>
+            
+            @if($latestProperties->count() > 0)
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            @foreach ($latestProperties as $property)
+                                @php 
+                                    $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg'; 
+                                @endphp
+                                <div class="col-md-6 col-lg-3 mb30">
+                                    <div class="listing-style1 list-style d-block">
+                                        <div class="list-thumb flex-shrink-0 position-relative">
+                                            <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">
+                                                <img class="package-front-img w-100" style="height: 200px; object-fit: cover;"
+                                                    src="{{ asset(Storage::url('upload/property/thumbnail/' . $thumbnail)) }}"
+                                                    alt="{{ $property->name }}">
+                                            </a>
+                                            <span class="property-badge position-absolute top-0 end-0 m-2 px-2 py-1 bg-primary text-white rounded-pill small">
+                                                {{ ucfirst($property->listing_type ?? 'Property') }}
+                                            </span>
+                                        </div>
+                                        <div class="list-content flex-grow-1 ms-0 p-3">
+                                            <p class="list-text body-color fz14 mb-1">
+                                                <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">
+                                                    {{ ucfirst($property->name) }}
+                                                </a>
+                                            </p>
+                                            <h5 class="list-title fz16">
+                                                {{ \Illuminate\Support\Str::limit(strip_tags($property->description ?? ''), 50, '...') }}
+                                            </h5>
+                                            <hr class="my-2">
+                                            <div class="list-meta d-flex justify-content-between align-items-center mt15">
+                                                <ul class="list-unstyled mb-0 w-100">
+                                                    <li class="mb-2 d-flex justify-content-between align-items-center">
+                                                        <span><i class="fas fa-list-ul text-secondary me-2"></i> <strong>{{ __('Type') }}:</strong></span>
+                                                        <span>{{ \App\Models\Property::types()[$property->type] ?? ucfirst($property->type) }}</span>
+                                                    </li>
+                                                    <li class="mb-2 d-flex justify-content-between align-items-center">
+                                                        <span><i class="fas fa-tag text-secondary me-2"></i> <strong>{{ __('Price') }}:</strong></span>
+                                                        <span class="text-primary fw-bold">{{ priceFormat($property->price) }}</span>
+                                                    </li>
+                                                    <li class="mb-2 d-flex justify-content-between align-items-center">
+                                                        <span><i class="fas fa-map-marker-alt text-secondary me-2"></i> <strong>{{ __('Location') }}:</strong></span>
+                                                        <span class="small">{{ $property->city ?? 'N/A' }}</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="mt-3">
+                                                <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="ud-btn btn-thm w-100">
+                                                    View Details <i class="fal fa-arrow-right-long"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
-                @if (!empty($propertiesByType))
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="tab-content ha" id="pills-tabContent">
-                                @foreach ($listingTypes as $key => $type)
-                                    <div class="tab-pane fade {{ $key == 0 ? 'show active' : '' }}"
-                                        id="pills-{{ $type }}" role="tabpanel"
-                                        aria-labelledby="pills-{{ $type }}-tab">
-                                        <div class="row">
-                                            @forelse ($propertiesByType[$type] as $property)
-                                                @if (!empty($property->thumbnail) && !empty($property->thumbnail->image))
-                                                    @php $thumbnail= $property->thumbnail->image; @endphp
-                                                @else
-                                                    @php $thumbnail= 'default.jpg'; @endphp
-                                                @endif
-                                                <div class="col-md-6">
-                                                    <div
-                                                        class="listing-style1 list-style d-block d-xl-flex align-items-center">
-                                                        <div class="list-thumb flex-shrink-0">
-                                                            <a
-                                                                href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">
-                                                                <img class="package-front-img"
-                                                                    src="{{ asset(Storage::url('upload/property/thumbnail/' . $thumbnail)) }}"
-                                                                    alt="{{ $property->name }}">
-                                                            </a>
-                                                        </div>
-                                                        <div class="list-content flex-grow-1 ms-0">
-                                                            <p class="list-text body-color fz14 mb-1">
-                                                                <a
-                                                                    href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">
-                                                                    {{ ucfirst($property->name) }}
-                                                                </a>
-                                                            </p>
-                                                            <h5 class="list-title">
-                                                                {{ \Illuminate\Support\Str::limit(strip_tags($property->description), 50, '...') }}
-                                                            </h5>
-                                                            <hr class="my-2">
-
-                                                            <div
-                                                                class="list-meta d-flex justify-content-between align-items-center mt15">
-                                                                <ul class="list-unstyled">
-                                                                    <li class="mb-2 d-flex align-items-center">
-                                                                        <i class="fas fa-list-ul text-secondary me-2"></i>
-                                                                        <strong>{{ __('Type') }}: </strong>
-                                                                        {{ \App\Models\Property::types()[$property->type] }}
-                                                                    </li>
-                                                                    <li class="mb-2 d-flex align-items-center">
-                                                                        <i
-                                                                            class="fas fa-sort-amount-up text-secondary me-2"></i>
-                                                                        <strong>{{ __('Price') }}: </strong>
-                                                                        {{ priceformat($property->price) }}
-                                                                    </li>
-                                                                    <li class="mb-2 d-flex align-items-center">
-                                                                        <i
-                                                                            class="fas fa-address-book text-secondary me-2"></i>
-                                                                        <strong>{{ __('Address') }}: </strong>
-                                                                        {{ $property->address }}
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @empty
-                                                <p class="text-center">{{ __('No Properties Available') }}</p>
-                                            @endforelse
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
+            @else
+                <div class="row">
+                    <div class="col-12 text-center py-5">
+                        <p>{{ __('No Properties Available') }}</p>
                     </div>
-                @else
-                    <div class="row">
-                        <p class="text-center">{{ __('No Properties Available') }}</p>
-                    </div>
-                @endif
-            </div>
-        </section>
-    @endif
+                </div>
+            @endif
+        </div>
+    </section>
+@endif
 
     <!-- Banner 2 -->
     @php

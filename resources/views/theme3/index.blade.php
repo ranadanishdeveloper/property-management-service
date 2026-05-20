@@ -105,50 +105,54 @@
 @endif
 
     <!-- Properties - Theme 3 (continued) -->
-    @php
-        $Section_5 = App\Models\FrontHomePage::where('section', 'Section 5')->first();
-        $Section_5_content_value = !empty($Section_5->content_value)
-            ? json_decode($Section_5->content_value, true)
-            : [];
-    @endphp
-    @if (empty($Section_5_content_value['section_enabled']) || $Section_5_content_value['section_enabled'] == 'active')
-        <section class="theme3-properties">
-            <div class="theme3-container">
-                <h2 class="theme3-section-title">{{ $Section_5_content_value['Sec5_title'] }}</h2>
-                <p class="theme3-section-subtitle">{{ $Section_5_content_value['Sec5_info'] }}</p>
-                @if (!empty($propertiesByType))
-                    @foreach ($listingTypes as $key => $type)
-                        <div class="theme3-property-list" id="theme3-type-{{ $type }}" style="{{ $key == 0 ? 'display: block;' : 'display: none;' }}">
-                            @forelse ($propertiesByType[$type] as $property)
-                                @php $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg'; @endphp
-                                <div class="theme3-property-item">
-                                    <img src="{{ asset(Storage::url('upload/property/thumbnail/' . $thumbnail)) }}" alt="{{ $property->name }}">
-                                    <div>
-                                        <h3>{{ ucfirst($property->name) }}</h3>
-                                        <p>{{ \Illuminate\Support\Str::limit(strip_tags($property->description), 60) }}</p>
-                                        <div class="theme3-property-meta">
-                                            <span>{{ \App\Models\Property::types()[$property->type] }}</span>
-                                            <span>{{ priceformat($property->price) }}</span>
-                                        </div>
-                                        <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}">DETAILS →</a>
-                                    </div>
+ <!-- Properties - Theme 3 (Latest 8 Properties) -->
+@php
+    $Section_5 = App\Models\FrontHomePage::where('section', 'Section 5')->first();
+    $Section_5_content_value = !empty($Section_5->content_value)
+        ? json_decode($Section_5->content_value, true)
+        : [];
+    
+    // Get latest 8 properties directly
+    $latestProperties = \App\Models\Property::where('parent_id', $user->id)
+        ->latest()
+        ->take(8)
+        ->get();
+@endphp
+@if (empty($Section_5_content_value['section_enabled']) || $Section_5_content_value['section_enabled'] == 'active')
+    <section class="theme3-properties">
+        <div class="theme3-container">
+            <h2 class="theme3-section-title">{{ $Section_5_content_value['Sec5_title'] ?? 'Featured Properties' }}</h2>
+            <p class="theme3-section-subtitle">{{ $Section_5_content_value['Sec5_info'] ?? 'Discover our exclusive collection' }}</p>
+            
+            @if($latestProperties->count() > 0)
+                <div class="theme3-properties-grid">
+                    @foreach ($latestProperties as $property)
+                        @php 
+                            $thumbnail = !empty($property->thumbnail->image) ? $property->thumbnail->image : 'default.jpg'; 
+                        @endphp
+                        <div class="theme3-property-card">
+                            <div class="theme3-property-image">
+                                <img src="{{ asset(Storage::url('upload/property/thumbnail/' . $thumbnail)) }}" alt="{{ $property->name }}">
+                                <span class="theme3-property-badge">{{ ucfirst($property->listing_type ?? 'Property') }}</span>
+                            </div>
+                            <div class="theme3-property-info">
+                                <h3>{{ ucfirst($property->name) }}</h3>
+                                <p>{{ \Illuminate\Support\Str::limit(strip_tags($property->description ?? ''), 60) }}</p>
+                                <div class="theme3-property-meta">
+                                    <span>{{ \App\Models\Property::types()[$property->type] ?? ucfirst($property->type) }}</span>
+                                    <span class="theme3-property-price">{{ priceFormat($property->price) }}</span>
                                 </div>
-                            @empty
-                                <p>NO PROPERTIES AVAILABLE</p>
-                            @endforelse
+                                <a href="{{ route('property.detail', ['code' => $user->code, \Crypt::encrypt($property->id)]) }}" class="theme3-property-link">VIEW DETAILS →</a>
+                            </div>
                         </div>
                     @endforeach
-                    <div class="theme3-tab-buttons">
-                        @foreach ($listingTypes as $key => $type)
-                            <button class="theme3-tab-btn {{ $key == 0 ? 'active' : '' }}" onclick="showTheme3Tab('{{ $type }}')">{{ strtoupper($type) }}</button>
-                        @endforeach
-                    </div>
-                @else
-                    <p>NO PROPERTIES AVAILABLE</p>
-                @endif
-            </div>
-        </section>
-    @endif
+                </div>
+            @else
+                <p class="text-center">No properties available at the moment.</p>
+            @endif
+        </div>
+    </section>
+@endif
 
     <!-- CTA Banner 2 & Testimonials continue same pattern... -->
     @php

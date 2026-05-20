@@ -79,12 +79,56 @@
             color: #cc4909 !important;
             border: 1px solid #000;
             padding: 6px 24px;
+
             border-radius: 4px;
             /* background-color: #fff; */
             font-weight: 500;
             /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
             transition: all 0.3s ease;
         }
+
+        /* Property Badge */
+.property-badge {
+    background: #ff6b4a !important;
+    font-size: 10px;
+    font-weight: 600;
+    z-index: 2;
+}
+
+/* Property Card Hover Effect */
+.listing-style1 {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+.listing-style1:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+/* Price styling */
+.text-primary {
+    color: #ff6b4a !important;
+}
+
+/* Button styling */
+.ud-btn.btn-thm {
+    background: #ff6b4a;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 13px;
+    transition: all 0.3s;
+}
+
+.ud-btn.btn-thm:hover {
+    background: #e85d3e;
+    transform: translateY(-2px);
+}
     </style>
 
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">

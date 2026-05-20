@@ -36,7 +36,13 @@ class FrontendController extends Controller
         $themeMap = [
             1 => 'theme',      // Your existing corporate theme
             2 => 'theme2',     // Glassmorphism theme
-            3 => 'theme3'      // Brutalist theme
+            3 => 'theme3',
+             4 => 'theme4',
+              5 => 'theme5',
+              6 => 'theme6',
+              7 => 'theme7',
+              8 => 'theme8',
+              9 => 'theme9'      // Brutalist theme
         ];
 
         return $themeMap[$themeNumber] ?? 'theme';
@@ -317,7 +323,7 @@ public function customDomainGetCities(Request $request)
     // MAIN THEME PAGE (with redirect logic)
     // ============================================
 
-   public function themePage($code = null, Request $request = null)
+  public function themePage($code = null, Request $request = null)
 {
     $user = User::where('code', $code)->firstOrFail();
 
@@ -344,11 +350,11 @@ public function customDomainGetCities(Request $request)
         return redirect()->to($customUrl);
     }
 
-    // Your existing theme page code continues here...
     $settings = settingsById($user->id);
     $parent_id = $user->id;
     $allAmenities = Amenity::where('parent_id', $user->id)->get();
 
+    // FIXED: Get listing types from properties that actually exist
     $listingTypes = Property::where('parent_id', $user->id)
         ->whereIn('listing_type', ['sell', 'rent'])
         ->select('listing_type')
@@ -356,10 +362,37 @@ public function customDomainGetCities(Request $request)
         ->pluck('listing_type')
         ->toArray();
 
-    $propertiesByType = Property::where('parent_id', $user->id)
-        ->whereIn('listing_type', $listingTypes)
-        ->get()
-        ->groupBy('listing_type');
+    // FIXED: Get properties by type - only ACTIVE properties
+    $propertiesByType = [];
+
+    if (!empty($listingTypes)) {
+        foreach ($listingTypes as $type) {
+            $propertiesByType[$type] = Property::where('parent_id', $user->id)
+                ->where('listing_type', $type)
+                ->where('is_active', 1)  // Add this filter for active properties
+                ->latest()
+                ->take(6)  // Limit to 6 properties per type
+                ->get();
+        }
+    } else {
+        // If no listing types found, get all active properties
+        $allProperties = Property::where('parent_id', $user->id)
+            ->where('is_active', 1)
+            ->latest()
+            ->take(6)
+            ->get();
+
+        if ($allProperties->count() > 0) {
+            $propertiesByType['Featured'] = $allProperties;
+        }
+    }
+
+    // Debug: Log what we found
+    \Log::info('Listing Types: ' . json_encode($listingTypes));
+    \Log::info('Properties By Type Count: ' . count($propertiesByType));
+    foreach($propertiesByType as $type => $props) {
+        \Log::info('Type: ' . $type . ' - Property Count: ' . $props->count());
+    }
 
     return $this->renderThemeView($user, 'index', compact('settings', 'parent_id', 'user', 'allAmenities', 'listingTypes', 'propertiesByType'))->with('is_custom_domain', $isCustomDomain);
 }

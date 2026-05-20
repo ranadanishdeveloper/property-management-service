@@ -1,7 +1,13 @@
 @php
     $routeName = \Request::route()->getName();
-    $isCustomDomain = isset($is_custom_domain) ? $is_custom_domain : (request()->getHost() !== '13.61.10.174' && request()->getHost() !== 'localhost' && request()->getHost() !== '127.0.0.1');
-    
+    $admin_logo = getSettingsValByName('company_logo');
+
+    $isCustomDomain = isset($is_custom_domain)
+        ? $is_custom_domain
+        : request()->getHost() !== '13.61.10.174' &&
+            request()->getHost() !== 'localhost' &&
+            request()->getHost() !== '127.0.0.1';
+
     if ($isCustomDomain) {
         $homeUrl = route('custom.domain.home');
         $propertiesUrl = route('custom.domain.properties');
@@ -19,14 +25,23 @@
     <div class="theme2-nav-container">
         <div class="theme2-logo">
             <a href="{{ $homeUrl }}">
-                <img src="{{ asset(Storage::url('upload/logo/') . '/' . (isset($admin_logo) && !empty($admin_logo) ? $admin_logo : 'logo.png')) }}" alt="Logo">
+                <img src="{{ asset(Storage::url('upload/logo/')) . '/' . (isset($admin_logo) && !empty($admin_logo) ? $admin_logo : 'logo.png') }}"
+                     alt="Logo"
+                     style="height: 45px; width: auto; transition: transform 0.3s ease;">
             </a>
         </div>
         <ul class="theme2-nav-menu">
-            <li><a href="{{ $homeUrl }}" class="{{ in_array($routeName, ['web.page', 'custom.domain.home']) ? 'active' : '' }}">Home</a></li>
-            <li><a href="{{ $propertiesUrl }}" class="{{ in_array($routeName, ['property.home', 'custom.domain.properties']) ? 'active' : '' }}">Properties</a></li>
-            <li><a href="{{ $blogUrl }}" class="{{ in_array($routeName, ['blog.home', 'custom.domain.blog']) ? 'active' : '' }}">Blog</a></li>
-            <li><a href="{{ $contactUrl }}" class="{{ in_array($routeName, ['contact.home', 'custom.domain.contact']) ? 'active' : '' }}">Contact</a></li>
+            <li><a href="{{ $homeUrl }}"
+                    class="{{ in_array($routeName, ['web.page', 'custom.domain.home']) ? 'active' : '' }}">Home</a></li>
+            <li><a href="{{ $propertiesUrl }}"
+                    class="{{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active' : '' }}">Properties</a>
+            </li>
+            <li><a href="{{ $blogUrl }}"
+                    class="{{ in_array($routeName, ['blog.home', 'blog.detail', 'custom.domain.blog', 'custom.domain.blog.detail']) ? 'active' : '' }}">Blog</a>
+            </li>
+            <li><a href="{{ $contactUrl }}"
+                    class="{{ in_array($routeName, ['contact.home', 'custom.domain.contact']) ? 'active' : '' }}">Contact</a>
+            </li>
         </ul>
     </div>
 </nav>
