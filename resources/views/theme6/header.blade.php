@@ -70,7 +70,7 @@
                 </ul>
             </nav>
 
-            <!-- Right Actions -->
+            <!-- Right Actions - NO LOGIN/SIGN UP (only Dashboard for logged in users) -->
             <div class="aether-actions">
                 @if(Auth::check())
                     <div class="user-menu">
@@ -83,8 +83,6 @@
                             <a href="{{ route('dashboard') }}" class="dropdown-item">
                                 <i class="fas fa-tachometer-alt"></i> Dashboard
                             </a>
-
-
                             <a href="#" class="dropdown-item">
                                 <i class="fas fa-heart"></i> Favorites
                             </a>
@@ -98,16 +96,8 @@
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
                         </div>
                     </div>
-                @else
-                    <a href="#" class="aether-btn aether-btn-outline">
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span>Login</span>
-                    </a>
-                    <a href="#" class="aether-btn aether-btn-primary">
-                        <i class="fas fa-user-plus"></i>
-                        <span>Sign Up</span>
-                    </a>
                 @endif
+                <!-- Login and Sign Up buttons REMOVED completely -->
 
                 <!-- Mobile Menu Toggle -->
                 <button class="mobile-toggle" id="mobileToggle">
@@ -119,7 +109,7 @@
         </div>
     </div>
 
-    <!-- Mobile Navigation -->
+    <!-- Mobile Navigation - NO LOGIN/SIGN UP -->
     <div class="mobile-nav" id="mobileNav">
         <div class="mobile-nav-container">
             <div class="mobile-nav-header">
@@ -140,12 +130,7 @@
                 <li><a href="{{ $blogUrl }}" class="mobile-nav-link {{ in_array($routeName, ['blog.home', 'blog.detail', 'custom.domain.blog', 'custom.domain.blog.detail']) ? 'active' : '' }}"><i class="fas fa-newspaper"></i> Blog</a></li>
                 <li><a href="{{ $contactUrl }}" class="mobile-nav-link {{ in_array($routeName, ['contact.home', 'custom.domain.contact']) ? 'active' : '' }}"><i class="fas fa-envelope"></i> Contact</a></li>
             </ul>
-            @if(!Auth::check())
-                <div class="mobile-auth">
-                    <a href="{{ route('login') }}" class="mobile-btn mobile-btn-outline">Login</a>
-                    <a href="{{ route('register') }}" class="mobile-btn mobile-btn-primary">Sign Up</a>
-                </div>
-            @endif
+            <!-- Login and Sign Up buttons REMOVED completely from mobile menu -->
         </div>
     </div>
 </header>
@@ -307,43 +292,6 @@
     display: flex;
     align-items: center;
     gap: 12px;
-}
-
-/* Buttons */
-.aether-btn {
-    padding: 10px 24px;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 14px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.aether-btn-primary {
-    background: linear-gradient(135deg, #ff6b4a, #e85d3e);
-    color: white;
-    box-shadow: 0 2px 10px rgba(255, 107, 74, 0.25);
-}
-
-.aether-btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 107, 74, 0.35);
-}
-
-.aether-btn-outline {
-    border: 1.5px solid #e2e8f0;
-    color: #1a1a2e;
-    background: transparent;
-}
-
-.aether-btn-outline:hover {
-    border-color: #ff6b4a;
-    color: #ff6b4a;
-    transform: translateY(-2px);
-    background: rgba(255, 107, 74, 0.05);
 }
 
 /* User Menu */
@@ -566,34 +514,6 @@
     transform: translateX(5px);
 }
 
-.mobile-auth {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #e2e8f0;
-}
-
-.mobile-btn {
-    flex: 1;
-    text-align: center;
-    padding: 12px;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s;
-}
-
-.mobile-btn-primary {
-    background: linear-gradient(135deg, #ff6b4a, #e85d3e);
-    color: white;
-}
-
-.mobile-btn-outline {
-    border: 1px solid #e2e8f0;
-    color: #4a5568;
-}
-
 /* Overlay */
 .mobile-nav-overlay {
     position: fixed;
@@ -643,19 +563,6 @@
         gap: 8px;
     }
 
-    .aether-btn span {
-        display: none;
-    }
-
-    .aether-btn i {
-        margin: 0;
-        font-size: 18px;
-    }
-
-    .aether-btn {
-        padding: 10px 14px;
-    }
-
     .user-name {
         display: none;
     }
@@ -672,12 +579,6 @@
 
     .logo-img {
         height: 35px;
-    }
-}
-
-@media (max-width: 480px) {
-    .aether-btn-outline {
-        display: none;
     }
 }
 </style>
