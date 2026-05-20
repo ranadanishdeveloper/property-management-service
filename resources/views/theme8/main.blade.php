@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -10,7 +11,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Google Fonts - SF Pro style -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap"
+        rel="stylesheet">
 
     <style>
         /* ============================================
@@ -33,7 +36,12 @@
             overflow-x: hidden;
         }
 
-        h1, h2, h3, h4, h5, h6 {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
             font-weight: 700;
             letter-spacing: -0.02em;
             color: #1d1c1e;
@@ -245,7 +253,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Mobile Sidebar */
@@ -314,6 +324,7 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+
             .glass-nav,
             .glass-buttons {
                 display: none;
@@ -329,6 +340,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="glass-preloader" id="glassPreloader">
         <div class="glass-loader"></div>
@@ -349,15 +361,25 @@
     <div class="glass-overlay" id="glassOverlay"></div>
     <div class="glass-mobile-sidebar" id="glassMobileSidebar">
         <button class="glass-mobile-close" id="glassMobileClose"><i class="fas fa-times"></i></button>
-        <ul>
-            <li><a href="{{ route('web.page', $user->code ?? '') }}">Home</a></li>
-            <li><a href="{{ route('property.home', ['code' => $user->code ?? '']) }}">Properties</a></li>
-            <li><a href="{{ route('blog.home', ['code' => $user->code ?? '']) }}">Blog</a></li>
-            <li><a href="{{ route('contact.home', ['code' => $user->code ?? '']) }}">Contact</a></li>
-            @if(Auth::check())
+        <ul class="glass-nav">
+            <li><a href="{{ $homeUrl }}"
+                    class="{{ in_array($routeName, ['web.page', 'custom.domain.home']) ? 'active' : '' }}">Home</a></li>
+            <li><a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}"
+                    class="{{ in_array($routeName, ['property.home', 'property.detail', 'custom.domain.properties', 'custom.domain.property.detail']) ? 'active' : '' }}">Properties</a>
+            </li>
+            <li><a href="{{ $blogUrl }}"
+                    class="{{ in_array($routeName, ['blog.home', 'blog.detail', 'custom.domain.blog', 'custom.domain.blog.detail']) ? 'active' : '' }}">Blog</a>
+            </li>
+            <li><a href="{{ $contactUrl }}"
+                    class="{{ in_array($routeName, ['contact.home', 'custom.domain.contact']) ? 'active' : '' }}">Contact</a>
+            </li>
+            @if (Auth::check())
                 <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                <li><a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
+                <li><a href="#"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                </li>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf
+                </form>
             @else
                 <li><a href="">Login</a></li>
                 <li><a href="">Sign Up</a></li>
@@ -379,7 +401,10 @@
                 window.addEventListener('scroll', () => {
                     backTop.classList.toggle('visible', window.scrollY > 300);
                 });
-                backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+                backTop.addEventListener('click', () => window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                }));
             }
 
             // Mobile sidebar
@@ -409,4 +434,5 @@
 
     @stack('theme8-scripts')
 </body>
+
 </html>
