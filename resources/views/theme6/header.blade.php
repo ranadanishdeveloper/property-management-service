@@ -83,6 +83,8 @@
                             <a href="{{ route('dashboard') }}" class="dropdown-item">
                                 <i class="fas fa-tachometer-alt"></i> Dashboard
                             </a>
+
+
                             <a href="#" class="dropdown-item">
                                 <i class="fas fa-heart"></i> Favorites
                             </a>

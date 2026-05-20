@@ -109,6 +109,10 @@
                 <li style="margin-bottom: 12px;"><a href="{{ route('dashboard') }}" style="text-decoration: none; color: #1e293b; font-size: 16px; display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; transition: all 0.3s;"><i class="fas fa-tachometer-alt" style="width: 20px;"></i> {{ __('Dashboard') }}</a></li>
             @endif
         </ul>
+
+
+
+        
     </div>
 </header>
 
