@@ -680,7 +680,7 @@
         <div class="container-aether" style="padding: 0;">
             <h2 style="color:white;">Need Help?</h2>
             <p style="color:#b9c3e0;">Our experts are here 24/7</p>
-            <a href="{{ route('contact.home', $user->code) }}" class="btn-aether btn-outline-light" style="margin-top: 1.5rem; display: inline-block;">Contact Us →</a>
+            <a href="{{ $isCustomDomain ? route('custom.domain.contact') : route('contact.home', $user->code) }}" class="btn-aether btn-outline-light" style="margin-top: 1.5rem; display: inline-block;">Contact Us →</a>
         </div>
     </div>
 </div>

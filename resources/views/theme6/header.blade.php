@@ -97,11 +97,11 @@
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('login') }}" class="aether-btn aether-btn-outline">
+                    <a href="" class="aether-btn aether-btn-outline">
                         <i class="fas fa-sign-in-alt"></i>
                         <span>Login</span>
                     </a>
-                    <a href="{{ route('register') }}" class="aether-btn aether-btn-primary">
+                    <a href="" class="aether-btn aether-btn-primary">
                         <i class="fas fa-user-plus"></i>
                         <span>Sign Up</span>
                     </a>

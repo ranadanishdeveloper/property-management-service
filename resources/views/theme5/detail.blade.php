@@ -722,7 +722,7 @@ body {
                 <div class="sidebar-card">
                     <div class="sidebar-title"><i class="fas fa-headset"></i><span>Need Help?</span></div>
                     <p style="color: var(--text-light); margin-bottom: 20px; font-size: 14px;">Contact our property experts for more information about this property.</p>
-                    <a href="{{ route('contact.home', $user->code) }}" class="contact-btn"><i class="fas fa-envelope"></i> Contact Agent</a>
+                    <a href="{{ $isCustomDomain ? route('custom.domain.contact') : route('contact.home', $user->code) }}" class="contact-btn"><i class="fas fa-envelope"></i> Contact Agent</a>
                 </div>
             </div>
         </div>

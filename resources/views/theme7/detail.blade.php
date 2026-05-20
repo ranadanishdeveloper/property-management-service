@@ -622,7 +622,7 @@
                 <div class="cyber-sidebar-card">
                     <h3>// CONTACT AGENT</h3>
                     <p style="color: var(--gray-text); margin-bottom: 20px; font-size: 14px;">Have questions? Contact our property expert for more details.</p>
-                    <a href="{{ $isCustomDomain ? route('custom.domain.contact') : route('contact.home', $user->code) }}" class="cyber-contact-btn">
+                    <a href="{{ $isCustomDomain ? route('custom.domain.contact') : $isCustomDomain ? route('custom.domain.contact') : route('contact.home', $user->code) }}" class="cyber-contact-btn">
                         <i class="fas fa-envelope"></i> SEND MESSAGE
                     </a>
                 </div>

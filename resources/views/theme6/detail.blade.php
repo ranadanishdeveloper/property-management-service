@@ -449,36 +449,36 @@
     .theme6-container {
         padding: 0 20px;
     }
-    
+
     .detail-section {
         padding: 30px 0 60px;
     }
-    
+
     .property-title {
         font-size: 32px;
     }
-    
+
     .property-price {
         font-size: 24px;
     }
-    
+
     .carousel-slide {
         height: 280px;
     }
-    
+
     .amenities-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .units-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .thumbnail-item {
         width: 60px;
         height: 55px;
     }
-    
+
     .info-card {
         padding: 20px;
     }
@@ -518,7 +518,7 @@
                     <button class="carousel-btn carousel-next" id="carouselNext"><i class="fas fa-chevron-right"></i></button>
                 @endif
             </div>
-            
+
             <!-- Carousel Dots -->
             @if($imageCount > 1)
             <div class="carousel-dots" id="carouselDots">
@@ -527,7 +527,7 @@
                 @endforeach
             </div>
             @endif
-            
+
             <!-- Thumbnail Strip -->
             @if($imageCount > 1)
             <div class="thumbnail-strip">
@@ -640,7 +640,7 @@
                 <div class="sidebar-card">
                     <h3>Contact Agent</h3>
                     <p style="color: var(--gray); margin-bottom: 20px; font-size: 14px;">Have questions? Contact our property expert for more details.</p>
-                    <a href="{{ route('contact.home', $user->code) }}" class="contact-btn">
+                    <a href="{{ $isCustomDomain ? route('custom.domain.contact') : route('contact.home', $user->code) }}" class="contact-btn">
                         <i class="fas fa-envelope"></i> Send Message
                     </a>
                 </div>
@@ -669,7 +669,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const slides = document.querySelectorAll('.carousel-slide');
     let currentIndex = 0;
     const totalSlides = slides.length;
-    
+
     if (totalSlides > 0) {
         function updateCarousel(index) {
             if (index < 0) index = 0;
@@ -677,46 +677,46 @@ document.addEventListener('DOMContentLoaded', function() {
             currentIndex = index;
             const offset = -currentIndex * 100;
             track.style.transform = `translateX(${offset}%)`;
-            
+
             // Update dots
             dots.forEach((dot, i) => {
                 dot.classList.toggle('active', i === currentIndex);
             });
-            
+
             // Update thumbnails
             thumbnails.forEach((thumb, i) => {
                 thumb.classList.toggle('active', i === currentIndex);
             });
         }
-        
+
         if (prevBtn && nextBtn) {
             prevBtn.addEventListener('click', () => {
                 currentIndex--;
                 if (currentIndex < 0) currentIndex = totalSlides - 1;
                 updateCarousel(currentIndex);
             });
-            
+
             nextBtn.addEventListener('click', () => {
                 currentIndex++;
                 if (currentIndex >= totalSlides) currentIndex = 0;
                 updateCarousel(currentIndex);
             });
         }
-        
+
         // Dot click
         dots.forEach((dot, index) => {
             dot.addEventListener('click', () => {
                 updateCarousel(index);
             });
         });
-        
+
         // Thumbnail click
         thumbnails.forEach((thumb, index) => {
             thumb.addEventListener('click', () => {
                 updateCarousel(index);
             });
         });
-        
+
         // Auto swipe carousel every 5 seconds (only if more than 1 slide)
         if (totalSlides > 1) {
             setInterval(() => {
@@ -726,12 +726,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 5000);
         }
     }
-    
+
     // ========== MODAL FUNCTIONALITY ==========
     const modal = document.getElementById('imageModal');
     const modalImg = document.getElementById('modalImage');
     const modalClose = document.querySelector('.modal-close');
-    
+
     // Main carousel image click
     track?.addEventListener('click', (e) => {
         if (e.target.tagName === 'IMG') {
@@ -740,21 +740,21 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.style.overflow = 'hidden';
         }
     });
-    
+
     // Close modal function
     function closeModal() {
         modal.classList.remove('active');
         document.body.style.overflow = '';
     }
-    
+
     modalClose?.addEventListener('click', closeModal);
-    
+
     modal?.addEventListener('click', (e) => {
         if (e.target === modal) {
             closeModal();
         }
     });
-    
+
     // Escape key close modal
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && modal.classList.contains('active')) {

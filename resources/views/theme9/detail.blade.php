@@ -13,7 +13,7 @@
     background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
     padding: 100px 0 60px;
     margin-top: 80px;
-    
+
     text-align: center;
 }
 
@@ -608,7 +608,7 @@
             <div class="sidebar-card">
                 <h3>Contact Agent</h3>
                 <p style="color: #a0a0a0; margin-bottom: 20px; font-size: 14px;">Have questions? Contact our property expert for more details.</p>
-                <a href="{{ $isCustomDomain ? route('custom.domain.contact') : route('contact.home', $user->code) }}" class="contact-btn">
+                <a href="{{ $isCustomDomain ? route('custom.domain.contact') : $isCustomDomain ? route('custom.domain.contact') : route('contact.home', $user->code) }}" class="contact-btn">
                     <i class="fas fa-envelope"></i> Send Message
                 </a>
             </div>

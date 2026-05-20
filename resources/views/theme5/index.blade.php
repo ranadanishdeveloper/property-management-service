@@ -647,7 +647,7 @@ body {
             <p>{{ $Section_0_content_value['sub_title'] ?? 'Discover exceptional properties with our curated collection of luxury homes and investment opportunities.' }}</p>
             <div class="hero-buttons">
                 <a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}" class="btn btn-primary">Explore Properties →</a>
-                <a href="{{ route('contact.home', $user->code) }}" class="btn btn-outline">Contact Us</a>
+                <a href="{{ $isCustomDomain ? route('custom.domain.contact') : route('contact.home', $user->code) }}" class="btn btn-outline">Contact Us</a>
             </div>
             <div class="hero-image">
                 <img src="{{ asset(Storage::url($Section_0_content_value['banner_image1_path'] ?? '')) }}" alt="Hero">

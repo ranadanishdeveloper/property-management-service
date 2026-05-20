@@ -44,8 +44,8 @@
                     <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="glass-btn-outline">Logout</a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
                 @else
-                    <a href="{{ route('login') }}" class="glass-btn-outline">Login</a>
-                    <a href="{{ route('register') }}" class="glass-btn-primary">Sign Up</a>
+                    <a href="" class="glass-btn-outline">Login</a>
+                    <a href="" class="glass-btn-primary">Sign Up</a>
                 @endif
             </div>
 

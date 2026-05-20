@@ -204,8 +204,8 @@
                     <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn-outline">LOGOUT</a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
                 @else
-                    <a href="{{ route('login') }}" class="btn-outline">LOGIN</a>
-                    <a href="{{ route('register') }}" class="btn-primary">SIGN UP</a>
+                    <a href="" class="btn-outline">LOGIN</a>
+                    <a href="" class="btn-primary">SIGN UP</a>
                 @endif
             </div>
 

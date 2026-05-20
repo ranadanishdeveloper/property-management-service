@@ -990,7 +990,7 @@ body {
             <p class="hero-luxury-text">{{ $Section_0_content_value['sub_title'] ?? 'Discover exceptional properties curated for discerning buyers. Experience luxury living at its finest.' }}</p>
             <div class="hero-luxury-buttons">
                 <a href="{{ $isCustomDomain ? route('custom.domain.properties') : route('property.home', $user->code) }}" class="btn-luxury btn-luxury-primary">Explore Collection <i class="fas fa-arrow-right"></i></a>
-                <a href="{{ route('contact.home', $user->code) }}" class="btn-luxury btn-luxury-outline"><i class="fas fa-play-circle"></i> Virtual Tour</a>
+                <a href="{{ $isCustomDomain ? route('custom.domain.contact') : route('contact.home', $user->code) }}" class="btn-luxury btn-luxury-outline"><i class="fas fa-play-circle"></i> Virtual Tour</a>
             </div>
             <div class="hero-luxury-stats">
                 <div class="hero-luxury-stat"><h3>500+</h3><p>LUXURY HOMES</p></div>
@@ -1191,7 +1191,7 @@ body {
             <p>{{ $Section_6_content_value['Sec6_info'] ?? 'Let our expert advisors guide you to your dream property' }}</p>
             <div class="cta-premium-buttons">
                 <a href="{{ $Section_6_content_value['sec6_btn_link'] ?? '#' }}" class="btn-luxury btn-premium-white">{{ $Section_6_content_value['sec6_btn_name'] ?? 'Schedule Consultation' }} <i class="fas fa-calendar-check"></i></a>
-                <a href="{{ route('contact.home', $user->code) }}" class="btn-luxury btn-premium-transparent"><i class="fas fa-headset"></i> Concierge Service</a>
+                <a href="{{ $isCustomDomain ? route('custom.domain.contact') : route('contact.home', $user->code) }}" class="btn-luxury btn-premium-transparent"><i class="fas fa-headset"></i> Concierge Service</a>
             </div>
         </div>
     </div>

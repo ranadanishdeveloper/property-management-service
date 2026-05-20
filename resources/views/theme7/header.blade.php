@@ -38,8 +38,8 @@
             <li><a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
         @else
-            <li><a href="{{ route('login') }}"><i class="fas fa-sign-in-alt"></i> LOGIN</a></li>
-            <li><a href="{{ route('register') }}"><i class="fas fa-user-plus"></i> SIGN UP</a></li>
+            <li><a href=""><i class="fas fa-sign-in-alt"></i> LOGIN</a></li>
+            <li><a href=""><i class="fas fa-user-plus"></i> SIGN UP</a></li>
         @endif
     </ul>
 
