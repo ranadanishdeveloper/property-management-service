@@ -1,6 +1,8 @@
 @extends('theme2.main')
 @section('content')
-
+@php
+    $isCustomDomain = isset($is_custom_domain) ? $is_custom_domain : (request()->getHost() !== '13.61.10.174' && request()->getHost() !== 'localhost' && request()->getHost() !== '127.0.0.1');
+@endphp
     <!-- Home Banner Style V1 - Theme 2 Glassmorphism Style -->
     @php
         $Section_0 = App\Models\FrontHomePage::where('section', 'Section 0')->where('parent_id', $parent_id)->first();

@@ -1,6 +1,8 @@
 @extends('theme9.main')
 @section('content')
-
+@php
+    $isCustomDomain = isset($is_custom_domain) ? $is_custom_domain : (request()->getHost() !== '13.61.10.174' && request()->getHost() !== 'localhost' && request()->getHost() !== '127.0.0.1');
+@endphp
 <style>
 /* ============================================
    THEME 9 - VELORA (DARK THEME + LIGHT TEXT)
