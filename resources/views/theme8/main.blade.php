@@ -350,10 +350,10 @@
     <div class="glass-mobile-sidebar" id="glassMobileSidebar">
         <button class="glass-mobile-close" id="glassMobileClose"><i class="fas fa-times"></i></button>
         <ul>
-            <li><a href="">Home</a></li>
-            <li><a href="{{ route('property.home', ['code' => $user->code ?? '']) }}">Properties</a></li>
-            <li><a href="{{ route('blog.home', ['code' => $user->code ?? '']) }}">Blog</a></li>
-            <li><a href="{{ route('contact.home', ['code' => $user->code ?? '']) }}">Contact</a></li>
+            <li><a href="{{ url('/') }}">Home</a></li>
+            <li><a href="{{ url('/properties') }}">Properties</a></li>
+            <li><a href="{{ url('/blog') }}">Blog</a></li>
+            <li><a href="{{ url('/contact') }}">Contact</a></li>
             @if(Auth::check())
                 <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
                 <li><a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
