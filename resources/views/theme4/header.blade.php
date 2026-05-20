@@ -78,26 +78,15 @@
                 </ul>
             </nav>
 
-            <!-- Header Buttons -->
+            <!-- Header Buttons - NO LOGIN/SIGN UP (only Dashboard for logged in users) -->
             <div style="display: flex; gap: 12px;">
                 @if (Auth::check())
                     <a href="{{ route('dashboard') }}"
                         style="padding: 10px 24px; border-radius: 50px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);">
                         <i class="fas fa-tachometer-alt"></i> Dashboard
                     </a>
-                @else
-                    <a href="#"
-                        style="padding: 10px 24px; border-radius: 50px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; border: 1px solid rgba(255, 255, 255, 0.3); color: white; background: transparent; transition: all 0.3s ease;">
-                        <i class="fas fa-sign-in-alt"></i> Login
-                    </a>
-
-
-
-                    <a href="#"
-                        style="padding: 10px 24px; border-radius: 50px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; background: linear-gradient(135deg, #6366f1, #a855f7); color: white; transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);">
-                        <i class="fas fa-user-plus"></i> Sign Up
-                    </a>
                 @endif
+                <!-- Login and Sign Up buttons REMOVED completely -->
             </div>
 
             <!-- Mobile Menu Toggle -->
@@ -108,7 +97,7 @@
         </div>
     </div>
 
-    <!-- Mobile Menu -->
+    <!-- Mobile Menu - NO LOGIN/SIGN UP -->
     <div style="position: fixed; top: 0; left: -100%; width: 80%; max-width: 320px; height: 100%; background: #0f172a; z-index: 1001; transition: left 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1); box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3); overflow-y: auto;"
         class="t4-mobile-menu">
         <div
@@ -145,24 +134,14 @@
                 <a href="{{ $contactUrl }}"
                     style="text-decoration: none; color: #e2e8f0; font-size: 16px; display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 12px; transition: all 0.3s ease;"><i
                         class="fas fa-envelope"></i> {{ __('Contact') }}</a></li>
-            @if (!Auth::check())
-                <li
-                    style="margin-bottom: 16px; opacity: 0; transform: translateX(-20px); animation: slideIn 0.3s ease forwards; animation-delay: 0.25s;">
-                    <a href="{{ route('login') }}"
-                        style="text-decoration: none; color: #e2e8f0; font-size: 16px; display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 12px; transition: all 0.3s ease;"><i
-                            class="fas fa-sign-in-alt"></i> {{ __('Login') }}</a></li>
-                <li
-                    style="margin-bottom: 16px; opacity: 0; transform: translateX(-20px); animation: slideIn 0.3s ease forwards; animation-delay: 0.3s;">
-                    <a href="{{ route('register') }}"
-                        style="text-decoration: none; color: #e2e8f0; font-size: 16px; display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 12px; transition: all 0.3s ease;"><i
-                            class="fas fa-user-plus"></i> {{ __('Register') }}</a></li>
-            @else
+            @if (Auth::check())
                 <li
                     style="margin-bottom: 16px; opacity: 0; transform: translateX(-20px); animation: slideIn 0.3s ease forwards; animation-delay: 0.25s;">
                     <a href="{{ route('dashboard') }}"
                         style="text-decoration: none; color: #e2e8f0; font-size: 16px; display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 12px; transition: all 0.3s ease;"><i
                             class="fas fa-tachometer-alt"></i> {{ __('Dashboard') }}</a></li>
             @endif
+            <!-- Login and Register links REMOVED completely -->
         </ul>
     </div>
 </header>
@@ -211,19 +190,6 @@
         color: #6366f1 !important;
     }
 
-    /* Button hover animations */
-    .t4-header-buttons a:first-child:hover,
-    .t4-header-buttons a:last-child:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
-    }
-
-    .t4-header-buttons a:nth-child(2):hover {
-        border-color: #6366f1 !important;
-        background: rgba(99, 102, 241, 0.15) !important;
-        transform: translateY(-2px);
-    }
-
     /* Mobile menu animations */
     .t4-mobile-menu.open {
         left: 0 !important;
@@ -247,10 +213,6 @@
     /* Responsive */
     @media (max-width: 768px) {
         nav {
-            display: none !important;
-        }
-
-        .t4-header-buttons {
             display: none !important;
         }
 

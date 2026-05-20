@@ -60,20 +60,14 @@
                 </ul>
             </nav>
 
-            <!-- Header Buttons -->
+            <!-- Header Buttons - NO LOGIN/SIGN UP -->
             <div style="display: flex; gap: 12px;">
                 @if(Auth::check())
                     <a href="{{ route('dashboard') }}" style="padding: 8px 20px; border-radius: 8px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; background: #3b82f6; color: white; transition: all 0.3s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
                         <i class="fas fa-tachometer-alt"></i> Dashboard
                     </a>
-                @else
-                    <a href="{{ route('login') }}" style="padding: 8px 20px; border-radius: 8px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; border: 1px solid #cbd5e1; color: #1e293b; background: white; transition: all 0.3s;">
-                        <i class="fas fa-sign-in-alt"></i> Login
-                    </a>
-                    <a href="{{ route('register') }}" style="padding: 8px 20px; border-radius: 8px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; background: #3b82f6; color: white; transition: all 0.3s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                        <i class="fas fa-user-plus"></i> Sign Up
-                    </a>
                 @endif
+                <!-- Login and Sign Up buttons REMOVED completely -->
             </div>
 
             <!-- Mobile Menu Toggle -->
@@ -83,7 +77,7 @@
         </div>
     </div>
 
-    <!-- Mobile Menu -->
+    <!-- Mobile Menu - NO LOGIN/SIGN UP -->
     <div style="position: fixed; top: 0; left: -100%; width: 80%; max-width: 320px; height: 100%; background: white; z-index: 1001; transition: left 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1); box-shadow: 2px 0 20px rgba(0,0,0,0.1); overflow-y: auto;" class="theme5-mobile-menu">
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #e2e8f0;">
             <div class="theme5-logo">
@@ -102,18 +96,11 @@
             <li style="margin-bottom: 12px;"><a href="{{ $blogUrl }}" style="text-decoration: none; color: #1e293b; font-size: 16px; display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; transition: all 0.3s;"><i class="fas fa-newspaper" style="width: 20px;"></i> {{ __('Blog') }}</a></li>
             <li style="margin-bottom: 12px;"><a href="{{ $contactUrl }}" style="text-decoration: none; color: #1e293b; font-size: 16px; display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; transition: all 0.3s;"><i class="fas fa-envelope" style="width: 20px;"></i> {{ __('Contact') }}</a></li>
             <div style="height: 1px; background: #e2e8f0; margin: 16px 0;"></div>
-            @if(!Auth::check())
-                <li style="margin-bottom: 12px;"><a href="#" style="text-decoration: none; color: #1e293b; font-size: 16px; display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; transition: all 0.3s;"><i class="fas fa-sign-in-alt" style="width: 20px;"></i> {{ __('Login') }}</a></li>
-                <li style="margin-bottom: 12px;"><a href="#" style="text-decoration: none; color: #1e293b; font-size: 16px; display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; transition: all 0.3s;"><i class="fas fa-user-plus" style="width: 20px;"></i> {{ __('Register') }}</a></li>
-            @else
+            @if(Auth::check())
                 <li style="margin-bottom: 12px;"><a href="{{ route('dashboard') }}" style="text-decoration: none; color: #1e293b; font-size: 16px; display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; transition: all 0.3s;"><i class="fas fa-tachometer-alt" style="width: 20px;"></i> {{ __('Dashboard') }}</a></li>
             @endif
-
+            <!-- Login and Register links REMOVED completely -->
         </ul>
-
-
-
-
     </div>
 </header>
 
@@ -149,19 +136,6 @@ nav ul li a:hover {
     color: #3b82f6 !important;
 }
 
-/* Button hover animations */
-.theme5-header-buttons a:first-child:hover,
-.theme5-header-buttons a:last-child:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-}
-
-.theme5-header-buttons a:nth-child(2):hover {
-    border-color: #3b82f6 !important;
-    color: #3b82f6 !important;
-    background: #eff6ff !important;
-}
-
 /* Mobile menu animations */
 .theme5-mobile-menu.open {
     left: 0 !important;
@@ -184,9 +158,6 @@ nav ul li a:hover {
 /* Responsive */
 @media (max-width: 768px) {
     nav {
-        display: none !important;
-    }
-    .theme5-header-buttons {
         display: none !important;
     }
     .theme5-mobile-toggle {

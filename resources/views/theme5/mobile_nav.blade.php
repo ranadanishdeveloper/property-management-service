@@ -53,13 +53,13 @@
     <ul style="list-style: none; padding: 0 20px; margin: 0;">
         @if(!Auth::check())
             <li style="margin-bottom: 5px; opacity: 0; transform: translateX(-20px); animation: slideInMobile 0.3s ease forwards; animation-delay: 0.25s;">
-                <a href="{{ route('login') }}" style="display: flex; align-items: center; gap: 15px; padding: 14px 16px; text-decoration: none; color: #e2e8f0; font-size: 16px; font-weight: 500; border-radius: 12px; transition: all 0.3s;">
+                <a href="" style="display: flex; align-items: center; gap: 15px; padding: 14px 16px; text-decoration: none; color: #e2e8f0; font-size: 16px; font-weight: 500; border-radius: 12px; transition: all 0.3s;">
                     <i class="fas fa-sign-in-alt" style="width: 24px; color: #00f3ff;"></i>
                     <span>{{ __('Login') }}</span>
                 </a>
             </li>
             <li style="margin-bottom: 5px; opacity: 0; transform: translateX(-20px); animation: slideInMobile 0.3s ease forwards; animation-delay: 0.3s;">
-                <a href="{{ route('register') }}" style="display: flex; align-items: center; gap: 15px; padding: 14px 16px; text-decoration: none; color: #e2e8f0; font-size: 16px; font-weight: 500; border-radius: 12px; transition: all 0.3s;">
+                <a href="" style="display: flex; align-items: center; gap: 15px; padding: 14px 16px; text-decoration: none; color: #e2e8f0; font-size: 16px; font-weight: 500; border-radius: 12px; transition: all 0.3s;">
                     <i class="fas fa-user-plus" style="width: 24px; color: #00f3ff;"></i>
                     <span>{{ __('Register') }}</span>
                 </a>

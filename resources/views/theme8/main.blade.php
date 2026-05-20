@@ -186,7 +186,7 @@
         }
 
         /* Main Content */
-       
+
 
         /* Back to Top */
         .glass-back-top {
@@ -359,8 +359,8 @@
                 <li><a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
             @else
-                <li><a href="{{ route('login') }}">Login</a></li>
-                <li><a href="{{ route('register') }}">Sign Up</a></li>
+                <li><a href="">Login</a></li>
+                <li><a href="">Sign Up</a></li>
             @endif
         </ul>
     </div>

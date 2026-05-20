@@ -38,8 +38,8 @@
         <li><a href="{{ $blogUrl }}"><i class="fas fa-newspaper"></i> {{ __('Blog') }}</a></li>
         <li><a href="{{ $contactUrl }}"><i class="fas fa-envelope"></i> {{ __('Contact') }}</a></li>
         @if(!Auth::check())
-            <li><a href="{{ route('login') }}"><i class="fas fa-sign-in-alt"></i> {{ __('Login') }}</a></li>
-            <li><a href="{{ route('register') }}"><i class="fas fa-user-plus"></i> {{ __('Register') }}</a></li>
+            <li><a href=""><i class="fas fa-sign-in-alt"></i> {{ __('Login') }}</a></li>
+            <li><a href=""><i class="fas fa-user-plus"></i> {{ __('Register') }}</a></li>
         @else
             <li><a href="{{ route('dashboard') }}"><i class="fas fa-tachometer-alt"></i> {{ __('Dashboard') }}</a></li>
         @endif
