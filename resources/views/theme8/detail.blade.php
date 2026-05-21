@@ -550,7 +550,7 @@
                 <div class="glass-sidebar-card">
                     <h3>Contact Agent</h3>
                     <p style="color: #8e8e93; margin-bottom: 20px; font-size: 14px;">Have questions? Contact our property expert for more details.</p>
-                    <a href="{{ $isCustomDomain ? route('custom.domain.contact') : $isCustomDomain ? route('custom.domain.contact') : route('contact.home', $user->code) }}" class="glass-contact-btn">
+                    <a href="{{ $isCustomDomain ? route('custom.domain.contact') : route('contact.home', $user->code) }}" class="glass-contact-btn">
                         <i class="fas fa-envelope"></i> Send Message
                     </a>
                 </div>
